@@ -1,0 +1,62 @@
+{
+  "common": {
+    "loading": "로딩 중...",
+    "error": "오류",
+    "success": "성공",
+    "cancel": "취소",
+    "save": "저장",
+    "delete": "삭제",
+    "edit": "수정",
+    "add": "추가",
+    "back": "뒤로"
+  },
+  "nav": {
+    "profile": "프로필",
+    "feed": "피드",
+    "dashboard": "대시보드",
+    "logout": "로그아웃"
+  },
+  "auth": {
+    "login": "로그인",
+    "signup": "회원가입",
+    "email": "이메일",
+    "password": "비밀번호",
+    "confirmPassword": "비밀번호 확인",
+    "username": "사용자명",
+    "loginTitle": "로그인",
+    "signupTitle": "계정 생성",
+    "noAccount": "계정이 없으신가요?",
+    "haveAccount": "이미 계정이 있으신가요?"
+  },
+  "profile": {
+    "title": "내 프로필",
+    "bio": "소개",
+    "pets": "내 반려동물",
+    "editProfile": "프로필 수정",
+    "addPet": "반려동물 추가",
+    "petName": "반려동물 이름",
+    "species": "종류",
+    "breed": "품종",
+    "age": "나이",
+    "followers": "팔로워",
+    "following": "팔로잉"
+  },
+  "feed": {
+    "title": "커뮤니티 피드",
+    "newPost": "반려동물의 소식을 공유하세요",
+    "post": "게시",
+    "like": "좋아요",
+    "comment": "댓글",
+    "share": "공유",
+    "bestPost": "최고의 일지 배지"
+  },
+  "dashboard": {
+    "title": "대시보드",
+    "weeklyHealth": "주간 건강",
+    "logs": "로그",
+    "stats": "통계",
+    "feeding": "식사",
+    "walks": "산책",
+    "health": "건강"
+  }
+}

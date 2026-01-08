@@ -1,0 +1,62 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "back": "Back"
+  },
+  "nav": {
+    "profile": "Profile",
+    "feed": "Feed",
+    "dashboard": "Dashboard",
+    "logout": "Logout"
+  },
+  "auth": {
+    "login": "Login",
+    "signup": "Sign Up",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "username": "Username",
+    "loginTitle": "Welcome Back",
+    "signupTitle": "Create Account",
+    "noAccount": "Don't have an account?",
+    "haveAccount": "Already have an account?"
+  },
+  "profile": {
+    "title": "My Profile",
+    "bio": "Bio",
+    "pets": "My Pets",
+    "editProfile": "Edit Profile",
+    "addPet": "Add Pet",
+    "petName": "Pet Name",
+    "species": "Species",
+    "breed": "Breed",
+    "age": "Age",
+    "followers": "Followers",
+    "following": "Following"
+  },
+  "feed": {
+    "title": "Community Feed",
+    "newPost": "What's new with your pet?",
+    "post": "Post",
+    "like": "Like",
+    "comment": "Comment",
+    "share": "Share",
+    "bestPost": "Best Post Badge"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "weeklyHealth": "Weekly Health",
+    "logs": "Logs",
+    "stats": "Statistics",
+    "feeding": "Feeding",
+    "walks": "Walks",
+    "health": "Health"
+  }
+}

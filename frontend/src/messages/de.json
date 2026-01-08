@@ -1,0 +1,62 @@
+{
+  "common": {
+    "loading": "Wird geladen...",
+    "error": "Fehler",
+    "success": "Erfolg",
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "add": "Hinzufügen",
+    "back": "Zurück"
+  },
+  "nav": {
+    "profile": "Profil",
+    "feed": "Feed",
+    "dashboard": "Dashboard",
+    "logout": "Abmelden"
+  },
+  "auth": {
+    "login": "Anmelden",
+    "signup": "Registrieren",
+    "email": "Email",
+    "password": "Passwort",
+    "confirmPassword": "Passwort bestätigen",
+    "username": "Benutzername",
+    "loginTitle": "Willkommen zurück",
+    "signupTitle": "Konto erstellen",
+    "noAccount": "Sie haben kein Konto?",
+    "haveAccount": "Sie haben bereits ein Konto?"
+  },
+  "profile": {
+    "title": "Mein Profil",
+    "bio": "Biografie",
+    "pets": "Meine Haustiere",
+    "editProfile": "Profil bearbeiten",
+    "addPet": "Haustier hinzufügen",
+    "petName": "Name des Haustiers",
+    "species": "Art",
+    "breed": "Rasse",
+    "age": "Alter",
+    "followers": "Follower",
+    "following": "Folgen"
+  },
+  "feed": {
+    "title": "Community-Feed",
+    "newPost": "Was ist neu mit Ihrem Haustier?",
+    "post": "Posten",
+    "like": "Mag ich",
+    "comment": "Kommentar",
+    "share": "Teilen",
+    "bestPost": "Bestes Tagebuch-Abzeichen"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "weeklyHealth": "Wöchentliche Gesundheit",
+    "logs": "Logs",
+    "stats": "Statistiken",
+    "feeding": "Fütterung",
+    "walks": "Spaziergänge",
+    "health": "Gesundheit"
+  }
+}

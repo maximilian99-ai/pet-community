@@ -1,0 +1,62 @@
+{
+  "common": {
+    "loading": "Indlæser...",
+    "error": "Fejl",
+    "success": "Succes",
+    "cancel": "Annuller",
+    "save": "Gem",
+    "delete": "Slet",
+    "edit": "Rediger",
+    "add": "Tilføj",
+    "back": "Tilbage"
+  },
+  "nav": {
+    "profile": "Profil",
+    "feed": "Feed",
+    "dashboard": "Dashboard",
+    "logout": "Log ud"
+  },
+  "auth": {
+    "login": "Log ind",
+    "signup": "Tilmeld",
+    "email": "E-mail",
+    "password": "Adgangskode",
+    "confirmPassword": "Bekræft adgangskode",
+    "username": "Brugernavn",
+    "loginTitle": "Velkommen tilbage",
+    "signupTitle": "Opret konto",
+    "noAccount": "Har du ikke en konto?",
+    "haveAccount": "Har du allerede en konto?"
+  },
+  "profile": {
+    "title": "Min profil",
+    "bio": "Biografi",
+    "pets": "Mine kæledyr",
+    "editProfile": "Rediger profil",
+    "addPet": "Tilføj kæledyr",
+    "petName": "Navn på kæledyr",
+    "species": "Art",
+    "breed": "Race",
+    "age": "Alder",
+    "followers": "Følgere",
+    "following": "Følger"
+  },
+  "feed": {
+    "title": "Fællesskabsfeed",
+    "newPost": "Hvad er nyt med dit kæledyr?",
+    "post": "Indlæg",
+    "like": "Synes godt om",
+    "comment": "Kommentar",
+    "share": "Del",
+    "bestPost": "Bedste dagbogsemblem"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "weeklyHealth": "Ugentligt helbred",
+    "logs": "Logs",
+    "stats": "Statistikker",
+    "feeding": "Fodring",
+    "walks": "Gåture",
+    "health": "Helbred"
+  }
+}

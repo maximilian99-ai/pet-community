@@ -1,0 +1,62 @@
+{
+  "common": {
+    "loading": "Bezig met laden...",
+    "error": "Fout",
+    "success": "Succes",
+    "cancel": "Annuleren",
+    "save": "Opslaan",
+    "delete": "Verwijderen",
+    "edit": "Bewerken",
+    "add": "Toevoegen",
+    "back": "Terug"
+  },
+  "nav": {
+    "profile": "Profiel",
+    "feed": "Feed",
+    "dashboard": "Dashboard",
+    "logout": "Afmelden"
+  },
+  "auth": {
+    "login": "Aanmelden",
+    "signup": "Registreren",
+    "email": "E-mailadres",
+    "password": "Wachtwoord",
+    "confirmPassword": "Wachtwoord bevestigen",
+    "username": "Gebruikersnaam",
+    "loginTitle": "Welkom terug",
+    "signupTitle": "Account maken",
+    "noAccount": "Heb je nog geen account?",
+    "haveAccount": "Heb je al een account?"
+  },
+  "profile": {
+    "title": "Mijn profiel",
+    "bio": "Biografie",
+    "pets": "Mijn huisdieren",
+    "editProfile": "Profiel bewerken",
+    "addPet": "Huisdier toevoegen",
+    "petName": "Naam huisdier",
+    "species": "Soort",
+    "breed": "Ras",
+    "age": "Leeftijd",
+    "followers": "Volgers",
+    "following": "Volgend"
+  },
+  "feed": {
+    "title": "Gemeenschapsfeed",
+    "newPost": "Wat is er nieuw met je huisdier?",
+    "post": "Posten",
+    "like": "Vind ik leuk",
+    "comment": "Opmerking",
+    "share": "Delen",
+    "bestPost": "Beste dagboek badge"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "weeklyHealth": "Wekelijkse gezondheid",
+    "logs": "Logboeken",
+    "stats": "Statistieken",
+    "feeding": "Voeding",
+    "walks": "Wandelingen",
+    "health": "Gezondheid"
+  }
+}

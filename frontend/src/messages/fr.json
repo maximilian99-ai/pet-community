@@ -1,0 +1,62 @@
+{
+  "common": {
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "add": "Ajouter",
+    "back": "Retour"
+  },
+  "nav": {
+    "profile": "Profil",
+    "feed": "Flux",
+    "dashboard": "Tableau de bord",
+    "logout": "Déconnexion"
+  },
+  "auth": {
+    "login": "Connexion",
+    "signup": "S'inscrire",
+    "email": "Email",
+    "password": "Mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "username": "Nom d'utilisateur",
+    "loginTitle": "Bienvenue",
+    "signupTitle": "Créer un compte",
+    "noAccount": "Vous n'avez pas de compte?",
+    "haveAccount": "Vous avez déjà un compte?"
+  },
+  "profile": {
+    "title": "Mon profil",
+    "bio": "Biographie",
+    "pets": "Mes animaux",
+    "editProfile": "Modifier le profil",
+    "addPet": "Ajouter un animal",
+    "petName": "Nom de l'animal",
+    "species": "Espèce",
+    "breed": "Race",
+    "age": "Âge",
+    "followers": "Abonnés",
+    "following": "En suivant"
+  },
+  "feed": {
+    "title": "Flux communautaire",
+    "newPost": "Quoi de neuf avec votre animal?",
+    "post": "Publier",
+    "like": "J'aime",
+    "comment": "Commenter",
+    "share": "Partager",
+    "bestPost": "Meilleur insigne de journal"
+  },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "weeklyHealth": "Santé hebdomadaire",
+    "logs": "Journaux",
+    "stats": "Statistiques",
+    "feeding": "Alimentation",
+    "walks": "Promenades",
+    "health": "Santé"
+  }
+}

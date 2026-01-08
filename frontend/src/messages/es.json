@@ -1,0 +1,62 @@
+{
+  "common": {
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "add": "Añadir",
+    "back": "Atrás"
+  },
+  "nav": {
+    "profile": "Perfil",
+    "feed": "Feed",
+    "dashboard": "Panel",
+    "logout": "Cerrar sesión"
+  },
+  "auth": {
+    "login": "Iniciar sesión",
+    "signup": "Registrarse",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "confirmPassword": "Confirmar contraseña",
+    "username": "Nombre de usuario",
+    "loginTitle": "Bienvenido",
+    "signupTitle": "Crear cuenta",
+    "noAccount": "¿No tienes cuenta?",
+    "haveAccount": "¿Ya tienes cuenta?"
+  },
+  "profile": {
+    "title": "Mi perfil",
+    "bio": "Biografía",
+    "pets": "Mis mascotas",
+    "editProfile": "Editar perfil",
+    "addPet": "Añadir mascota",
+    "petName": "Nombre de la mascota",
+    "species": "Especie",
+    "breed": "Raza",
+    "age": "Edad",
+    "followers": "Seguidores",
+    "following": "Siguiendo"
+  },
+  "feed": {
+    "title": "Feed de comunidad",
+    "newPost": "¿Qué hay de nuevo con tu mascota?",
+    "post": "Publicar",
+    "like": "Me gusta",
+    "comment": "Comentar",
+    "share": "Compartir",
+    "bestPost": "Insignia de mejor diario"
+  },
+  "dashboard": {
+    "title": "Panel",
+    "weeklyHealth": "Salud semanal",
+    "logs": "Registros",
+    "stats": "Estadísticas",
+    "feeding": "Alimentación",
+    "walks": "Paseos",
+    "health": "Salud"
+  }
+}
