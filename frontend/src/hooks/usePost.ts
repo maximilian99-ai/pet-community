@@ -94,3 +94,16 @@ export const useLikePost = () => {
     },
   });
 };
+
+export const useDeleteComment = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ postId, commentId }: { postId: string; commentId: string }) => {
+      await apiClient.delete(`/posts/${postId}/comments/${commentId}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
+    },
+  });
+};

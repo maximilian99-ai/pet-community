@@ -14,7 +14,9 @@
     "profile": "Profil",
     "feed": "Flux",
     "dashboard": "Tableau de bord",
-    "logout": "Déconnexion"
+    "logout": "Déconnexion",
+    "login": "Connexion",
+    "signup": "S'inscrire"
   },
   "auth": {
     "login": "Connexion",

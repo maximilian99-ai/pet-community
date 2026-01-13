@@ -14,7 +14,9 @@
     "profile": "Profiel",
     "feed": "Feed",
     "dashboard": "Dashboard",
-    "logout": "Afmelden"
+    "logout": "Afmelden",
+    "login": "Aanmelden",
+    "signup": "Registreren"
   },
   "auth": {
     "login": "Aanmelden",

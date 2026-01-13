@@ -131,8 +131,23 @@ router.put('/:postId', authenticate, async (req: AuthRequest, res: Response) => 
   try {
     const { postId } = req.params;
     const { title, content, image } = req.body;
+    const userId = req.user?.userId;
 
-    const post = await prisma.post.update({
+    const post = await prisma.post.findUnique({
+      where: { id: postId },
+    });
+
+    if (!post) {
+      res.status(404).json({ error: 'Post not found' });
+      return;
+    }
+
+    if (post.authorId !== userId) {
+      res.status(403).json({ error: 'Not authorized to update this post' });
+      return;
+    }
+
+    const updatedPost = await prisma.post.update({
       where: { id: postId },
       data: {
         title: title || undefined,
@@ -141,7 +156,7 @@ router.put('/:postId', authenticate, async (req: AuthRequest, res: Response) => 
       },
     });
 
-    res.json(post);
+    res.json(updatedPost);
   } catch (error) {
     console.error('Update post error:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -152,6 +167,21 @@ router.put('/:postId', authenticate, async (req: AuthRequest, res: Response) => 
 router.delete('/:postId', authenticate, async (req: AuthRequest, res: Response) => {
   try {
     const { postId } = req.params;
+    const userId = req.user?.userId;
+
+    const post = await prisma.post.findUnique({
+      where: { id: postId },
+    });
+
+    if (!post) {
+      res.status(404).json({ error: 'Post not found' });
+      return;
+    }
+
+    if (post.authorId !== userId) {
+      res.status(403).json({ error: 'Not authorized to delete this post' });
+      return;
+    }
 
     await prisma.post.delete({
       where: { id: postId },
@@ -238,6 +268,42 @@ router.post('/:postId/likes', authenticate, async (req: AuthRequest, res: Respon
     }
   } catch (error) {
     console.error('Like post error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Delete comment
+router.delete('/:postId/comments/:commentId', authenticate, async (req: AuthRequest, res: Response) => {
+  try {
+    const { postId, commentId } = req.params;
+    const userId = req.user?.userId;
+
+    const comment = await prisma.comment.findUnique({
+      where: { id: commentId },
+    });
+
+    if (!comment) {
+      res.status(404).json({ error: 'Comment not found' });
+      return;
+    }
+
+    if (comment.authorId !== userId) {
+      res.status(403).json({ error: 'Not authorized to delete this comment' });
+      return;
+    }
+
+    if (comment.postId !== postId) {
+      res.status(400).json({ error: 'Comment does not belong to this post' });
+      return;
+    }
+
+    await prisma.comment.delete({
+      where: { id: commentId },
+    });
+
+    res.json({ message: 'Comment deleted' });
+  } catch (error) {
+    console.error('Delete comment error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });

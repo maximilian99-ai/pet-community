@@ -14,7 +14,9 @@
     "profile": "Perfil",
     "feed": "Feed",
     "dashboard": "Panel",
-    "logout": "Cerrar sesión"
+    "logout": "Cerrar sesión",
+    "login": "Iniciar sesión",
+    "signup": "Registrarse"
   },
   "auth": {
     "login": "Iniciar sesión",
