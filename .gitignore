@@ -1,6 +1,7 @@
 node_modules/
 dist/
 .env
+.env.*
 *.log
 .DS_Store
 .vscode/
@@ -9,6 +10,6 @@ dist/
 *.swo
 ~*
 .next/
-# .gitignore
+.gitignore
 .eslintrc.json
 package-lock.json

@@ -4,6 +4,8 @@ import { useTranslations } from 'next-intl';
 import { Box, VStack, Heading, Grid, Button, Card, CardBody } from '@chakra-ui/react';
 import { useProfileStore } from '@/store';
 
+export const dynamic = 'force-dynamic';
+
 export default function ProfilePage() {
   const t = useTranslations();
   const user = useProfileStore((state) => state.user);

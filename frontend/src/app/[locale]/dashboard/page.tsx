@@ -3,6 +3,8 @@
 import { useTranslations } from 'next-intl';
 import { Box, VStack, Card, CardBody, Heading, SimpleGrid } from '@chakra-ui/react';
 
+export const dynamic = 'force-dynamic';
+
 export default function DashboardPage() {
   const t = useTranslations();
 

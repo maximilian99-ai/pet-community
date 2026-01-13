@@ -1,22 +1,36 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
+import { setRequestLocale } from 'next-intl/server';
+import { getMessages } from 'next-intl/server';
+import { NextIntlClientProvider } from 'next-intl';
+import { ChakraProvider } from '@chakra-ui/react';
+import { ReactQueryClientProvider } from '@/components/ReactQueryProvider';
 
 const locales = ['en', 'ko', 'fr', 'de', 'es', 'nl', 'da'];
 
-export function generateStaticParams() {
-  return locales.map((locale) => ({ locale }));
+interface LocaleLayoutProps {
+  children: React.ReactNode;
+  params: Promise<{ locale: string }>;
 }
 
-export default function LocaleLayout({
-  children,
-  params,
-}: {
-  children: React.ReactNode;
-  params: { locale: string };
-}) {
-  if (!locales.includes(params.locale)) {
+export default async function LocaleLayout({ children, params }: LocaleLayoutProps) {
+  const { locale } = await params;
+  
+  if (!locales.includes(locale)) {
     notFound();
   }
 
-  return <>{children}</>;
+  setRequestLocale(locale);
+  const messages = await getMessages();
+
+  return (
+    <NextIntlClientProvider locale={locale} messages={messages}>
+      <ReactQueryClientProvider>
+        <ChakraProvider>
+          {children}
+        </ChakraProvider>
+      </ReactQueryClientProvider>
+    </NextIntlClientProvider>
+  );
 }
+

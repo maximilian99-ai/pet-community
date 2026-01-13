@@ -44,7 +44,7 @@ export const useUpdatePost = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ postId, ...data }: any) => {
+    mutationFn: async ({ postId, ...data }: Record<string, unknown> & { postId?: string }) => {
       const response = await apiClient.put(`/posts/${postId}`, data);
       return response.data;
     },

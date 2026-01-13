@@ -16,6 +16,13 @@ const nextConfig = {
       },
     ],
   },
+  typescript: {
+    // Ignore type errors during build
+    ignoreBuildErrors: false,
+  },
+  eslint: {
+    ignoreDuringBuilds: false,
+  },
 };
 
 module.exports = withNextIntl(nextConfig);

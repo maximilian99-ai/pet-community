@@ -8,6 +8,8 @@ import { useRouter, useParams } from 'next/navigation';
 import { apiClient } from '@/api/client';
 import { useAuthStore } from '@/store';
 
+export const dynamic = 'force-dynamic';
+
 export default function LoginPage() {
   const t = useTranslations();
   const router = useRouter();
@@ -30,8 +32,13 @@ export default function LoginPage() {
       const { token } = response.data;
       setToken(token);
       router.push(`/${locale}/feed`);
-    } catch (err: any) {
-      setError(err.response?.data?.error || 'Login failed');
+    } catch (err) {
+      interface ErrorResponse {
+        response?: { data?: { error?: string } };
+      }
+      const error = err as ErrorResponse;
+      const errorMessage = error.response?.data?.error || 'Login failed';
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }

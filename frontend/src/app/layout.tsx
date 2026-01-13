@@ -1,23 +1,16 @@
-'use client';
-
 import React from 'react';
-import { ChakraProvider } from '@chakra-ui/react';
-import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import './globals.css';
 
-const queryClient = new QueryClient();
+export const metadata = {
+  title: 'Pet Community',
+  description: 'Share your pet\'s daily journey',
+};
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html>
       <body>
-        <QueryClientProvider client={queryClient}>
-          <ChakraProvider>{children}</ChakraProvider>
-        </QueryClientProvider>
+        {children}
       </body>
     </html>
   );

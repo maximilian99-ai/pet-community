@@ -64,10 +64,11 @@ export const recommendationsAPI = {
     apiClient.get('/recommendations/users', { params: { limit } }),
 };
 
-export default {
+const apiServices = {
   auth: authAPI,
   profile: profileAPI,
   post: postAPI,
   log: logAPI,
   recommendations: recommendationsAPI,
 };
+export default apiServices;

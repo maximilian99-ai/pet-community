@@ -69,7 +69,7 @@ export const useUpdatePet = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ petId, ...data }: any) => {
+    mutationFn: async ({ petId, ...data }: Record<string, unknown> & { petId?: string }) => {
       const response = await apiClient.put(`/profiles/me/pets/${petId}`, data);
       return response.data;
     },

@@ -2,6 +2,14 @@
 
 🐾 반려동물 커뮤니티 플랫폼: 사용자가 반려동물의 일상을 기록하고 공유할 수 있는 소셜 네트워크 애플리케이션
 
+## 📚 문서
+
+- 🚀 [빠른 시작 (5분)](QUICKSTART.md) - **새로운 개발자는 여기서 시작하세요**
+- 🔧 [개발 환경 설정](DEVELOPMENT.md) - 상세한 로컬 개발 환경 구축 가이드
+- 📦 [배포 가이드](DEPLOYMENT.md) - Railway, Vercel, Supabase 배포 방법
+- 🏗️ [시스템 아키텍처](ARCHITECTURE.md) - 기술 아키텍처 및 설계
+- ✅ [배포 체크리스트](DEPLOYMENT_CHECKLIST.md) - 배포 전 최종 검증
+
 ## 테크 스택
 
 ### Frontend

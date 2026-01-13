@@ -8,6 +8,8 @@ import { useRouter, useParams } from 'next/navigation';
 import { apiClient } from '@/api/client';
 import { useAuthStore } from '@/store';
 
+export const dynamic = 'force-dynamic';
+
 export default function SignupPage() {
   const t = useTranslations();
   const router = useRouter();
@@ -42,8 +44,13 @@ export default function SignupPage() {
       const { token } = response.data;
       setToken(token);
       router.push(`/${locale}/profile`);
-    } catch (err: any) {
-      setError(err.response?.data?.error || 'Signup failed');
+    } catch (err) {
+      interface ErrorResponse {
+        response?: { data?: { error?: string } };
+      }
+      const error = err as ErrorResponse;
+      const errorMessage = error.response?.data?.error || 'Signup failed';
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
