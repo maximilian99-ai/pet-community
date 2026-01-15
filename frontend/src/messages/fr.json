@@ -16,7 +16,8 @@
     "dashboard": "Tableau de bord",
     "logout": "Déconnexion",
     "login": "Connexion",
-    "signup": "S'inscrire"
+    "signup": "S'inscrire",
+    "welcome": "Bienvenue, {username}!"
   },
   "auth": {
     "login": "Connexion",

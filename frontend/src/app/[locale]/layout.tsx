@@ -6,6 +6,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { ChakraProvider } from '@chakra-ui/react';
 import { ReactQueryClientProvider } from '@/components/ReactQueryProvider';
 import { ColorModeProvider } from '@/components/ColorModeProvider';
+import { Navbar } from '@/components/Navbar';
 
 const locales = ['en', 'ko', 'fr', 'de', 'es', 'nl', 'da'];
 
@@ -29,6 +30,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
       <ReactQueryClientProvider>
         <ChakraProvider>
           <ColorModeProvider>
+            <Navbar />
             {children}
           </ColorModeProvider>
         </ChakraProvider>

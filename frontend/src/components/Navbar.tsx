@@ -1,63 +1,95 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
-import { useColorMode, Box, Flex, Button, HStack } from '@chakra-ui/react';
+import { useRouter, usePathname } from 'next/navigation';
+import { useColorMode, Box, Flex, Button, HStack, Text } from '@chakra-ui/react';
 import { useAuthStore } from '@/store';
+import { useEffect, useState } from 'react';
 
 export function Navbar() {
   const t = useTranslations();
   const router = useRouter();
+  const pathname = usePathname();
   const { colorMode, toggleColorMode } = useColorMode();
-  const { isAuthenticated, logout } = useAuthStore();
+  const { isAuthenticated, logout, username } = useAuthStore();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleLogout = () => {
     logout();
-    router.push('/');
+    const locale = pathname.split('/')[1];
+    router.push(`/${locale}/feed`);
   };
 
   const navigateTo = (path: string) => {
     router.push(path);
   };
 
+  if (!mounted) {
+    return null;
+  }
+
   return (
-    <Box bg={colorMode === 'dark' ? 'gray.800' : 'white'} borderBottom="1px" borderColor={colorMode === 'dark' ? 'gray.700' : 'gray.200'} py={4} px={8}>
-      <Flex justify="space-between" align="center" maxW="1400px" mx="auto">
-        <Flex gap={6} align="center">
-          <Button variant="ghost" onClick={() => navigateTo('/')}>
-            {t('nav.feed')}
-          </Button>
+    <Box
+      bg={colorMode === 'dark' ? 'gray.800' : 'white'}
+      borderBottom="1px"
+      borderColor={colorMode === 'dark' ? 'gray.700' : 'gray.200'}
+      py={4}
+      px={{ base: 4, md: 6, lg: 8 }}
+    >
+      <Flex justify="space-between" align="center" maxW="1400px" mx="auto" gap={4}>
+        {/* Left side */}
+        <Flex align="center" flex={1}>
           {isAuthenticated && (
-            <>
-              <Button variant="ghost" onClick={() => navigateTo('/dashboard')}>
-                {t('nav.dashboard')}
-              </Button>
-              <Button variant="ghost" onClick={() => navigateTo('/profile')}>
-                {t('nav.profile')}
-              </Button>
-            </>
+            <Text fontSize={{ base: 'sm', md: 'md', lg: 'lg' }} fontWeight="medium">
+              {t('nav.welcome', { username: username })}
+            </Text>
           )}
         </Flex>
 
-        <HStack spacing={4}>
+        {/* Right side */}
+        <HStack spacing={{ base: 2, md: 4 }}>
           <Button
             onClick={toggleColorMode}
             variant="ghost"
-            size="sm"
+            size={{ base: 'sm', md: 'md' }}
           >
             {colorMode === 'dark' ? '☀️' : '🌙'}
           </Button>
 
           {isAuthenticated ? (
-            <Button colorScheme="red" size="sm" onClick={handleLogout}>
+            <Button
+              colorScheme="red"
+              size={{ base: 'sm', md: 'md' }}
+              onClick={handleLogout}
+            >
               {t('nav.logout')}
             </Button>
           ) : (
             <>
-              <Button colorScheme="blue" variant="outline" size="sm" onClick={() => navigateTo('/login')}>
+              <Button
+                colorScheme="blue"
+                variant="outline"
+                size={{ base: 'sm', md: 'md' }}
+                onClick={() => {
+                  const locale = pathname.split('/')[1];
+                  navigateTo(`/${locale}/login`);
+                }}
+              >
                 {t('nav.login')}
               </Button>
-              <Button colorScheme="green" size="sm" onClick={() => navigateTo('/signup')}>
+              <Text display={{ base: 'none', md: 'block' }}>|</Text>
+              <Button
+                colorScheme="green"
+                size={{ base: 'sm', md: 'md' }}
+                onClick={() => {
+                  const locale = pathname.split('/')[1];
+                  navigateTo(`/${locale}/signup`);
+                }}
+              >
                 {t('nav.signup')}
               </Button>
             </>

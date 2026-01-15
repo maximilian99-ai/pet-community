@@ -16,7 +16,8 @@
     "dashboard": "Dashboard",
     "logout": "Log ud",
     "login": "Log ind",
-    "signup": "Tilmeld"
+    "signup": "Tilmeld",
+    "welcome": "Velkommen, {username}!"
   },
   "auth": {
     "login": "Log ind",

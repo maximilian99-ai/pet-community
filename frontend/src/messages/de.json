@@ -16,7 +16,8 @@
     "dashboard": "Dashboard",
     "logout": "Abmelden",
     "login": "Anmelden",
-    "signup": "Registrieren"
+    "signup": "Registrieren",
+    "welcome": "Willkommen, {username}!"
   },
   "auth": {
     "login": "Anmelden",

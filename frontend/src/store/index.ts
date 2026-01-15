@@ -47,14 +47,17 @@ export const useProfileStore = create<ProfileState>((set) => ({
 interface AuthState {
   token: string | null;
   isAuthenticated: boolean;
+  username: string | null;
 
   setToken: (token: string | null) => void;
+  setUsername: (username: string | null) => void;
   logout: () => void;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
   token: typeof window !== 'undefined' ? localStorage.getItem('token') : null,
   isAuthenticated: typeof window !== 'undefined' ? !!localStorage.getItem('token') : false,
+  username: typeof window !== 'undefined' ? localStorage.getItem('username') : null,
 
   setToken: (token) => {
     if (token) {
@@ -64,8 +67,17 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
     set({ token, isAuthenticated: !!token });
   },
+  setUsername: (username) => {
+    if (username) {
+      localStorage.setItem('username', username);
+    } else {
+      localStorage.removeItem('username');
+    }
+    set({ username });
+  },
   logout: () => {
     localStorage.removeItem('token');
-    set({ token: null, isAuthenticated: false });
+    localStorage.removeItem('username');
+    set({ token: null, isAuthenticated: false, username: null });
   },
 }));

@@ -16,7 +16,8 @@
     "dashboard": "Panel",
     "logout": "Cerrar sesión",
     "login": "Iniciar sesión",
-    "signup": "Registrarse"
+    "signup": "Registrarse",
+    "welcome": "¡Bienvenido, {username}!"
   },
   "auth": {
     "login": "Iniciar sesión",
