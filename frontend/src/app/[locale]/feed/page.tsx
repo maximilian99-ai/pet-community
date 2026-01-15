@@ -2,7 +2,6 @@
 
 import { useTranslations } from 'next-intl';
 import { useColorMode, Box, VStack, Card, CardBody, Heading, Text, Button, HStack } from '@chakra-ui/react';
-import { Navbar } from '@/components/Navbar';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,7 +11,6 @@ export default function FeedPage() {
 
   return (
     <Box>
-      <Navbar />
       <Box minH="100vh" bg={colorMode === 'dark' ? 'gray.900' : 'gray.50'} p={{ base: 4, md: 8 }}>
         <VStack spacing={6} maxW="800px" mx="auto">
           <Heading>{t('feed.title')}</Heading>
