@@ -7,7 +7,6 @@ import Link from 'next/link';
 import { useRouter, useParams } from 'next/navigation';
 import { apiClient } from '@/api/client';
 import { useAuthStore } from '@/store';
-import { Navbar } from '@/components/Navbar';
 
 export const dynamic = 'force-dynamic';
 
@@ -48,7 +47,6 @@ export default function LoginPage() {
 
   return (
     <Box>
-      <Navbar />
       <Box minH="100vh" display="flex" alignItems="center" justifyContent="center" bg={colorMode === 'dark' ? 'gray.900' : 'gray.50'}>
         <VStack
           spacing={6}

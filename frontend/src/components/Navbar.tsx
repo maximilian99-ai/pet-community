@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useRouter, usePathname } from 'next/navigation';
-import { useColorMode, Box, Flex, Button, HStack, Text } from '@chakra-ui/react';
+import { useColorMode, Box, Flex, Button, HStack, Text, Heading } from '@chakra-ui/react';
 import { useAuthStore } from '@/store';
 import { useEffect, useState } from 'react';
 
@@ -13,6 +13,7 @@ export function Navbar() {
   const { colorMode, toggleColorMode } = useColorMode();
   const { isAuthenticated, logout, username } = useAuthStore();
   const [mounted, setMounted] = useState(false);
+  const locale = pathname.split('/')[1];
 
   useEffect(() => {
     setMounted(true);
@@ -20,7 +21,6 @@ export function Navbar() {
 
   const handleLogout = () => {
     logout();
-    const locale = pathname.split('/')[1];
     router.push(`/${locale}/feed`);
   };
 
@@ -41,11 +41,18 @@ export function Navbar() {
       px={{ base: 4, md: 6, lg: 8 }}
     >
       <Flex justify="space-between" align="center" maxW="1400px" mx="auto" gap={4}>
-        {/* Left side */}
+        {/* Left Side */}
+        <Flex cursor="pointer" onClick={() => { router.push(`/${locale}/feed`) }}>
+          <Heading as="h1" size="lg" color={colorMode === 'dark' ? 'white' : 'black'}>
+            🐾 Pet Community
+          </Heading>
+        </Flex>
+
+        {/* Center */}
         <Flex align="center" flex={1}>
           {isAuthenticated && (
-            <Text fontSize={{ base: 'sm', md: 'md', lg: 'lg' }} fontWeight="medium">
-              {t('nav.welcome', { username: username })}
+            <Text fontSize={{ base: 'sm', md: 'md', lg: 'lg' }} fontWeight="medium" cursor="pointer" onClick={() => { navigateTo(`/${locale}/profile`) }}>
+              {t('nav.welcome', { username })}
             </Text>
           )}
         </Flex>

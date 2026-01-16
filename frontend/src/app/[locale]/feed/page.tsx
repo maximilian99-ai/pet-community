@@ -2,12 +2,14 @@
 
 import { useTranslations } from 'next-intl';
 import { useColorMode, Box, VStack, Card, CardBody, Heading, Text, Button, HStack } from '@chakra-ui/react';
+import { useAuthStore } from '@/store';
 
 export const dynamic = 'force-dynamic';
 
 export default function FeedPage() {
   const t = useTranslations();
   const { colorMode } = useColorMode();
+  const auth = useAuthStore(state => state.isAuthenticated);
 
   return (
     <Box>
@@ -16,19 +18,21 @@ export default function FeedPage() {
           <Heading>{t('feed.title')}</Heading>
 
           {/* New Post Card */}
-          <Card width="100%" bg={colorMode === 'dark' ? 'gray.800' : 'white'}>
-            <CardBody>
-              <Text>{t('feed.newPost')}</Text>
-              <Button colorScheme="blue" mt={4}>
-                {t('feed.post')}
-              </Button>
-            </CardBody>
-          </Card>
+          {auth ? (
+            <Card width="100%" bg={colorMode === 'dark' ? 'gray.700' : 'white'}>
+              <CardBody>
+                <Text>{t('feed.newPost')}</Text>
+                <Button colorScheme="blue" mt={4}>
+                  {t('feed.post')}
+                </Button>
+              </CardBody>
+            </Card>
+          ) : null}
 
           {/* Feed Posts */}
           <VStack spacing={4} width="100%">
             {/* Sample Post */}
-            <Card width="100%" bg={colorMode === 'dark' ? 'gray.800' : 'white'}>
+            <Card width="100%" bg={colorMode === 'dark' ? 'gray.700' : 'white'}>
               <CardBody>
                 <Heading size="sm" mb={2}>
                   Post Title

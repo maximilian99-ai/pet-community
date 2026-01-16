@@ -2,7 +2,6 @@
 
 import { useTranslations } from 'next-intl';
 import { Box, VStack, Card, CardBody, Heading, SimpleGrid, useColorMode } from '@chakra-ui/react';
-import { Navbar } from '@/components/Navbar';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,7 +11,6 @@ export default function DashboardPage() {
 
   return (
     <Box>
-      <Navbar />
       <Box minH="100vh" bg={colorMode === 'dark' ? 'gray.900' : 'gray.50'} p={{ base: 4, md: 8 }}>
         <VStack spacing={8} maxW="1200px" mx="auto" align="stretch">
           <Heading size="lg">{t('dashboard.title')}</Heading>

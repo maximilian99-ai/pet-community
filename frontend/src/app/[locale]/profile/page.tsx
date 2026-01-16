@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { Box, VStack, Heading, Grid, Button, Card, CardBody, useColorMode } from '@chakra-ui/react';
 import { useProfileStore, useAuthStore } from '@/store';
-import { Navbar } from '@/components/Navbar';
 
 export const dynamic = 'force-dynamic';
 
@@ -29,7 +28,6 @@ export default function ProfilePage() {
 
   return (
     <Box>
-      <Navbar />
       <Box minH="100vh" bg={colorMode === 'dark' ? 'gray.900' : 'gray.50'} p={{ base: 4, md: 8 }}>
         <VStack spacing={8} maxW="1200px" mx="auto">
           {/* User Profile Section */}
