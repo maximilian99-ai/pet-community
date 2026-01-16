@@ -51,7 +51,11 @@
     "like": "좋아요",
     "comment": "댓글",
     "share": "공유",
-    "bestPost": "최고의 일지 배지"
+    "bestPost": "최고의 일지 배지",
+    "loading": "포스트 로딩 중...",
+    "noPosts": "아직 포스트가 없습니다",
+    "comments": "댓글",
+    "viewMore": "더보기"
   },
   "dashboard": {
     "title": "대시보드",

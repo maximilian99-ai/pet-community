@@ -51,7 +51,11 @@
     "like": "Me gusta",
     "comment": "Comentar",
     "share": "Compartir",
-    "bestPost": "Insignia de mejor diario"
+    "bestPost": "Insignia de mejor diario",
+    "loading": "Cargando publicaciones...",
+    "noPosts": "Sin publicaciones aún",
+    "comments": "Comentarios",
+    "viewMore": "Ver más comentarios"
   },
   "dashboard": {
     "title": "Panel",

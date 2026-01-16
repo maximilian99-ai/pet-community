@@ -51,7 +51,11 @@
     "like": "Vind ik leuk",
     "comment": "Opmerking",
     "share": "Delen",
-    "bestPost": "Beste dagboek badge"
+    "bestPost": "Beste dagboek badge",
+    "loading": "Berichten laden...",
+    "noPosts": "Nog geen berichten",
+    "comments": "Opmerkingen",
+    "viewMore": "Meer opmerkingen weergeven"
   },
   "dashboard": {
     "title": "Dashboard",

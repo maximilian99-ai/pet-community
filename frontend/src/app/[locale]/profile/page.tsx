@@ -38,7 +38,6 @@ export default function ProfilePage() {
               </Heading>
               <VStack spacing={4} align="start">
                 <Box>{user?.username || 'Loading...'}</Box>
-                <Box>{user?.bio || 'No bio yet'}</Box>
                 <Button colorScheme="blue">{t('profile.editProfile')}</Button>
               </VStack>
             </CardBody>

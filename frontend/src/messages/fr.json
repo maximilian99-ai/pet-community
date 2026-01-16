@@ -51,7 +51,11 @@
     "like": "J'aime",
     "comment": "Commenter",
     "share": "Partager",
-    "bestPost": "Meilleur insigne de journal"
+    "bestPost": "Meilleur insigne de journal",
+    "loading": "Chargement des publications...",
+    "noPosts": "Aucune publication pour l'instant",
+    "comments": "Commentaires",
+    "viewMore": "Afficher plus de commentaires"
   },
   "dashboard": {
     "title": "Tableau de bord",

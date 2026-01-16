@@ -14,156 +14,411 @@ async function main() {
   await prisma.userFollow.deleteMany();
   await prisma.user.deleteMany();
 
-  // Create users
-  const user1 = await prisma.user.create({
+  // Create multilingual users (without personal information)
+  // Female users (한국어, 영어, 덴마크어)
+  const userJiEun = await prisma.user.create({
     data: {
-      email: 'alice@example.com',
-      username: 'alice',
+      email: 'jieun.pet@example.com',
+      username: 'PetLover_지은',
       password: await bcryptjs.hash('password123', 10),
-      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=alice',
-      bio: 'Pet lover and travel enthusiast',
+      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=jieun',
+      bio: '반려동물과 함께하는 일상',
     },
   });
 
-  const user2 = await prisma.user.create({
+  const userEmma = await prisma.user.create({
     data: {
-      email: 'bob@example.com',
-      username: 'bob',
+      email: 'emma.pet@example.com',
+      username: 'PetJourney_Emma',
       password: await bcryptjs.hash('password123', 10),
-      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=bob',
-      bio: 'Dog trainer and pet photographer',
+      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=emma',
+      bio: 'Sharing happy moments with my furry friends',
     },
   });
 
-  const user3 = await prisma.user.create({
+  const userAnna = await prisma.user.create({
     data: {
-      email: 'charlie@example.com',
-      username: 'charlie',
+      email: 'anna.pet@example.com',
+      username: 'PetTales_Anna',
       password: await bcryptjs.hash('password123', 10),
-      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=charlie',
-      bio: 'Veterinary student',
+      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=anna',
+      bio: 'Mit mit mine kæledyr',
     },
   });
 
-  // Create pets
-  const pet1 = await prisma.pet.create({
+  // Male users (독일어, 프랑스어, 네덜란드어, 스페인어)
+  const userKlaus = await prisma.user.create({
     data: {
-      name: 'Luna',
+      email: 'klaus.pet@example.com',
+      username: 'HundeFreund_Klaus',
+      password: await bcryptjs.hash('password123', 10),
+      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=klaus',
+      bio: 'Mein Leben mit Haustieren',
+    },
+  });
+
+  const userPierre = await prisma.user.create({
+    data: {
+      email: 'pierre.pet@example.com',
+      username: 'AmourPet_Pierre',
+      password: await bcryptjs.hash('password123', 10),
+      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=pierre',
+      bio: 'La vie est belle avec les animaux de compagnie',
+    },
+  });
+
+  const userJan = await prisma.user.create({
+    data: {
+      email: 'jan.pet@example.com',
+      username: 'HuisdierjournaalJan',
+      password: await bcryptjs.hash('password123', 10),
+      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=jan',
+      bio: 'Momenten met mijn gezellige huisdieren',
+    },
+  });
+
+  const userCarlos = await prisma.user.create({
+    data: {
+      email: 'carlos.pet@example.com',
+      username: 'MascotaVida_Carlos',
+      password: await bcryptjs.hash('password123', 10),
+      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=carlos',
+      bio: 'Mi vida con mis queridas mascotas',
+    },
+  });
+
+  // Create pets for each user
+  const petMelody = await prisma.pet.create({
+    data: {
+      name: 'Melody',
+      species: 'Dog',
+      breed: 'Maltese',
+      age: 2,
+      image: 'https://images.unsplash.com/photo-1633722715463-d30628be4c4e?w=300',
+      userId: userJiEun.id,
+    },
+  });
+
+  const petBailey = await prisma.pet.create({
+    data: {
+      name: 'Bailey',
       species: 'Dog',
       breed: 'Golden Retriever',
       age: 3,
-      image: 'https://images.unsplash.com/photo-1633722715463-d30628be4c4e?w=300',
-      userId: user1.id,
+      image: 'https://images.unsplash.com/photo-1558788353-f76d92427f16?w=300',
+      userId: userEmma.id,
     },
   });
 
-  const pet2 = await prisma.pet.create({
+  const petLoki = await prisma.pet.create({
     data: {
-      name: 'Whiskers',
+      name: 'Loki',
       species: 'Cat',
-      breed: 'Persian',
-      age: 2,
+      breed: 'British Shorthair',
+      age: 4,
       image: 'https://images.unsplash.com/photo-1574158622682-e40e69881006?w=300',
-      userId: user2.id,
+      userId: userAnna.id,
     },
   });
 
-  const pet3 = await prisma.pet.create({
+  const petMax = await prisma.pet.create({
     data: {
       name: 'Max',
       species: 'Dog',
-      breed: 'Labrador',
+      breed: 'German Shepherd',
       age: 5,
-      image: 'https://images.unsplash.com/photo-1633722713463-d30628be4c4e?w=300',
-      userId: user3.id,
+      image: 'https://images.unsplash.com/photo-1611003228941-98852ba62227?w=300',
+      userId: userKlaus.id,
     },
   });
 
-  // Create logs
-  const now = new Date();
-  await prisma.log.create({
+  const petChouchou = await prisma.pet.create({
     data: {
-      petId: pet1.id,
-      type: 'feeding',
-      content: 'Fed Luna with premium dog food',
-      date: new Date(now.getTime() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
+      name: 'Chouchou',
+      species: 'Cat',
+      breed: 'Siamese',
+      age: 2,
+      image: 'https://images.unsplash.com/photo-1567633949008-58fc508d9ee0?w=300',
+      userId: userPierre.id,
     },
   });
 
-  await prisma.log.create({
+  const petLucy = await prisma.pet.create({
     data: {
-      petId: pet1.id,
-      type: 'walk',
-      content: '30 minute walk at the park',
-      date: new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
+      name: 'Lucy',
+      species: 'Dog',
+      breed: 'Dachshund',
+      age: 3,
+      image: 'https://images.unsplash.com/photo-1623807917808-ab3efb4a9bdc?w=300',
+      userId: userJan.id,
     },
   });
 
-  // Create posts
-  const post1 = await prisma.post.create({
+  const petSabor = await prisma.pet.create({
     data: {
-      title: 'Luna loves the beach!',
-      content: 'Had an amazing day at the beach with Luna. She loved running in the sand and swimming!',
+      name: 'Sabor',
+      species: 'Dog',
+      breed: 'Spanish Mastiff',
+      age: 4,
+      image: 'https://images.unsplash.com/photo-1633722815463-d30628be4c4e?w=300',
+      userId: userCarlos.id,
+    },
+  });
+
+  // Create posts for each language/user
+  // Korean post (여성 - 지은)
+  const postKorean = await prisma.post.create({
+    data: {
+      title: 'Melody와 함께한 공원 산책',
+      content: '날씨가 너무 좋아서 공원에 다녀왔어요. Melody가 다른 강아지들과 잘 놀았어요 🐕',
       image: 'https://images.unsplash.com/photo-1633722715463-d30628be4c4e?w=500',
-      petId: pet1.id,
-      authorId: user1.id,
+      petId: petMelody.id,
+      authorId: userJiEun.id,
     },
   });
 
-  const post2 = await prisma.post.create({
+  // English post (여성 - Emma)
+  const postEnglish = await prisma.post.create({
     data: {
-      title: 'Whiskers is the perfect cuddle buddy',
-      content: 'Nothing beats a lazy Sunday afternoon with Whiskers on my lap',
+      title: 'Bailey\'s first time at the beach',
+      content: 'Bailey absolutely loved the beach today! She ran around, played in the sand, and made new friends. What a wonderful day! 🏖️',
+      image: 'https://images.unsplash.com/photo-1558788353-f76d92427f16?w=500',
+      petId: petBailey.id,
+      authorId: userEmma.id,
+    },
+  });
+
+  // Danish post (여성 - Anna)
+  const postDanish = await prisma.post.create({
+    data: {
+      title: 'Loki\'s afslappende dag hjemme',
+      content: 'Loki elsker at ligge i solen ved vinduet. Han er så fredeligt og sødt. Et perfekt eftermiddag med min katte veninde! 😸',
       image: 'https://images.unsplash.com/photo-1574158622682-e40e69881006?w=500',
-      petId: pet2.id,
-      authorId: user2.id,
+      petId: petLoki.id,
+      authorId: userAnna.id,
     },
   });
 
-  // Create likes
-  await prisma.like.create({
+  // German post (남성 - Klaus)
+  const postGerman = await prisma.post.create({
     data: {
-      userId: user2.id,
-      postId: post1.id,
+      title: 'Max beim Training im Park',
+      content: 'Max ist ein wundervoller Hund. Heute haben wir ein intensives Trainings sitzung im Park gemacht. Er liebt es, seine Fähigkeiten zu zeigen! 🐕‍🦺',
+      image: 'https://images.unsplash.com/photo-1611003228941-98852ba62227?w=500',
+      petId: petMax.id,
+      authorId: userKlaus.id,
     },
   });
 
-  await prisma.like.create({
+  // French post (남성 - Pierre)
+  const postFrench = await prisma.post.create({
     data: {
-      userId: user3.id,
-      postId: post1.id,
+      title: 'Chouchou, mon petit compagnon',
+      content: 'Chouchou est la plus gracieuse des chattes. Elle aime s\'asseoir sur mes genoux pendant que je travaille. C\'est un vrai plaisir d\'avoir ce petit amour! 💕',
+      image: 'https://images.unsplash.com/photo-1567633949008-58fc508d9ee0?w=500',
+      petId: petChouchou.id,
+      authorId: userPierre.id,
     },
   });
 
-  // Create comments
+  // Dutch post (남성 - Jan)
+  const postDutch = await prisma.post.create({
+    data: {
+      title: 'Lucy\'s eerste dag in de achtertuin',
+      content: 'Lucy exploert nu voor het eerst onze nieuwe achtertuin! Ze snuffelt overal en geniet van alle nieuwe geuren. Ze is zo enthousiast! 🐕',
+      image: 'https://images.unsplash.com/photo-1623807917808-ab3efb4a9bdc?w=500',
+      petId: petLucy.id,
+      authorId: userJan.id,
+    },
+  });
+
+  // Spanish post (남성 - Carlos)
+  const postSpanish = await prisma.post.create({
+    data: {
+      title: 'Sabor, mi fiel compañero',
+      content: 'Sabor ha sido mi compañero más leal durante estos años. Hoy disfrutamos de un hermoso paseo en el campo. ¡La vida es mucho mejor con él! 🐾',
+      image: 'https://images.unsplash.com/photo-1633722815463-d30628be4c4e?w=500',
+      petId: petSabor.id,
+      authorId: userCarlos.id,
+    },
+  });
+
+  // Create comments from different users
+  // Comments on Korean post
   await prisma.comment.create({
     data: {
-      content: 'Luna is so beautiful! 🐕',
-      authorId: user2.id,
-      postId: post1.id,
+      content: 'Bailey도 공원을 너무 좋아해요! 멋진 사진이네요! 😊',
+      authorId: userEmma.id,
+      postId: postKorean.id,
     },
   });
 
-  // Create badges
-  await prisma.badge.create({
+  await prisma.comment.create({
     data: {
-      name: 'Best Post',
-      postId: post1.id,
+      content: 'Melody는 정말 귀엽네요! 🥰',
+      authorId: userAnna.id,
+      postId: postKorean.id,
     },
   });
 
-  // Create follows
-  await prisma.userFollow.create({
+  // Comments on English post
+  await prisma.comment.create({
     data: {
-      followerId: user2.id,
-      followingId: user1.id,
+      content: 'Max도 해변을 매우 즐겼어요!',
+      authorId: userKlaus.id,
+      postId: postEnglish.id,
     },
   });
 
-  await prisma.userFollow.create({
+  await prisma.comment.create({
     data: {
-      followerId: user3.id,
-      followingId: user1.id,
+      content: 'Bella immagine! 📸',
+      authorId: userPierre.id,
+      postId: postEnglish.id,
+    },
+  });
+
+  // Comments on Danish post
+  await prisma.comment.create({
+    data: {
+      content: 'Lucy also loves sunbathing! 🌞',
+      authorId: userJan.id,
+      postId: postDanish.id,
+    },
+  });
+
+  // Comments on German post
+  await prisma.comment.create({
+    data: {
+      content: 'Sabor también es muy inteligente. ¡Excelente entrenamiento! 👏',
+      authorId: userCarlos.id,
+      postId: postGerman.id,
+    },
+  });
+
+  // Comments on French post
+  await prisma.comment.create({
+    data: {
+      content: 'Chouchou is adorable! 💕',
+      authorId: userEmma.id,
+      postId: postFrench.id,
+    },
+  });
+
+  // Comments on Dutch post
+  await prisma.comment.create({
+    data: {
+      content: 'Loki loves it too! Great photos! 📷',
+      authorId: userAnna.id,
+      postId: postDutch.id,
+    },
+  });
+
+  // Comments on Spanish post
+  await prisma.comment.create({
+    data: {
+      content: 'Das Feld ist ein großartiger Ort zum Spielen! 🌳',
+      authorId: userKlaus.id,
+      postId: postSpanish.id,
+    },
+  });
+
+  // Create likes for posts
+  // Korean post likes
+  await prisma.like.create({
+    data: {
+      userId: userEmma.id,
+      postId: postKorean.id,
+    },
+  });
+
+  await prisma.like.create({
+    data: {
+      userId: userAnna.id,
+      postId: postKorean.id,
+    },
+  });
+
+  await prisma.like.create({
+    data: {
+      userId: userKlaus.id,
+      postId: postKorean.id,
+    },
+  });
+
+  // English post likes
+  await prisma.like.create({
+    data: {
+      userId: userJiEun.id,
+      postId: postEnglish.id,
+    },
+  });
+
+  await prisma.like.create({
+    data: {
+      userId: userKlaus.id,
+      postId: postEnglish.id,
+    },
+  });
+
+  // Danish post likes
+  await prisma.like.create({
+    data: {
+      userId: userPierre.id,
+      postId: postDanish.id,
+    },
+  });
+
+  await prisma.like.create({
+    data: {
+      userId: userCarlos.id,
+      postId: postDanish.id,
+    },
+  });
+
+  // German post likes
+  await prisma.like.create({
+    data: {
+      userId: userEmma.id,
+      postId: postGerman.id,
+    },
+  });
+
+  // French post likes
+  await prisma.like.create({
+    data: {
+      userId: userJiEun.id,
+      postId: postFrench.id,
+    },
+  });
+
+  await prisma.like.create({
+    data: {
+      userId: userJan.id,
+      postId: postFrench.id,
+    },
+  });
+
+  // Dutch post likes
+  await prisma.like.create({
+    data: {
+      userId: userCarlos.id,
+      postId: postDutch.id,
+    },
+  });
+
+  // Spanish post likes
+  await prisma.like.create({
+    data: {
+      userId: userKlaus.id,
+      postId: postSpanish.id,
+    },
+  });
+
+  await prisma.like.create({
+    data: {
+      userId: userJan.id,
+      postId: postSpanish.id,
     },
   });
 

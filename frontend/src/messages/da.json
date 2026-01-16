@@ -51,7 +51,11 @@
     "like": "Synes godt om",
     "comment": "Kommentar",
     "share": "Del",
-    "bestPost": "Bedste dagbogsemblem"
+    "bestPost": "Bedste dagbogsemblem",
+    "loading": "Indlægge læses ind...",
+    "noPosts": "Ingen indlæg endnu",
+    "comments": "Kommentarer",
+    "viewMore": "Se flere kommentarer"
   },
   "dashboard": {
     "title": "Dashboard",

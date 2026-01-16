@@ -51,7 +51,11 @@
     "like": "Mag ich",
     "comment": "Kommentar",
     "share": "Teilen",
-    "bestPost": "Bestes Tagebuch-Abzeichen"
+    "bestPost": "Bestes Tagebuch-Abzeichen",
+    "loading": "Beiträge werden geladen...",
+    "noPosts": "Noch keine Beiträge",
+    "comments": "Kommentare",
+    "viewMore": "Mehr Kommentare anzeigen"
   },
   "dashboard": {
     "title": "Dashboard",

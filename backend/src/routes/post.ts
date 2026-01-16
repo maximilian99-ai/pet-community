@@ -26,7 +26,17 @@ router.get('/', async (req: any, res: Response) => {
         },
         pet: true,
         likes: true,
-        comments: true,
+        comments: {
+          include: {
+            author: {
+              select: {
+                id: true,
+                username: true,
+                avatar: true,
+              },
+            },
+          },
+        },
         badges: true,
       },
     });

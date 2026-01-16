@@ -51,7 +51,11 @@
     "like": "Like",
     "comment": "Comment",
     "share": "Share",
-    "bestPost": "Best Post Badge"
+    "bestPost": "Best Post Badge",
+    "loading": "Loading posts...",
+    "noPosts": "No posts yet",
+    "comments": "Comments",
+    "viewMore": "View more comments"
   },
   "dashboard": {
     "title": "Dashboard",

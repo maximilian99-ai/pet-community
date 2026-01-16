@@ -1,10 +1,8 @@
 export interface User {
   id: string;
-  email: string;
   username: string;
   avatar?: string;
-  bio?: string;
-  createdAt: string;
+  createdAt?: string;
 }
 
 export interface Pet {
@@ -27,19 +25,6 @@ export interface Log {
   createdAt: string;
 }
 
-export interface Post {
-  id: string;
-  authorId: string;
-  author: User;
-  petId?: string;
-  title: string;
-  content: string;
-  image?: string;
-  likes: number;
-  comments: number;
-  createdAt: string;
-}
-
 export interface Comment {
   id: string;
   authorId: string;
@@ -49,7 +34,29 @@ export interface Comment {
   createdAt: string;
 }
 
+export interface Like {
+  id: string;
+  userId: string;
+  postId: string;
+  createdAt: string;
+}
+
+export interface Post {
+  id: string;
+  authorId: string;
+  author: User;
+  petId?: string;
+  pet?: Pet;
+  title: string;
+  content: string;
+  image?: string;
+  likes: Like[];
+  comments: Comment[];
+  badges?: string[];
+  createdAt: string;
+}
+
 export interface AuthResponse {
   token: string;
-  user: User;
+  user: Omit<User, 'createdAt'> & { email: string };
 }
