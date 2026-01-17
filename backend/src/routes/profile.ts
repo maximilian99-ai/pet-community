@@ -20,10 +20,12 @@ router.get('/:userId', async (req: any, res: Response) => {
     });
 
     if (!user) {
+      console.log(`[PROFILE] 프로필 조회 실패 - 사용자 없음: ${userId}`);
       res.status(404).json({ error: 'User not found' });
       return;
     }
 
+    console.log(`[PROFILE] 프로필 조회 성공 - 사용자명: ${user.username}, ID: ${user.id}`);
     res.json({
       id: user.id,
       email: user.email,
@@ -36,7 +38,7 @@ router.get('/:userId', async (req: any, res: Response) => {
       createdAt: user.createdAt,
     });
   } catch (error) {
-    console.error('Get profile error:', error);
+    console.error('[PROFILE] 프로필 조회 오류:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -56,6 +58,7 @@ router.put('/me', authenticate, async (req: AuthRequest, res: Response) => {
       },
     });
 
+    console.log(`[PROFILE] 프로필 수정 성공 - 사용자명: ${user.username}, ID: ${user.id}`);
     res.json({
       id: user.id,
       email: user.email,
@@ -64,7 +67,7 @@ router.put('/me', authenticate, async (req: AuthRequest, res: Response) => {
       bio: user.bio,
     });
   } catch (error) {
-    console.error('Update profile error:', error);
+    console.error('[PROFILE] 프로필 수정 오류:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -84,9 +87,10 @@ router.get('/:userId/pets', async (req: any, res: Response) => {
       },
     });
 
+    console.log(`[PROFILE] 반려동물 조회 성공 - 사용자 ID: ${userId}, 반려동물 수: ${pets.length}`);
     res.json(pets);
   } catch (error) {
-    console.error('Get pets error:', error);
+    console.error('[PROFILE] 반려동물 조회 오류:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -98,6 +102,7 @@ router.post('/me/pets', authenticate, async (req: AuthRequest, res: Response) =>
     const userId = req.user?.userId;
 
     if (!name || !species) {
+      console.log('[PROFILE] 반려동물 추가 실패 - 필수 필드 누락');
       res.status(400).json({ error: 'Missing required fields' });
       return;
     }
@@ -113,9 +118,10 @@ router.post('/me/pets', authenticate, async (req: AuthRequest, res: Response) =>
       },
     });
 
+    console.log(`[PROFILE] 반려동물 추가 성공 - 반려동물명: ${name}, ID: ${pet.id}`);
     res.status(201).json(pet);
   } catch (error) {
-    console.error('Add pet error:', error);
+    console.error('[PROFILE] 반려동물 추가 오류:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -137,9 +143,10 @@ router.put('/me/pets/:petId', authenticate, async (req: AuthRequest, res: Respon
       },
     });
 
+    console.log(`[PROFILE] 반려동물 수정 성공 - 반려동물명: ${pet.name}, ID: ${pet.id}`);
     res.json(pet);
   } catch (error) {
-    console.error('Update pet error:', error);
+    console.error('[PROFILE] 반려동물 수정 오류:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -149,13 +156,18 @@ router.delete('/me/pets/:petId', authenticate, async (req: AuthRequest, res: Res
   try {
     const { petId } = req.params;
 
+    const pet = await prisma.pet.findUnique({
+      where: { id: petId },
+    });
+
     await prisma.pet.delete({
       where: { id: petId },
     });
 
+    console.log(`[PROFILE] 반려동물 삭제 성공 - 반려동물명: ${pet?.name}, ID: ${petId}`);
     res.json({ message: 'Pet deleted' });
   } catch (error) {
-    console.error('Delete pet error:', error);
+    console.error('[PROFILE] 반려동물 삭제 오류:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });

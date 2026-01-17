@@ -49,10 +49,10 @@ export function Navbar() {
         </Flex>
 
         {/* Center */}
-        <Flex align="center" flex={1}>
+        <Flex align="center" gap={4}>
           {isAuthenticated && (
             <Text fontSize={{ base: 'sm', md: 'md', lg: 'lg' }} fontWeight="medium" cursor="pointer" onClick={() => { navigateTo(`/${locale}/profile`) }}>
-              {t('nav.welcome', { username })}
+              ⚙️ {t('nav.welcome', { username })}
             </Text>
           )}
         </Flex>

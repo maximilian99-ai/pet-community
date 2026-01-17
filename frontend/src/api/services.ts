@@ -8,6 +8,7 @@ export const authAPI = {
   login: (data: { email: string; password: string }) =>
     apiClient.post<AuthResponse>('/auth/login', data),
   getCurrentUser: () => apiClient.get<User>('/auth/me'),
+  deleteAccount: () => apiClient.delete('/auth/me'),
 };
 
 // Profile API

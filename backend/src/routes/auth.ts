@@ -13,6 +13,7 @@ router.post('/signup', async (req: any, res: Response) => {
     const { email, username, password } = req.body;
 
     if (!email || !username || !password) {
+      console.log('[AUTH] 회원가입 실패 - 필수 필드 누락');
       res.status(400).json({ error: 'Missing required fields' });
       return;
     }
@@ -25,6 +26,7 @@ router.post('/signup', async (req: any, res: Response) => {
     });
 
     if (existingUser) {
+      console.log(`[AUTH] 회원가입 실패 - 이미 존재하는 사용자: ${email || username}`);
       res.status(409).json({ error: 'User already exists' });
       return;
     }
@@ -47,6 +49,7 @@ router.post('/signup', async (req: any, res: Response) => {
       email: user.email,
     });
 
+    console.log(`[AUTH] 회원가입 성공 - 사용자명: ${username}, ID: ${user.id}`);
     res.status(201).json({
       token,
       user: {
@@ -56,7 +59,7 @@ router.post('/signup', async (req: any, res: Response) => {
       },
     });
   } catch (error) {
-    console.error('Signup error:', error);
+    console.error('[AUTH] 회원가입 오류:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -67,6 +70,7 @@ router.post('/login', async (req: any, res: Response) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
+      console.log('[AUTH] 로그인 실패 - 필수 필드 누락');
       res.status(400).json({ error: 'Missing required fields' });
       return;
     }
@@ -77,6 +81,7 @@ router.post('/login', async (req: any, res: Response) => {
     });
 
     if (!user) {
+      console.log(`[AUTH] 로그인 실패 - 사용자 없음: ${email}`);
       res.status(401).json({ error: 'Invalid credentials' });
       return;
     }
@@ -85,6 +90,7 @@ router.post('/login', async (req: any, res: Response) => {
     const isPasswordValid = await bcryptjs.compare(password, user.password);
 
     if (!isPasswordValid) {
+      console.log(`[AUTH] 로그인 실패 - 비밀번호 오류: ${email}`);
       res.status(401).json({ error: 'Invalid credentials' });
       return;
     }
@@ -95,6 +101,7 @@ router.post('/login', async (req: any, res: Response) => {
       email: user.email,
     });
 
+    console.log(`[AUTH] 로그인 성공 - 사용자명: ${user.username}, ID: ${user.id}`);
     res.json({
       token,
       user: {
@@ -104,7 +111,7 @@ router.post('/login', async (req: any, res: Response) => {
       },
     });
   } catch (error) {
-    console.error('Login error:', error);
+    console.error('[AUTH] 로그인 오류:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -117,10 +124,12 @@ router.get('/me', authenticate, async (req: AuthRequest, res: Response) => {
     });
 
     if (!user) {
+      console.log(`[AUTH] 사용자 조회 실패 - 사용자 없음: ${req.user?.userId}`);
       res.status(404).json({ error: 'User not found' });
       return;
     }
 
+    console.log(`[AUTH] 사용자 조회 성공 - 사용자명: ${user.username}, ID: ${user.id}`);
     res.json({
       id: user.id,
       email: user.email,
@@ -130,7 +139,36 @@ router.get('/me', authenticate, async (req: AuthRequest, res: Response) => {
       createdAt: user.createdAt,
     });
   } catch (error) {
-    console.error('Get user error:', error);
+    console.error('[AUTH] 사용자 조회 오류:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Delete account
+router.delete('/me', authenticate, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user?.userId;
+
+    // Find user
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      console.log(`[AUTH] 회원탈퇴 실패 - 사용자 없음: ${userId}`);
+      res.status(404).json({ error: 'User not found' });
+      return;
+    }
+
+    // Delete user (cascade will delete related posts, comments, etc.)
+    await prisma.user.delete({
+      where: { id: userId },
+    });
+
+    console.log(`[AUTH] 회원탈퇴 성공 - 사용자명: ${user.username}, ID: ${userId}`);
+    res.json({ message: 'Account deleted successfully' });
+  } catch (error) {
+    console.error('[AUTH] 회원탈퇴 오류:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });

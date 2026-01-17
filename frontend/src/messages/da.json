@@ -42,7 +42,11 @@
     "breed": "Race",
     "age": "Alder",
     "followers": "Følgere",
-    "following": "Følger"
+    "following": "Følger",
+    "deleteAccount": "Slet konto",
+    "deleteAccountTitle": "Slet konto",
+    "deleteAccountMessage": "Er du sikker på, at du vil slette din konto? Denne handling kan ikke fortrydes.",
+    "username": "Brugernavn"
   },
   "feed": {
     "title": "Fællesskabsfeed",
@@ -55,7 +59,10 @@
     "loading": "Indlægge læses ind...",
     "noPosts": "Ingen indlæg endnu",
     "comments": "Kommentarer",
-    "viewMore": "Se flere kommentarer"
+    "viewMore": "Se flere kommentarer",
+    "createPost": "Opret indlæg",
+    "postTitle": "Indlægstitel",
+    "postContent": "Indlægsindhold"
   },
   "dashboard": {
     "title": "Dashboard",

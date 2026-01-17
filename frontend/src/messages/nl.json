@@ -42,7 +42,11 @@
     "breed": "Ras",
     "age": "Leeftijd",
     "followers": "Volgers",
-    "following": "Volgend"
+    "following": "Volgend",
+    "deleteAccount": "Account verwijderen",
+    "deleteAccountTitle": "Account verwijderen",
+    "deleteAccountMessage": "Weet je zeker dat je je account wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
+    "username": "Gebruikersnaam"
   },
   "feed": {
     "title": "Gemeenschapsfeed",
@@ -55,7 +59,10 @@
     "loading": "Berichten laden...",
     "noPosts": "Nog geen berichten",
     "comments": "Opmerkingen",
-    "viewMore": "Meer opmerkingen weergeven"
+    "viewMore": "Meer opmerkingen weergeven",
+    "createPost": "Bericht maken",
+    "postTitle": "Berichttitel",
+    "postContent": "Berichtinhoud"
   },
   "dashboard": {
     "title": "Dashboard",

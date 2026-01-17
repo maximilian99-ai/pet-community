@@ -42,7 +42,11 @@
     "breed": "Race",
     "age": "Âge",
     "followers": "Abonnés",
-    "following": "En suivant"
+    "following": "En suivant",
+    "deleteAccount": "Supprimer le compte",
+    "deleteAccountTitle": "Supprimer le compte",
+    "deleteAccountMessage": "Êtes-vous sûr de vouloir supprimer votre compte? Cette action est irréversible.",
+    "username": "Nom d'utilisateur"
   },
   "feed": {
     "title": "Flux communautaire",
@@ -55,7 +59,10 @@
     "loading": "Chargement des publications...",
     "noPosts": "Aucune publication pour l'instant",
     "comments": "Commentaires",
-    "viewMore": "Afficher plus de commentaires"
+    "viewMore": "Afficher plus de commentaires",
+    "createPost": "Créer une publication",
+    "postTitle": "Titre de la publication",
+    "postContent": "Contenu de la publication"
   },
   "dashboard": {
     "title": "Tableau de bord",

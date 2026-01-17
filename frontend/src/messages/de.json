@@ -42,7 +42,11 @@
     "breed": "Rasse",
     "age": "Alter",
     "followers": "Follower",
-    "following": "Folgen"
+    "following": "Folgen",
+    "deleteAccount": "Konto löschen",
+    "deleteAccountTitle": "Konto löschen",
+    "deleteAccountMessage": "Sind Sie sicher, dass Sie Ihr Konto löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "username": "Benutzername"
   },
   "feed": {
     "title": "Gemeinschaftfeed",
@@ -55,7 +59,10 @@
     "loading": "Beiträge werden geladen...",
     "noPosts": "Noch keine Beiträge",
     "comments": "Kommentare",
-    "viewMore": "Mehr Kommentare anzeigen"
+    "viewMore": "Mehr Kommentare anzeigen",
+    "createPost": "Beitrag erstellen",
+    "postTitle": "Beitragstitel",
+    "postContent": "Beitragsinhalt"
   },
   "dashboard": {
     "title": "Dashboard",

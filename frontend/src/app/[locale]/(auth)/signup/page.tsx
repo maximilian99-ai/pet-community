@@ -44,7 +44,7 @@ export default function SignupPage() {
       });
       const { token } = response.data;
       setToken(token);
-      router.push(`/${locale}/profile`);
+      router.push(`/${locale}/login`);
     } catch (err) {
       interface ErrorResponse {
         response?: { data?: { error?: string } };

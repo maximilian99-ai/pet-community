@@ -42,7 +42,11 @@
     "breed": "품종",
     "age": "나이",
     "followers": "팔로워",
-    "following": "팔로잉"
+    "following": "팔로잉",
+    "deleteAccount": "회원 탈퇴",
+    "deleteAccountTitle": "회원 탈퇴",
+    "deleteAccountMessage": "정말로 계정을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
+    "username": "사용자명"
   },
   "feed": {
     "title": "커뮤니티 피드",
@@ -55,7 +59,10 @@
     "loading": "포스트 로딩 중...",
     "noPosts": "아직 포스트가 없습니다",
     "comments": "댓글",
-    "viewMore": "더보기"
+    "viewMore": "더보기",
+    "createPost": "포스트 작성",
+    "postTitle": "포스트 제목",
+    "postContent": "포스트 내용"
   },
   "dashboard": {
     "title": "대시보드",

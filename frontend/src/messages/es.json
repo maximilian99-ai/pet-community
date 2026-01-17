@@ -42,7 +42,11 @@
     "breed": "Raza",
     "age": "Edad",
     "followers": "Seguidores",
-    "following": "Siguiendo"
+    "following": "Siguiendo",
+    "deleteAccount": "Eliminar cuenta",
+    "deleteAccountTitle": "Eliminar cuenta",
+    "deleteAccountMessage": "¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer.",
+    "username": "Nombre de usuario"
   },
   "feed": {
     "title": "Feed de comunidad",
@@ -55,7 +59,10 @@
     "loading": "Cargando publicaciones...",
     "noPosts": "Sin publicaciones aún",
     "comments": "Comentarios",
-    "viewMore": "Ver más comentarios"
+    "viewMore": "Ver más comentarios",
+    "createPost": "Crear publicación",
+    "postTitle": "Título de la publicación",
+    "postContent": "Contenido de la publicación"
   },
   "dashboard": {
     "title": "Panel",

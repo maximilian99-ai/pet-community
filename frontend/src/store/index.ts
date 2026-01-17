@@ -6,7 +6,6 @@ interface ProfileState {
   pets: Pet[];
   isLoading: boolean;
   error: string | null;
-
   setUser: (user: User | null) => void;
   setPets: (pets: Pet[]) => void;
   addPet: (pet: Pet) => void;
@@ -15,6 +14,15 @@ interface ProfileState {
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   clearProfile: () => void;
+}
+
+interface AuthState {
+  token: string | null;
+  isAuthenticated: boolean;
+  username: string | null;
+  setToken: (token: string | null) => void;
+  setUsername: (username: string | null) => void;
+  logout: () => void;
 }
 
 export const useProfileStore = create<ProfileState>((set) => ({
@@ -43,16 +51,6 @@ export const useProfileStore = create<ProfileState>((set) => ({
   setError: (error) => set({ error }),
   clearProfile: () => set({ user: null, pets: [], error: null }),
 }));
-
-interface AuthState {
-  token: string | null;
-  isAuthenticated: boolean;
-  username: string | null;
-
-  setToken: (token: string | null) => void;
-  setUsername: (username: string | null) => void;
-  logout: () => void;
-}
 
 export const useAuthStore = create<AuthState>((set) => ({
   token: typeof window !== 'undefined' ? localStorage.getItem('token') : null,

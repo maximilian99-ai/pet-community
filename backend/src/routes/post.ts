@@ -43,6 +43,7 @@ router.get('/', async (req: any, res: Response) => {
 
     const totalCount = await prisma.post.count();
 
+    console.log(`[POST] 피드 조회 성공 - 포스트 수: ${posts.length}, 총합: ${totalCount}`);
     res.json({
       posts,
       total: totalCount,
@@ -50,7 +51,7 @@ router.get('/', async (req: any, res: Response) => {
       offset: skip,
     });
   } catch (error) {
-    console.error('Get feed error:', error);
+    console.error('[POST] 피드 조회 오류:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -62,6 +63,7 @@ router.post('/', authenticate, async (req: AuthRequest, res: Response) => {
     const authorId = req.user?.userId;
 
     if (!title || !content) {
+      console.log('[POST] 포스트 생성 실패 - 필수 필드 누락');
       res.status(400).json({ error: 'Missing required fields' });
       return;
     }
@@ -85,9 +87,10 @@ router.post('/', authenticate, async (req: AuthRequest, res: Response) => {
       },
     });
 
+    console.log(`[POST] 포스트 생성 성공 - 제목: ${title}, ID: ${post.id}, 작성자: ${post.author.username}`);
     res.status(201).json(post);
   } catch (error) {
-    console.error('Create post error:', error);
+    console.error('[POST] 포스트 생성 오류:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -125,13 +128,15 @@ router.get('/:postId', async (req: any, res: Response) => {
     });
 
     if (!post) {
+      console.log(`[POST] 포스트 조회 실패 - 포스트 없음: ${postId}`);
       res.status(404).json({ error: 'Post not found' });
       return;
     }
 
+    console.log(`[POST] 포스트 조회 성공 - 제목: ${post.title}, ID: ${postId}`);
     res.json(post);
   } catch (error) {
-    console.error('Get post error:', error);
+    console.error('[POST] 포스트 조회 오류:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -148,11 +153,13 @@ router.put('/:postId', authenticate, async (req: AuthRequest, res: Response) => 
     });
 
     if (!post) {
+      console.log(`[POST] 포스트 수정 실패 - 포스트 없음: ${postId}`);
       res.status(404).json({ error: 'Post not found' });
       return;
     }
 
     if (post.authorId !== userId) {
+      console.log(`[POST] 포스트 수정 실패 - 권한 없음: ${postId}`);
       res.status(403).json({ error: 'Not authorized to update this post' });
       return;
     }
@@ -166,9 +173,10 @@ router.put('/:postId', authenticate, async (req: AuthRequest, res: Response) => 
       },
     });
 
+    console.log(`[POST] 포스트 수정 성공 - 제목: ${updatedPost.title}, ID: ${postId}`);
     res.json(updatedPost);
   } catch (error) {
-    console.error('Update post error:', error);
+    console.error('[POST] 포스트 수정 오류:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -184,11 +192,13 @@ router.delete('/:postId', authenticate, async (req: AuthRequest, res: Response) 
     });
 
     if (!post) {
+      console.log(`[POST] 포스트 삭제 실패 - 포스트 없음: ${postId}`);
       res.status(404).json({ error: 'Post not found' });
       return;
     }
 
     if (post.authorId !== userId) {
+      console.log(`[POST] 포스트 삭제 실패 - 권한 없음: ${postId}`);
       res.status(403).json({ error: 'Not authorized to delete this post' });
       return;
     }
@@ -197,9 +207,10 @@ router.delete('/:postId', authenticate, async (req: AuthRequest, res: Response) 
       where: { id: postId },
     });
 
+    console.log(`[POST] 포스트 삭제 성공 - 제목: ${post.title}, ID: ${postId}`);
     res.json({ message: 'Post deleted' });
   } catch (error) {
-    console.error('Delete post error:', error);
+    console.error('[POST] 포스트 삭제 오류:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -212,6 +223,7 @@ router.post('/:postId/comments', authenticate, async (req: AuthRequest, res: Res
     const authorId = req.user?.userId;
 
     if (!content) {
+      console.log('[POST] 댓글 추가 실패 - 필수 필드 누락');
       res.status(400).json({ error: 'Missing content' });
       return;
     }
@@ -233,9 +245,10 @@ router.post('/:postId/comments', authenticate, async (req: AuthRequest, res: Res
       },
     });
 
+    console.log(`[POST] 댓글 추가 성공 - 포스트 ID: ${postId}, 댓글 ID: ${comment.id}, 작성자: ${comment.author.username}`);
     res.status(201).json(comment);
   } catch (error) {
-    console.error('Add comment error:', error);
+    console.error('[POST] 댓글 추가 오류:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -265,6 +278,7 @@ router.post('/:postId/likes', authenticate, async (req: AuthRequest, res: Respon
           },
         },
       });
+      console.log(`[POST] 좋아요 취소 성공 - 포스트 ID: ${postId}, 사용자 ID: ${userId}`);
       res.json({ liked: false });
     } else {
       // Like
@@ -274,10 +288,11 @@ router.post('/:postId/likes', authenticate, async (req: AuthRequest, res: Respon
           postId,
         },
       });
+      console.log(`[POST] 좋아요 추가 성공 - 포스트 ID: ${postId}, 사용자 ID: ${userId}`);
       res.json({ liked: true });
     }
   } catch (error) {
-    console.error('Like post error:', error);
+    console.error('[POST] 좋아요 처리 오류:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -293,16 +308,19 @@ router.delete('/:postId/comments/:commentId', authenticate, async (req: AuthRequ
     });
 
     if (!comment) {
+      console.log(`[POST] 댓글 삭제 실패 - 댓글 없음: ${commentId}`);
       res.status(404).json({ error: 'Comment not found' });
       return;
     }
 
     if (comment.authorId !== userId) {
+      console.log(`[POST] 댓글 삭제 실패 - 권한 없음: ${commentId}`);
       res.status(403).json({ error: 'Not authorized to delete this comment' });
       return;
     }
 
     if (comment.postId !== postId) {
+      console.log(`[POST] 댓글 삭제 실패 - 포스트 불일치: ${commentId}`);
       res.status(400).json({ error: 'Comment does not belong to this post' });
       return;
     }
@@ -311,9 +329,10 @@ router.delete('/:postId/comments/:commentId', authenticate, async (req: AuthRequ
       where: { id: commentId },
     });
 
+    console.log(`[POST] 댓글 삭제 성공 - 댓글 ID: ${commentId}, 포스트 ID: ${postId}`);
     res.json({ message: 'Comment deleted' });
   } catch (error) {
-    console.error('Delete comment error:', error);
+    console.error('[POST] 댓글 삭제 오류:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
