@@ -51,8 +51,8 @@ export function Navbar() {
         {/* Center */}
         <Flex align="center" gap={4}>
           {isAuthenticated && (
-            <Text fontSize={{ base: 'sm', md: 'md', lg: 'lg' }} fontWeight="medium" cursor="pointer" onClick={() => { navigateTo(`/${locale}/profile`) }}>
-              ⚙️ {t('nav.welcome', { username })}
+            <Text fontSize={{ base: 'sm', md: 'md', lg: 'lg' }} fontWeight="medium">
+              {t('nav.welcome', { username })}
             </Text>
           )}
         </Flex>
@@ -68,13 +68,24 @@ export function Navbar() {
           </Button>
 
           {isAuthenticated ? (
-            <Button
-              colorScheme="red"
-              size={{ base: 'sm', md: 'md' }}
-              onClick={handleLogout}
-            >
-              {t('nav.logout')}
-            </Button>
+            <>
+              <Button
+                colorScheme="yellow"
+                variant="outline"
+                size={{ base: 'sm', md: 'md' }}
+                onClick={() => { navigateTo(`/${locale}/profile`) }}
+              >
+                {t('profile.title')}
+              </Button>
+              <Text display={{ base: 'none', md: 'block' }}>|</Text>
+              <Button
+                colorScheme="pink"
+                size={{ base: 'sm', md: 'md' }}
+                onClick={handleLogout}
+              >
+                {t('nav.logout')}
+              </Button>
+            </>
           ) : (
             <>
               <Button

@@ -297,6 +297,63 @@ router.post('/:postId/likes', authenticate, async (req: AuthRequest, res: Respon
   }
 });
 
+// Update comment
+router.put('/:postId/comments/:commentId', authenticate, async (req: AuthRequest, res: Response) => {
+  try {
+    const { postId, commentId } = req.params;
+    const { content } = req.body;
+    const userId = req.user?.userId;
+
+    if (!content) {
+      console.log('[POST] 댓글 수정 실패 - 필수 필드 누락');
+      res.status(400).json({ error: 'Missing content' });
+      return;
+    }
+
+    const comment = await prisma.comment.findUnique({
+      where: { id: commentId },
+    });
+
+    if (!comment) {
+      console.log(`[POST] 댓글 수정 실패 - 댓글 없음: ${commentId}`);
+      res.status(404).json({ error: 'Comment not found' });
+      return;
+    }
+
+    if (comment.authorId !== userId) {
+      console.log(`[POST] 댓글 수정 실패 - 권한 없음: ${commentId}`);
+      res.status(403).json({ error: 'Not authorized to update this comment' });
+      return;
+    }
+
+    if (comment.postId !== postId) {
+      console.log(`[POST] 댓글 수정 실패 - 포스트 불일치: ${commentId}`);
+      res.status(400).json({ error: 'Comment does not belong to this post' });
+      return;
+    }
+
+    const updatedComment = await prisma.comment.update({
+      where: { id: commentId },
+      data: { content },
+      include: {
+        author: {
+          select: {
+            id: true,
+            username: true,
+            avatar: true,
+          },
+        },
+      },
+    });
+
+    console.log(`[POST] 댓글 수정 성공 - 댓글 ID: ${commentId}, 포스트 ID: ${postId}`);
+    res.json(updatedComment);
+  } catch (error) {
+    console.error('[POST] 댓글 수정 오류:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // Delete comment
 router.delete('/:postId/comments/:commentId', authenticate, async (req: AuthRequest, res: Response) => {
   try {

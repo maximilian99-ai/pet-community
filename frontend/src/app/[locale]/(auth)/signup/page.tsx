@@ -17,6 +17,7 @@ export default function SignupPage() {
   const locale = params.locale as string;
   const { colorMode } = useColorMode();
   const setToken = useAuthStore((state) => state.setToken);
+  const setUsernameStore = useAuthStore((state) => state.setUsername);
 
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
@@ -42,9 +43,10 @@ export default function SignupPage() {
         username,
         password,
       });
-      const { token } = response.data;
+      const { token, user } = response.data;
       setToken(token);
-      router.push(`/${locale}/login`);
+      setUsernameStore(user.username);
+      router.push(`/${locale}/feed`);
     } catch (err) {
       interface ErrorResponse {
         response?: { data?: { error?: string } };

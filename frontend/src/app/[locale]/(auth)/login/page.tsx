@@ -17,6 +17,7 @@ export default function LoginPage() {
   const locale = params.locale as string;
   const { colorMode } = useColorMode();
   const setToken = useAuthStore((state) => state.setToken);
+  const setUsername = useAuthStore((state) => state.setUsername);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -30,8 +31,9 @@ export default function LoginPage() {
 
     try {
       const response = await apiClient.post('/auth/login', { email, password });
-      const { token } = response.data;
+      const { token, user } = response.data;
       setToken(token);
+      setUsername(user.username);
       router.push(`/${locale}/feed`);
     } catch (err) {
       interface ErrorResponse {

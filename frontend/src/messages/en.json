@@ -34,6 +34,7 @@
   "profile": {
     "title": "My Profile",
     "bio": "Bio",
+    "pet": "Pet",
     "pets": "My Pets",
     "editProfile": "Edit Profile",
     "addPet": "Add Pet",

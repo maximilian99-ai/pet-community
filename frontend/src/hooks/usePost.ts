@@ -81,6 +81,20 @@ export const useAddComment = () => {
   });
 };
 
+export const useUpdateComment = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ postId, commentId, content }: { postId: string; commentId: string; content: string }) => {
+      const response = await apiClient.put(`/posts/${postId}/comments/${commentId}`, { content });
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
+    },
+  });
+};
+
 export const useLikePost = () => {
   const queryClient = useQueryClient();
 

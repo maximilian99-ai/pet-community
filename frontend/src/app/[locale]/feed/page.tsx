@@ -1,12 +1,12 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useColorMode, Box, VStack, Card, CardBody, Heading, Text, Button, HStack, Avatar, Divider, Flex, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Input, Textarea } from '@chakra-ui/react';
+import { useColorMode, Box, VStack, Card, CardBody, Heading, Text, Button, HStack, Avatar, Divider, Flex, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Input, Textarea, Image, useToast } from '@chakra-ui/react';
 import { useAuthStore } from '@/store';
 import { useGetPosts } from '@/hooks/usePost';
-import { useCreatePost, useAddComment, useLikePost } from '@/hooks/usePost';
+import { useCreatePost, useAddComment, useLikePost, useDeleteComment, useUpdateComment, useUpdatePost, useDeletePost } from '@/hooks/usePost';
 import { Post } from '@/types';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,31 +14,134 @@ export default function FeedPage() {
   const t = useTranslations();
   const { colorMode } = useColorMode();
   const auth = useAuthStore(state => state.isAuthenticated);
+  const currentUserId = useAuthStore(state => state.username);
   const { data: feedData, isLoading, refetch } = useGetPosts(10, 0);
   const createPostMutation = useCreatePost();
   const addCommentMutation = useAddComment();
+  const updateCommentMutation = useUpdateComment();
+  const deleteCommentMutation = useDeleteComment();
   const likePostMutation = useLikePost();
+  const updatePostMutation = useUpdatePost();
+  const deletePostMutation = useDeletePost();
+  const toast = useToast();
   
-  const [postData, setPostData] = useState({ title: '', content: '' });
+  const [postData, setPostData] = useState({ title: '', content: '', image: '' });
   const [commentData, setCommentData] = useState<{ [key: string]: string }>({});
+  const [editingComment, setEditingComment] = useState<{ [key: string]: string }>({});
   const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set());
+  const [editingPost, setEditingPost] = useState<string | null>(null);
+  const [editPostData, setEditPostData] = useState({ title: '', content: '' });
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const createPostDisclosure = useDisclosure();
+  const editPostDisclosure = useDisclosure();
 
   const posts: Post[] = feedData?.posts || [];
 
   const handleCreatePost = () => {
-    setPostData({ title: '', content: '' });
+    setPostData({ title: '', content: '', image: '' });
     createPostDisclosure.onOpen();
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // 이미지 압축
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const img = new window.Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          
+          // 최대 크기 제한 (너비 1200px)
+          const maxWidth = 1200;
+          if (width > maxWidth) {
+            height = (height * maxWidth) / width;
+            width = maxWidth;
+          }
+          
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.drawImage(img, 0, 0, width, height);
+            // JPEG로 압축 (품질 0.8)
+            const compressedImage = canvas.toDataURL('image/jpeg', 0.8);
+            setPostData({ ...postData, image: compressedImage });
+          }
+        };
+        img.src = reader.result as string;
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSavePost = async () => {
     try {
-      await createPostMutation.mutateAsync(postData);
-      createPostDisclosure.onClose();
-      setPostData({ title: '', content: '' });
+      if (!postData.title || !postData.content) {
+        toast({
+          title: 'Error',
+          description: 'Please fill in both title and content',
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+        });
+        return;
+      }
+      
+      const response = await createPostMutation.mutateAsync(postData);
+      if (response) {
+        toast({
+          title: 'Success',
+          description: 'Post created successfully',
+          status: 'success',
+          duration: 2000,
+          isClosable: true,
+        });
+        createPostDisclosure.onClose();
+        setPostData({ title: '', content: '', image: '' });
+        refetch();
+      }
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { error?: string } } };
+      const errorMsg = err?.response?.data?.error || 'Failed to create post';
+      toast({
+        title: 'Error',
+        description: errorMsg,
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+      console.error('Failed to create post:', error);
+    }
+  };
+
+  const handleEditPost = (post: Post) => {
+    setEditingPost(post.id);
+    setEditPostData({ title: post.title, content: post.content });
+    editPostDisclosure.onOpen();
+  };
+
+  const handleSaveEditPost = async () => {
+    try {
+      if (editingPost) {
+        await updatePostMutation.mutateAsync({ postId: editingPost, ...editPostData });
+        editPostDisclosure.onClose();
+        setEditingPost(null);
+        refetch();
+      }
+    } catch (error) {
+      console.error('Failed to update post:', error);
+    }
+  };
+
+  const handleDeletePost = async (postId: string) => {
+    try {
+      await deletePostMutation.mutateAsync(postId);
       refetch();
     } catch (error) {
-      console.error('Failed to create post:', error);
+      console.error('Failed to delete post:', error);
     }
   };
 
@@ -55,11 +158,36 @@ export default function FeedPage() {
     }
   };
 
+  const handleEditComment = (postId: string, commentId: string, content: string) => {
+    setEditingComment({ postId, commentId, content });
+  };
+
+  const handleSaveEditComment = async () => {
+    try {
+      const { postId, commentId, content } = editingComment as {postId: string; commentId: string; content: string};
+      if (!content || !content.trim()) return;
+
+      await updateCommentMutation.mutateAsync({ postId, commentId, content });
+      setEditingComment({});
+      refetch();
+    } catch (error) {
+      console.error('Failed to update comment:', error);
+    }
+  };
+
+  const handleDeleteComment = async (postId: string, commentId: string) => {
+    try {
+      await deleteCommentMutation.mutateAsync({ postId, commentId });
+      refetch();
+    } catch (error) {
+      console.error('Failed to delete comment:', error);
+    }
+  };
+
   const handleLikePost = async (postId: string) => {
     try {
       await likePostMutation.mutateAsync(postId);
       
-      // Toggle liked status locally
       const newLikedPosts = new Set(likedPosts);
       if (newLikedPosts.has(postId)) {
         newLikedPosts.delete(postId);
@@ -71,6 +199,17 @@ export default function FeedPage() {
     } catch (error) {
       console.error('Failed to like post:', error);
     }
+  };
+
+  const handleSharePost = (postId: string) => {
+    const postUrl = `${window.location.origin}/en/feed?postId=${postId}`;
+    navigator.clipboard.writeText(postUrl);
+    toast({
+      title: 'Copied to clipboard',
+      description: 'Post link has been copied to your clipboard.',
+      status: 'success',
+      duration: 3000,
+    });
   };
 
   return (
@@ -100,19 +239,31 @@ export default function FeedPage() {
                 <Card key={post.id} width="100%" bg={colorMode === 'dark' ? 'gray.700' : 'white'}>
                   <CardBody>
                     {/* Author Info */}
-                    <Flex mb={4} align="center">
-                      <Avatar
-                        size="md"
-                        name={post.author.username}
-                        src={post.author.avatar}
-                        mr={3}
-                      />
-                      <Box>
-                        <Text fontWeight="bold">{post.author.username}</Text>
-                        <Text fontSize="sm" color={colorMode === 'dark' ? 'gray.400' : 'gray.600'}>
-                          {new Date(post.createdAt).toLocaleDateString()}
-                        </Text>
-                      </Box>
+                    <Flex mb={4} align="center" justify="space-between">
+                      <Flex align="center">
+                        <Avatar
+                          size="md"
+                          name={post.author.username}
+                          src={post.author.avatar}
+                          mr={3}
+                        />
+                        <Box>
+                          <Text fontWeight="bold">{post.author.username}</Text>
+                          <Text fontSize="sm" color={colorMode === 'dark' ? 'gray.400' : 'gray.600'}>
+                            {new Date(post.createdAt).toLocaleDateString()}
+                          </Text>
+                        </Box>
+                      </Flex>
+                      {currentUserId === post.author.username && (
+                        <HStack spacing={2}>
+                          <Button size="sm" variant="ghost" onClick={() => handleEditPost(post)}>
+                            ✏️
+                          </Button>
+                          <Button size="sm" variant="ghost" onClick={() => handleDeletePost(post.id)}>
+                            🗑️
+                          </Button>
+                        </HStack>
+                      )}
                     </Flex>
 
                     <Divider mb={4} />
@@ -123,6 +274,13 @@ export default function FeedPage() {
                     </Heading>
                     <Text mb={4}>{post.content}</Text>
 
+                    {/* Post Image */}
+                    {post.image && (
+                      <Box mb={4} borderRadius="md" overflow="hidden">
+                        <Image src={post.image} alt={post.title} width="100%" />
+                      </Box>
+                    )}
+
                     {/* Pet Info */}
                     {post.pet && (
                       <Box mb={4} p={3} bg={colorMode === 'dark' ? 'gray.600' : 'gray.100'} borderRadius="md">
@@ -130,13 +288,6 @@ export default function FeedPage() {
                           🐾 {post.pet.name} ({post.pet.species}
                           {post.pet.breed ? ` - ${post.pet.breed}` : ''})
                         </Text>
-                      </Box>
-                    )}
-
-                    {/* Post Image */}
-                    {post.image && (
-                      <Box mb={4} borderRadius="md" overflow="hidden">
-                        <img src={post.image} alt={post.title} style={{ width: '100%', height: 'auto' }} />
                       </Box>
                     )}
 
@@ -155,8 +306,12 @@ export default function FeedPage() {
                       <Button size="sm" variant="ghost">
                         💬 {post.comments?.length || 0}
                       </Button>
-                      <Button size="sm" variant="ghost">
-                        🔄 {t('feed.share') || 'Share'}
+                      <Button 
+                        size="sm" 
+                        variant="ghost"
+                        onClick={() => handleSharePost(post.id)}
+                      >
+                        🔗 {t('feed.share') || 'Share'}
                       </Button>
                     </HStack>
 
@@ -166,21 +321,38 @@ export default function FeedPage() {
                         <Text fontSize="sm" fontWeight="bold" mb={2}>
                           {t('feed.comments') || 'Comments'}
                         </Text>
-                        {post.comments.slice(0, 2).map((comment) => (
+                        {post.comments.map((comment) => (
                           <Box key={comment.id} mb={2} p={2} bg={colorMode === 'dark' ? 'gray.600' : 'gray.50'} borderRadius="md">
-                            <Flex>
-                              <Text fontSize="sm" fontWeight="bold" mr={2}>
-                                {comment.author.username}
-                              </Text>
-                              <Text fontSize="sm">{comment.content}</Text>
+                            <Flex justify="space-between" align="start">
+                              <Box flex={1}>
+                                <Flex align="center" mb={1}>
+                                  <Text fontSize="sm" fontWeight="bold" mr={2}>
+                                    {comment.author.username}
+                                  </Text>
+                                  {currentUserId === comment.author.username && (
+                                    <HStack spacing={1}>
+                                      <Button 
+                                        size="xs" 
+                                        variant="ghost"
+                                        onClick={() => handleEditComment(post.id, comment.id, comment.content)}
+                                      >
+                                        ✏️
+                                      </Button>
+                                      <Button 
+                                        size="xs" 
+                                        variant="ghost"
+                                        onClick={() => handleDeleteComment(post.id, comment.id)}
+                                      >
+                                        🗑️
+                                      </Button>
+                                    </HStack>
+                                  )}
+                                </Flex>
+                                <Text fontSize="sm">{comment.content}</Text>
+                              </Box>
                             </Flex>
                           </Box>
                         ))}
-                        {post.comments.length > 2 && (
-                          <Text fontSize="sm" color="blue.500" mt={2}>
-                            {t('feed.viewMore') || 'View more comments'}
-                          </Text>
-                        )}
                       </Box>
                     )}
 
@@ -189,7 +361,7 @@ export default function FeedPage() {
                       <HStack spacing={2}>
                         <Input
                           size="sm"
-                          placeholder={t('feed.comment')}
+                          placeholder={t('feed.comment') || 'Add a comment...'}
                           value={commentData[post.id] || ''}
                           onChange={(e) => setCommentData({ ...commentData, [post.id]: e.target.value })}
                         />
@@ -241,6 +413,37 @@ export default function FeedPage() {
                   placeholder={t('feed.postContent')}
                 />
               </Box>
+              <Box width="100%">
+                <Text fontWeight="bold" mb={2}>Image Upload</Text>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  style={{ display: 'none' }}
+                />
+                <Button 
+                  width="100%"
+                  onClick={() => fileInputRef.current?.click()}
+                  variant="outline"
+                >
+                  {postData.image ? 'Change Image' : 'Upload Image'}
+                </Button>
+                {postData.image && (
+                  <Box mt={2} position="relative">
+                    <Image src={postData.image} alt="preview" borderRadius="md" />
+                    <Button
+                      position="absolute"
+                      top={2}
+                      right={2}
+                      size="sm"
+                      onClick={() => setPostData({ ...postData, image: '' })}
+                    >
+                      ✕
+                    </Button>
+                  </Box>
+                )}
+              </Box>
             </VStack>
           </ModalBody>
           <ModalFooter>
@@ -253,6 +456,69 @@ export default function FeedPage() {
           </ModalFooter>
         </ModalContent>
       </Modal>
+
+      {/* Edit Post Modal */}
+      <Modal isOpen={editPostDisclosure.isOpen} onClose={editPostDisclosure.onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>{t('feed.editPost') || 'Edit Post'}</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <VStack spacing={4}>
+              <Box width="100%">
+                <Text fontWeight="bold" mb={2}>{t('feed.postTitle')}</Text>
+                <Input
+                  value={editPostData.title}
+                  onChange={(e) => setEditPostData({ ...editPostData, title: e.target.value })}
+                  placeholder={t('feed.postTitle')}
+                />
+              </Box>
+              <Box width="100%">
+                <Text fontWeight="bold" mb={2}>{t('feed.postContent')}</Text>
+                <Textarea
+                  value={editPostData.content}
+                  onChange={(e) => setEditPostData({ ...editPostData, content: e.target.value })}
+                  placeholder={t('feed.postContent')}
+                />
+              </Box>
+            </VStack>
+          </ModalBody>
+          <ModalFooter>
+            <Button variant="ghost" mr={3} onClick={editPostDisclosure.onClose}>
+              {t('common.cancel')}
+            </Button>
+            <Button colorScheme="blue" onClick={handleSaveEditPost} isLoading={updatePostMutation.isPending}>
+              {t('common.save')}
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* Edit Comment Modal */}
+      {Object.keys(editingComment).length > 0 && (
+        <Modal isOpen={true} onClose={() => setEditingComment({})}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Edit Comment</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <Textarea
+                value={(editingComment as {postId: string; commentId: string; content: string}).content}
+                onChange={(e) => setEditingComment({ ...editingComment, content: e.target.value })}
+                placeholder="Edit your comment..."
+              />
+            </ModalBody>
+            <ModalFooter>
+              <Button variant="ghost" mr={3} onClick={() => setEditingComment({})}>
+                {t('common.cancel')}
+              </Button>
+              <Button colorScheme="blue" onClick={handleSaveEditComment} isLoading={updateCommentMutation.isPending}>
+                {t('common.save')}
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      )}
     </Box>
   );
 }
