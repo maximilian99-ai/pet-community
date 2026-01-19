@@ -7,6 +7,7 @@ import { useGetPosts } from '@/hooks/usePost';
 import { useCreatePost, useAddComment, useLikePost, useDeleteComment, useUpdateComment, useUpdatePost, useDeletePost } from '@/hooks/usePost';
 import { Post } from '@/types';
 import { useState, useRef } from 'react';
+import { usePathname, useSearchParams } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
 
@@ -36,6 +37,16 @@ export default function FeedPage() {
   const editPostDisclosure = useDisclosure();
 
   const posts: Post[] = feedData?.posts || [];
+
+  const pathname = usePathname();
+  const locale = pathname.split('/')[1];
+  const searchParams = useSearchParams();
+  const sharedPostId = searchParams.get('postId');
+  
+  // 게시물 필터링 로직 추가
+  const displayPosts = sharedPostId 
+    ? posts.filter(post => post.id === sharedPostId)
+    : posts;
 
   const handleCreatePost = () => {
     setPostData({ title: '', content: '', image: '' });
@@ -202,7 +213,7 @@ export default function FeedPage() {
   };
 
   const handleSharePost = (postId: string) => {
-    const postUrl = `${window.location.origin}/en/feed?postId=${postId}`;
+    const postUrl = `${window.location.origin}/${locale}/feed?postId=${postId}`;
     navigator.clipboard.writeText(postUrl);
     toast({
       title: 'Copied to clipboard',
@@ -234,8 +245,8 @@ export default function FeedPage() {
           <VStack spacing={4} width="100%">
             {isLoading ? (
               <Text>{t('feed.loading') || 'Loading posts...'}</Text>
-            ) : posts.length > 0 ? (
-              posts.map((post: Post) => (
+            ) : displayPosts.length > 0 ? (
+              displayPosts.map((post: Post) => (
                 <Card key={post.id} width="100%" bg={colorMode === 'dark' ? 'gray.700' : 'white'}>
                   <CardBody>
                     {/* Author Info */}
