@@ -10,7 +10,7 @@ export const useGetProfile = (userId: string | undefined) => {
       const response = await apiClient.get(`/profiles/${userId}`);
       return response.data;
     },
-    enabled: !!userId,
+    enabled: !!userId
   });
 };
 
@@ -20,7 +20,7 @@ export const useGetCurrentUser = () => {
     queryFn: async () => {
       const response = await apiClient.get('/auth/me');
       return response.data;
-    },
+    }
   });
 };
 
@@ -36,6 +36,9 @@ export const useUpdateProfile = () => {
       queryClient.invalidateQueries({ queryKey: ['currentUser'] });
       queryClient.invalidateQueries({ queryKey: ['profile'] });
     },
+    onError: (error) => {
+      console.error('Error updating profile:', error);
+    }
   });
 };
 
@@ -47,7 +50,7 @@ export const useGetPets = (userId: string | undefined) => {
       const response = await apiClient.get(`/profiles/${userId}/pets`);
       return response.data;
     },
-    enabled: !!userId,
+    enabled: !!userId
   });
 };
 
@@ -62,6 +65,9 @@ export const useAddPet = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['pets'] });
     },
+    onError: (error) => {
+      console.error('Error adding pet:', error);
+    }
   });
 };
 
@@ -76,6 +82,9 @@ export const useUpdatePet = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['pets'] });
     },
+    onError: (error) => {
+      console.error('Error updating pet:', error);
+    }
   });
 };
 
@@ -89,5 +98,8 @@ export const useDeletePet = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['pets'] });
     },
+    onError: (error) => {
+      console.error('Error deleting pet:', error);
+    }
   });
 };

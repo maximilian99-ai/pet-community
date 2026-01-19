@@ -37,6 +37,9 @@ export const useCreatePost = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['posts'] });
     },
+    onError: (error) => {
+      console.error('Error creating post:', error);
+    }
   });
 };
 
@@ -51,6 +54,9 @@ export const useUpdatePost = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['posts'] });
     },
+    onError: (error) => {
+      console.error('Error updating post:', error);
+    }
   });
 };
 
@@ -64,6 +70,9 @@ export const useDeletePost = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['posts'] });
     },
+    onError: (error) => {
+      console.error('Error deleting post:', error);
+    }
   });
 };
 
@@ -78,6 +87,9 @@ export const useAddComment = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['posts'] });
     },
+    onError: (error) => {
+      console.error('Error adding comment:', error);
+    }
   });
 };
 
@@ -92,6 +104,9 @@ export const useUpdateComment = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['posts'] });
     },
+    onError: (error) => {
+      console.error('Error updating comment:', error);
+    }
   });
 };
 
@@ -106,6 +121,9 @@ export const useLikePost = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['posts'] });
     },
+    onError: (error) => {
+      console.error('Error liking post:', error);
+    }
   });
 };
 
@@ -119,5 +137,8 @@ export const useDeleteComment = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['posts'] });
     },
+    onError: (error) => {
+      console.error('Error deleting comment:', error);
+    }
   });
 };
