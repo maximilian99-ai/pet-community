@@ -4,13 +4,13 @@ FROM node:20.5.1-alpine AS builder
 WORKDIR /app
 
 COPY package.json package-lock.json* ./
-RUN npm install
+RUN pnpm install
 
 COPY . .
 
-RUN npm run prisma:generate
+RUN pnpm prisma:generate
 
-RUN npm run build
+RUN pnpm build
 
 # 프로덕션 스테이지
 FROM node:20.5.1-alpine
@@ -19,7 +19,7 @@ WORKDIR /app
 
 # 필요한 패키지만 설치 (프로덕션)
 COPY package.json package-lock.json* ./
-RUN npm install --only=production
+RUN pnpm install --only=production
 
 # 빌드된 파일과 Prisma 클라이언트 복사
 COPY --from=builder /app/dist ./dist
