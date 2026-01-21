@@ -1,33 +1,23 @@
-# 빌드 스테이지
+# Use backend Dockerfile directly
 FROM node:20.5.1-alpine AS builder
 
 WORKDIR /app
 
-# Copy workspace files
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-COPY backend/package.json ./backend/
-COPY frontend/package.json ./frontend/
+# Copy backend package files
+COPY backend/package.json backend/pnpm-lock.yaml* ./
 
-# Install dependencies
+# Install pnpm and dependencies
 RUN npm install -g pnpm@9.0.0
 RUN pnpm install
 
-# Copy source code
-COPY backend/ ./backend/
-COPY frontend/ ./frontend/
+# Copy backend source code
+COPY backend/ ./
 
-# Generate Prisma client
-WORKDIR /app/backend
+# Generate Prisma client and build
 RUN pnpm prisma:generate
-
-# Build backend
 RUN pnpm build
 
-# Build frontend
-WORKDIR /app/frontend
-RUN pnpm build
-
-# 프로덕션 스테이지
+# Production stage
 FROM node:20.5.1-alpine
 
 WORKDIR /app
@@ -35,15 +25,14 @@ WORKDIR /app
 # Install pnpm
 RUN npm install -g pnpm@9.0.0
 
-# Copy backend production files
-COPY --from=builder /app/backend/package.json ./
-COPY --from=builder /app/backend/pnpm-lock.yaml* ./
-COPY --from=builder /app/backend/dist ./dist
-COPY --from=builder /app/backend/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder /app/backend/prisma ./prisma
-
-# Install production dependencies only
+# Copy package files and install production dependencies
+COPY backend/package.json backend/pnpm-lock.yaml* ./
 RUN pnpm install --only=production
+
+# Copy built artifacts
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder /app/prisma ./prisma
 
 EXPOSE 5001
 
