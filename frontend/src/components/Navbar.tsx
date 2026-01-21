@@ -40,16 +40,16 @@ export function Navbar() {
       py={4}
       px={{ base: 4, md: 6, lg: 8 }}
     >
-      <Flex justify="space-between" align="center" maxW="1400px" mx="auto" gap={4}>
+      <Flex justify="space-between" align="center" maxW="1400px" mx="auto" gap={2}>
         {/* Left Side */}
         <Flex cursor="pointer" onClick={() => { router.push(`/${locale}/feed`) }}>
-          <Heading as="h1" size="lg" color={colorMode === 'dark' ? 'white' : 'black'}>
+          <Heading as="h1" size={{ base: 'sm', md: 'lg' }} color={colorMode === 'dark' ? 'white' : 'black'}>
             🐾 Pet Community
           </Heading>
         </Flex>
 
-        {/* Center */}
-        <Flex align="center" gap={4}>
+        {/* Center - Hidden on mobile */}
+        <Flex align="center" gap={4} display={{ base: 'none', md: 'flex' }}>
           {isAuthenticated && (
             <Text fontSize={{ base: 'sm', md: 'md', lg: 'lg' }} fontWeight="medium">
               {t('nav.welcome', { username })}
@@ -58,11 +58,13 @@ export function Navbar() {
         </Flex>
 
         {/* Right side */}
-        <HStack spacing={{ base: 2, md: 4 }}>
+        <HStack spacing={{ base: 1, md: 4 }} flexShrink={0}>
           <Button
             onClick={toggleColorMode}
             variant="ghost"
             size={{ base: 'sm', md: 'md' }}
+            minW={{ base: 'auto', md: 'auto' }}
+            px={{ base: 2, md: 4 }}
           >
             {colorMode === 'dark' ? '☀️' : '🌙'}
           </Button>
@@ -72,7 +74,10 @@ export function Navbar() {
               <Button
                 colorScheme="yellow"
                 variant="outline"
-                size={{ base: 'sm', md: 'md' }}
+                size={{ base: 'xs', md: 'sm' }}
+                fontSize={{ base: 'xs', md: 'sm' }}
+                px={{ base: 2, md: 4 }}
+                minW={{ base: 'auto', md: 'auto' }}
                 onClick={() => { navigateTo(`/${locale}/profile`) }}
               >
                 {t('profile.title')}
@@ -80,7 +85,10 @@ export function Navbar() {
               <Text display={{ base: 'none', md: 'block' }}>|</Text>
               <Button
                 colorScheme="pink"
-                size={{ base: 'sm', md: 'md' }}
+                size={{ base: 'xs', md: 'sm' }}
+                fontSize={{ base: 'xs', md: 'sm' }}
+                px={{ base: 2, md: 4 }}
+                minW={{ base: 'auto', md: 'auto' }}
                 onClick={handleLogout}
               >
                 {t('nav.logout')}
@@ -91,7 +99,10 @@ export function Navbar() {
               <Button
                 colorScheme="blue"
                 variant="outline"
-                size={{ base: 'sm', md: 'md' }}
+                size={{ base: 'xs', md: 'sm' }}
+                fontSize={{ base: 'xs', md: 'sm' }}
+                px={{ base: 2, md: 4 }}
+                minW={{ base: 'auto', md: 'auto' }}
                 onClick={() => {
                   const locale = pathname.split('/')[1];
                   navigateTo(`/${locale}/login`);
@@ -102,7 +113,10 @@ export function Navbar() {
               <Text display={{ base: 'none', md: 'block' }}>|</Text>
               <Button
                 colorScheme="green"
-                size={{ base: 'sm', md: 'md' }}
+                size={{ base: 'xs', md: 'sm' }}
+                fontSize={{ base: 'xs', md: 'sm' }}
+                px={{ base: 2, md: 4 }}
+                minW={{ base: 'auto', md: 'auto' }}
                 onClick={() => {
                   const locale = pathname.split('/')[1];
                   navigateTo(`/${locale}/signup`);
