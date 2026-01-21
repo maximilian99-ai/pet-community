@@ -47,6 +47,22 @@
     "deleteAccount": "Supprimer le compte",
     "deleteAccountTitle": "Supprimer le compte",
     "deleteAccountMessage": "Êtes-vous sûr de vouloir supprimer votre compte? Cette action est irréversible.",
+    "deletePetTitle": "Supprimer l'animal",
+    "deletePetMessage": "Êtes-vous sûr de vouloir supprimer cet animal?",
+    "toast": {
+      "profileUpdated": "Profil mis à jour avec succès",
+      "profileUpdateFailed": "Échec de la mise à jour du profil",
+      "petAdded": "Animal ajouté avec succès",
+      "petAddFailed": "Échec de l'ajout de l'animal",
+      "petUpdated": "Animal mis à jour avec succès",
+      "petUpdateFailed": "Échec de la mise à jour de l'animal",
+      "petDeleted": "Animal supprimé avec succès",
+      "petDeleteFailed": "Échec de la suppression de l'animal",
+      "deleteAccountFailed": "Échec de la suppression du compte"
+    },
+    "validation": {
+      "nameAndSpeciesRequired": "Veuillez remplir le nom et l'espèce"
+    },
     "username": "Nom d'utilisateur"
   },
   "feed": {
@@ -73,5 +89,31 @@
     "feeding": "Alimentation",
     "walks": "Promenades",
     "health": "Santé"
+  },
+  "log": {
+    "add": "Ajouter un journal",
+    "edit": "Modifier le journal",
+    "noLogs": "Aucun journal pour l'instant",
+    "placeholder": "Saisir le contenu du journal",
+    "fields": {
+      "type": "Type",
+      "date": "Date",
+      "content": "Contenu"
+    },
+    "types": {
+      "feeding": "Alimentation",
+      "walk": "Promenade",
+      "health": "Santé",
+      "play": "Jeu",
+      "other": "Autre"
+    },
+    "validationContentRequired": "Veuillez remplir le contenu",
+    "created": "Journal créé avec succès",
+    "updated": "Journal mis à jour avec succès",
+    "deleted": "Journal supprimé avec succès",
+    "saveFailed": "Échec de l'enregistrement du journal",
+    "deleteFailed": "Échec de la suppression du journal",
+    "deleteTitle": "Supprimer le journal",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer ce journal?"
   }
 }

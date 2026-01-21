@@ -47,6 +47,22 @@
     "deleteAccount": "Delete Account",
     "deleteAccountTitle": "Delete Account",
     "deleteAccountMessage": "Are you sure you want to delete your account? This action cannot be undone.",
+    "deletePetTitle": "Delete Pet",
+    "deletePetMessage": "Are you sure you want to delete this pet?",
+    "toast": {
+      "profileUpdated": "Profile updated successfully",
+      "profileUpdateFailed": "Failed to update profile",
+      "petAdded": "Pet added successfully",
+      "petAddFailed": "Failed to add pet",
+      "petUpdated": "Pet updated successfully",
+      "petUpdateFailed": "Failed to update pet",
+      "petDeleted": "Pet deleted successfully",
+      "petDeleteFailed": "Failed to delete pet",
+      "deleteAccountFailed": "Failed to delete account"
+    },
+    "validation": {
+      "nameAndSpeciesRequired": "Please fill in name and species"
+    },
     "username": "Username"
   },
   "feed": {
@@ -73,5 +89,31 @@
     "feeding": "Feeding",
     "walks": "Walks",
     "health": "Health"
+  },
+  "log": {
+    "add": "Add Log",
+    "edit": "Edit Log",
+    "noLogs": "No logs yet",
+    "placeholder": "Enter log content",
+    "fields": {
+      "type": "Type",
+      "date": "Date",
+      "content": "Content"
+    },
+    "types": {
+      "feeding": "Feeding",
+      "walk": "Walk",
+      "health": "Health",
+      "play": "Play",
+      "other": "Other"
+    },
+    "validationContentRequired": "Please fill in content",
+    "created": "Log created successfully",
+    "updated": "Log updated successfully",
+    "deleted": "Log deleted successfully",
+    "saveFailed": "Failed to save log",
+    "deleteFailed": "Failed to delete log",
+    "deleteTitle": "Delete Log",
+    "deleteConfirm": "Are you sure you want to delete this log?"
   }
 }

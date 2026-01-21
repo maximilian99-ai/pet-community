@@ -11,6 +11,7 @@ import profileRoutes from './routes/profile';
 import postRoutes from './routes/post';
 import logRoutes from './routes/log';
 import recommendationsRoutes from './routes/recommendations';
+import followsRoutes from './routes/follows';
 
 const app: Express = express();
 const PORT = process.env.PORT || 5001;
@@ -31,6 +32,7 @@ app.use('/api/profiles', profileRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/logs', logRoutes);
 app.use('/api/recommendations', recommendationsRoutes);
+app.use('/api/follows', followsRoutes);
 
 // Error handling middleware
 app.use((err: any, req: Request, res: Response, next: Function) => {

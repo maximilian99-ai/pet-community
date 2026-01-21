@@ -1,13 +1,16 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Box, VStack, Heading, Grid, Button, Card, CardBody, useColorMode, Text, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Input, Textarea, AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter, HStack, useToast } from '@chakra-ui/react';
 import { useAuthStore } from '@/store';
 import { useGetCurrentUser, useUpdateProfile, useGetPets, useAddPet, useUpdatePet, useDeletePet } from '@/hooks/useProfile';
 import apiClient from '@/api/client';
 import { useRef } from 'react';
+import LogModal from '@/components/LogModal';
+import FollowingList from '@/components/FollowingList';
+import FollowerList from '@/components/FollowerList';
 
 export const dynamic = 'force-dynamic';
 
@@ -22,6 +25,8 @@ interface PetType {
 export default function ProfilePage() {
   const t = useTranslations();
   const router = useRouter();
+  const params = useParams();
+  const locale = params.locale as string;
   const { colorMode } = useColorMode();
   const logout = useAuthStore((state) => state.logout);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -41,6 +46,10 @@ export default function ProfilePage() {
   const editPetDisclosure = useDisclosure();
   const deletePetConfirmDisclosure = useDisclosure();
   const deleteConfirmDisclosure = useDisclosure();
+  const logModalDisclosure = useDisclosure();
+  const followingListDisclosure = useDisclosure();
+  const followerListDisclosure = useDisclosure();
+  const [selectedPetForLog, setSelectedPetForLog] = useState<string | null>(null);
   const cancelRef = useRef<HTMLButtonElement>(null);
 
   const updateProfileMutation = useUpdateProfile();
@@ -80,8 +89,8 @@ export default function ProfilePage() {
       await updateProfileMutation.mutateAsync(profileData);
       editProfileDisclosure.onClose();
       toast({
-        title: 'Success',
-        description: 'Profile updated successfully',
+        title: t('common.success'),
+        description: t('profile.toast.profileUpdated'),
         status: 'success',
         duration: 2000,
         isClosable: true,
@@ -89,8 +98,8 @@ export default function ProfilePage() {
     } catch (error) {
       console.error('Failed to update profile:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to update profile',
+        title: t('common.error'),
+        description: t('profile.toast.profileUpdateFailed'),
         status: 'error',
         duration: 3000,
         isClosable: true,
@@ -108,8 +117,8 @@ export default function ProfilePage() {
     try {
       if (!petData.name || !petData.species) {
         toast({
-          title: 'Error',
-          description: 'Please fill in name and species',
+          title: t('common.error'),
+          description: t('profile.validation.nameAndSpeciesRequired'),
           status: 'error',
           duration: 3000,
           isClosable: true,
@@ -125,8 +134,8 @@ export default function ProfilePage() {
       });
       addPetDisclosure.onClose();
       toast({
-        title: 'Success',
-        description: 'Pet added successfully',
+        title: t('common.success'),
+        description: t('profile.toast.petAdded'),
         status: 'success',
         duration: 2000,
         isClosable: true,
@@ -134,8 +143,8 @@ export default function ProfilePage() {
     } catch (error) {
       console.error('Failed to add pet:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to add pet',
+        title: t('common.error'),
+        description: t('profile.toast.petAddFailed'),
         status: 'error',
         duration: 3000,
         isClosable: true,
@@ -158,8 +167,8 @@ export default function ProfilePage() {
     try {
       if (!petData.name || !petData.species) {
         toast({
-          title: 'Error',
-          description: 'Please fill in name and species',
+          title: t('common.error'),
+          description: t('profile.validation.nameAndSpeciesRequired'),
           status: 'error',
           duration: 3000,
           isClosable: true,
@@ -177,8 +186,8 @@ export default function ProfilePage() {
         });
         editPetDisclosure.onClose();
         toast({
-          title: 'Success',
-          description: 'Pet updated successfully',
+          title: t('common.success'),
+          description: t('profile.toast.petUpdated'),
           status: 'success',
           duration: 2000,
           isClosable: true,
@@ -187,8 +196,8 @@ export default function ProfilePage() {
     } catch (error) {
       console.error('Failed to update pet:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to update pet',
+        title: t('common.error'),
+        description: t('profile.toast.petUpdateFailed'),
         status: 'error',
         duration: 3000,
         isClosable: true,
@@ -208,8 +217,8 @@ export default function ProfilePage() {
         deletePetConfirmDisclosure.onClose();
         setEditingPetId(null);
         toast({
-          title: 'Success',
-          description: 'Pet deleted successfully',
+          title: t('common.success'),
+          description: t('profile.toast.petDeleted'),
           status: 'success',
           duration: 2000,
           isClosable: true,
@@ -218,8 +227,8 @@ export default function ProfilePage() {
     } catch (error) {
       console.error('Failed to delete pet:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to delete pet',
+        title: t('common.error'),
+        description: t('profile.toast.petDeleteFailed'),
         status: 'error',
         duration: 3000,
         isClosable: true,
@@ -237,13 +246,13 @@ export default function ProfilePage() {
       await apiClient.delete('/auth/me');
       deleteConfirmDisclosure.onClose();
       logout();
-      router.push('/login');
+      router.push(`/${locale}/login`);
     } catch (error) {
       console.error('Failed to delete account:', error);
       setIsDeleting(false);
       toast({
-        title: 'Error',
-        description: 'Failed to delete account',
+        title: t('common.error'),
+        description: t('profile.toast.deleteAccountFailed'),
         status: 'error',
         duration: 3000,
         isClosable: true,
@@ -279,6 +288,31 @@ export default function ProfilePage() {
                       <Text>{currentUser.bio}</Text>
                     </Box>
                   )}
+                  
+                  {/* Follow Stats */}
+                  {/* <HStack spacing={4}>
+                    <Box>
+                      <Text fontSize="sm" color={colorMode === 'dark' ? 'gray.400' : 'gray.600'}>
+                        {t('profile.followers')}
+                      </Text>
+                      <Button variant="ghost" size="sm" onClick={followerListDisclosure.onOpen}>
+                        <Text fontWeight="bold" fontSize="lg">
+                          {currentUser?.followers || 0}
+                        </Text>
+                      </Button>
+                    </Box>
+                    <Box>
+                      <Text fontSize="sm" color={colorMode === 'dark' ? 'gray.400' : 'gray.600'}>
+                        {t('profile.following')}
+                      </Text>
+                      <Button variant="ghost" size="sm" onClick={followingListDisclosure.onOpen}>
+                        <Text fontWeight="bold" fontSize="lg">
+                          {currentUser?.following || 0}
+                        </Text>
+                      </Button>
+                    </Box>
+                  </HStack> */}
+                  
                   <Box>
                     <Button colorScheme="blue" mr={2} onClick={handleEditProfile}>
                       {t('profile.editProfile')}
@@ -317,6 +351,12 @@ export default function ProfilePage() {
                         <HStack mt={4} spacing={2}>
                           <Button size="sm" colorScheme="blue" onClick={() => handleEditPet(pet)}>
                             {t('common.edit')}
+                          </Button>
+                          <Button size="sm" colorScheme="purple" onClick={() => {
+                            setSelectedPetForLog(pet.id);
+                            logModalDisclosure.onOpen();
+                          }}>
+                            {t('dashboard.logs')}
                           </Button>
                           <Button size="sm" colorScheme="red" onClick={() => handleDeletePetClick(pet.id)}>
                             {t('common.delete')}
@@ -485,10 +525,10 @@ export default function ProfilePage() {
         <AlertDialogOverlay>
           <AlertDialogContent>
             <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              Delete Pet
+              {t('profile.deletePetTitle')}
             </AlertDialogHeader>
             <AlertDialogBody>
-              Are you sure you want to delete this pet?
+              {t('profile.deletePetMessage')}
             </AlertDialogBody>
             <AlertDialogFooter>
               <Button ref={cancelRef} onClick={deletePetConfirmDisclosure.onClose}>
@@ -527,6 +567,33 @@ export default function ProfilePage() {
           </AlertDialogContent>
         </AlertDialogOverlay>
       </AlertDialog>
+
+      {/* Log Modal */}
+      {selectedPetForLog && (
+        <LogModal
+          isOpen={logModalDisclosure.isOpen}
+          onClose={logModalDisclosure.onClose}
+          petId={selectedPetForLog}
+        />
+      )}
+
+      {/* Following List Modal */}
+      {currentUser && (
+        <FollowingList
+          isOpen={followingListDisclosure.isOpen}
+          onClose={followingListDisclosure.onClose}
+          userId={currentUser.id}
+        />
+      )}
+
+      {/* Follower List Modal */}
+      {currentUser && (
+        <FollowerList
+          isOpen={followerListDisclosure.isOpen}
+          onClose={followerListDisclosure.onClose}
+          userId={currentUser.id}
+        />
+      )}
     </Box>
   );
 }

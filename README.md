@@ -2,14 +2,6 @@
 
 🐾 반려동물 커뮤니티 플랫폼: 사용자가 반려동물의 일상을 기록하고 공유할 수 있는 소셜 네트워크 애플리케이션
 
-## 📚 문서
-
-- 🚀 [빠른 시작 (5분)](QUICKSTART.md) - **새로운 개발자는 여기서 시작하세요**
-- 🔧 [개발 환경 설정](DEVELOPMENT.md) - 상세한 로컬 개발 환경 구축 가이드
-- 📦 [배포 가이드](DEPLOYMENT.md) - Railway, Vercel, Supabase 배포 방법
-- 🏗️ [시스템 아키텍처](ARCHITECTURE.md) - 기술 아키텍처 및 설계
-- ✅ [배포 체크리스트](DEPLOYMENT_CHECKLIST.md) - 배포 전 최종 검증
-
 ## 테크 스택
 
 ### Frontend
@@ -112,7 +104,6 @@ pet-community/
 - **Comment**: 포스트 댓글
 - **Like**: 포스트 좋아요
 - **Badge**: 최고의 일지 배지 시스템
-- **UserFollow**: 사용자 팔로우 관계
 
 ## API 엔드포인트
 
@@ -145,11 +136,6 @@ pet-community/
 - `DELETE /api/logs/:logId` - 일지 삭제 (JWT 필수)
 - `GET /api/logs/pet/:petId/weekly-stats` - 주간 통계
 
-### 추천
-- `GET /api/recommendations` - 인기 포스트 추천
-- `GET /api/recommendations/best` - 최고의 일지 배지 포스트
-- `GET /api/recommendations/users` - 추천 사용자
-
 ## 로컬 개발 환경 설정
 
 ### 필수 사항
@@ -157,136 +143,109 @@ pet-community/
 - Docker & Docker Compose
 - Git
 
-### 1단계: 저장소 복제 및 환경 설정
 ```bash
+# 저장소 복제
+git clone <repository-url>
 cd pet-community
 
-# .env 파일 생성
+# 환경 설정
 cp .env.example .env
 
-# 기본 값 수정 (Cloudinary 토큰 등)
-nano .env
-```
-
-### 2단계: Backend 초기화
-```bash
+# Backend 초기화
 cd backend
-
-# npm 패키지 설치
-npm install
-
-# Prisma 클라이언트 생성
-npm run prisma:generate
-
-# (선택사항) 로컬 환경에서만 실행
-# 데이터베이스 마이그레이션
-npm run prisma:migrate
-
-# 샘플 데이터 삽입
-npm run prisma:seed
-
+pnpm install
+pnpm prisma:generate
+pnpm prisma db push
+pnpm prisma db seed
 cd ..
-```
 
-### 3단계: Frontend 초기화
-```bash
+# Frontend 초기화
 cd frontend
-
-# npm 패키지 설치
-npm install
-
+pnpm install
 cd ..
+
+# 통합 개발 서버 시작
+pnpm -r dev
+
+# http://localhost:3000/en (또는 /ko, /fr 등)
 ```
 
-### 4단계: Docker Compose로 로컬 서버 실행
-```bash
-# PostgreSQL + Backend 실행
-docker-compose up -d
-
-# Backend 서버 준비 확인
-# http://localhost:5000/health 방문
-```
-
-### 5단계: Frontend 개발 서버 실행
-```bash
-cd frontend
-npm run dev
-
-# http://localhost:3000/en (또는 http://localhost:3000/ko 등)
-```
-
-### 테스트 데이터
+### 테스트 계정
 ```
 이메일: alice@example.com
 비밀번호: password123
 
-username: alice, bob, charlie
+사용 가능한 사용자명: alice, bob, charlie
 ```
+
+## 📊 서비스 개발 과정 요약
+
+**주요 마일스톤**
+1. 서비스 기획 및 FSD 구조 설계
+2. Docker 환경 구축 및 포트 충돌 해결
+3. npm → pnpm 마이그레이션
+4. next-intl 버전 업그레이드 및 호환성 처리
+5. 핵심 기능 구현 (인증, 프로필, 포스트)
+6. 고급 기능 구현 (이미지, 댓글, 팔로우, 배지)
+7. 이미지 업로드 최적화 및 대용량 처리
+8. 다크모드, 다국어, 반응형 디자인 완성
+9. 시드 데이터 설정 및 데이터 보안
 
 ## 개발 워크플로우
 
-### Backend 작업
+### 작업
 ```bash
-cd backend
-npm run dev          # 개발 서버 실행
-npm test            # 테스트 실행
-npm run build       # 프로덕션 빌드
+pnpm -r dev         # 개발 서버 실행
+pnpm -r test        # 테스트 실행
+pnpm -r build       # 프로덕션 빌드
+pnpm -r lint        # ESLint 검사
 ```
 
-### Frontend 작업
+### 필수 계정 및 서비스
+- GitHub 계정 (저장소 관리)
+- Vercel 계정 (Frontend 배포)
+- Railway 또는 Render 계정 (Backend 배포)
+- PostgreSQL 데이터베이스 (Supabase 또는 Railway)
+- Cloudinary 계정 (이미지 관리)
+
+### 배포 순서
+1. **Cloudinary 설정** - 이미지 업로드 서비스
+2. **Backend 배포 (Railway)** - Express API 서버
+3. **Frontend 배포 (Vercel)** - Next.js 애플리케이션
+4. **CI/CD 자동화** - GitHub Actions 설정
+
+### 배포 검증
 ```bash
-cd frontend
-npm run dev          # 개발 서버 실행
-npm test            # 테스트 실행
-npm run build       # 프로덕션 빌드
+# Backend 헬스 체크
+curl https://pet-community-backend-prod.railway.app/health
+
+# Frontend 확인
+https://pet-community.vercel.app
 ```
 
-## 배포 가이드
+---
 
-### Frontend (Vercel)
-1. Vercel에 GitHub 계정 연동
-2. 프로젝트 임포트
-3. 환경 변수 설정 (.env 참고)
-4. 자동 배포 활성화
+## 🔒 보안 주의사항
 
-### Backend (Railway 또는 Render)
+### 필수 보안 조치
+- [ ] JWT_SECRET 강력한 값으로 변경 (최소 32자, 무작위)
+- [ ] Cloudinary API Secret은 절대 프론트엔드에 노출 금지
+- [ ] 프로덕션 환경에서 CORS 설정 검토
+- [ ] HTTPS 강제 (Vercel, Railway 기본 지원)
+- [ ] 정기적으로 보안 패치 업데이트
 
-#### Railway
-1. railway.app에 로그인
-2. 새 프로젝트 생성
-3. PostgreSQL 데이터베이스 추가
-4. GitHub 저장소 연동
-5. Dockerfile 경로: `./backend/Dockerfile`
+### 환경 변수 관리
+- 로컬: `.env` 파일 (`.gitignore`에 포함)
+- 프로덕션: 플랫폼의 환경 변수 관리 기능 사용
+- 절대 코드에 하드코딩하지 말 것
 
-#### Render
-1. render.com에 로그인
-2. 웹 서비스 생성
-3. GitHub 저장소 연동
-4. 빌드 커맨드: `npm install && npm run prisma:generate && npm run build`
-5. 시작 커맨드: `npm start`
+**일반적인 문제 해결**
+- Backend 배포 실패: 빌드 로그 확인, `pnpm build` 테스트
+- Frontend 배포 실패: 환경 변수 설정, 루트 디렉토리 설정 확인
+- 포트 충돌: `lsof -i :5000` 명령어로 프로세스 확인
+- 데이터베이스 연결: `DATABASE_URL` 형식 및 네트워크 권한 확인
 
-### 환경 변수 (프로덕션)
-```env
-NODE_ENV=production
-DATABASE_URL=postgresql://user:password@host:5432/db
-JWT_SECRET=your-secure-random-key
-CLOUDINARY_CLOUD_NAME=your-cloud-name
-CLOUDINARY_API_KEY=your-api-key
-CLOUDINARY_API_SECRET=your-api-secret
-```
-
-## 기능 명세
-
-### MVP (Minimum Viable Product)
-- ✅ 사용자 회원가입/로그인 (JWT)
-- ✅ 반려동물 프로필 관리 (등록, 수정, 삭제)
-- ✅ 일지 기록 (식사, 산책, 건강 로그)
-- ✅ 피드 및 포스트 공유
-- ✅ 댓글 및 좋아요 기능
-- ✅ 베스트 일지 배지 시스템
-- ✅ 주간 건강 차트
-- ✅ 다국어 지원 (7개 언어)
-- ✅ 반응형 디자인 (모바일/태블릿/PC)
+---
 
 ## 성능 최적화
 
@@ -302,63 +261,11 @@ CLOUDINARY_API_SECRET=your-api-secret
 - 페이지네이션 (limit/offset)
 - 응답 압축 (gzip)
 
-## 테스트
-
-### Backend 테스트
-```bash
-cd backend
-npm test                # 모든 테스트 실행
-npm test -- --watch    # 감시 모드
-```
-
-### Frontend E2E 테스트
-```bash
-cd frontend
-npm run test:e2e        # Playwright 테스트
-```
-
-## 보안
-
-- ✅ JWT 토큰 기반 인증
-- ✅ 비밀번호 해싱 (bcryptjs)
-- ✅ CORS 설정
-- ✅ SQL Injection 방지 (Prisma ORM)
-- ✅ 환경 변수 보호
-
-## 문제 해결
-
-### "데이터베이스 연결 실패"
-```bash
-docker-compose down
-docker-compose up -d
-```
-
-### "포트 이미 사용 중"
-```bash
-# macOS/Linux
-lsof -i :5000
-kill -9 <PID>
-
-# Windows
-netstat -ano | findstr :5000
-taskkill /PID <PID> /F
-```
-
-### "모듈을 찾을 수 없음"
-```bash
-# 패키지 재설치
-rm -rf node_modules package-lock.json
-npm install
-```
-
 ## 라이센스
 
 MIT
 
-## 문의
-
-프로젝트 이슈나 제안은 GitHub Issues에서 제출해주세요.
-
 ---
 
-**마지막 업데이트**: 2026년 1월 6일
+**개발 완료일**: 2026년 1월 21일
+**배포 준비 상태**: MVP 구현 완료, 배포 준비 완료

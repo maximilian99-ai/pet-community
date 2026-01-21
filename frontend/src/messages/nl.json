@@ -38,7 +38,7 @@
     "pets": "Mijn huisdieren",
     "editProfile": "Profiel bewerken",
     "addPet": "Huisdier toevoegen",
-    "petName": "Naam huisdier",
+    "petName": "Naam van het huisdier",
     "species": "Soort",
     "breed": "Ras",
     "age": "Leeftijd",
@@ -47,6 +47,22 @@
     "deleteAccount": "Account verwijderen",
     "deleteAccountTitle": "Account verwijderen",
     "deleteAccountMessage": "Weet je zeker dat je je account wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
+    "deletePetTitle": "Huisdier verwijderen",
+    "deletePetMessage": "Weet je zeker dat je dit huisdier wilt verwijderen?",
+    "toast": {
+      "profileUpdated": "Profiel succesvol bijgewerkt",
+      "profileUpdateFailed": "Bijwerken van profiel mislukt",
+      "petAdded": "Huisdier succesvol toegevoegd",
+      "petAddFailed": "Toevoegen van huisdier mislukt",
+      "petUpdated": "Huisdier succesvol bijgewerkt",
+      "petUpdateFailed": "Bijwerken van huisdier mislukt",
+      "petDeleted": "Huisdier succesvol verwijderd",
+      "petDeleteFailed": "Verwijderen van huisdier mislukt",
+      "deleteAccountFailed": "Verwijderen van account mislukt"
+    },
+    "validation": {
+      "nameAndSpeciesRequired": "Vul de naam en soort in"
+    },
     "username": "Gebruikersnaam"
   },
   "feed": {
@@ -73,5 +89,31 @@
     "feeding": "Voeding",
     "walks": "Wandelingen",
     "health": "Gezondheid"
+  },
+  "log": {
+    "add": "Log toevoegen",
+    "edit": "Log bewerken",
+    "noLogs": "Nog geen logs",
+    "placeholder": "Voer loginhoud in",
+    "fields": {
+      "type": "Type",
+      "date": "Datum",
+      "content": "Inhoud"
+    },
+    "types": {
+      "feeding": "Voeding",
+      "walk": "Wandeling",
+      "health": "Gezondheid",
+      "play": "Spelen",
+      "other": "Overig"
+    },
+    "validationContentRequired": "Vul de inhoud in",
+    "created": "Log succesvol aangemaakt",
+    "updated": "Log succesvol bijgewerkt",
+    "deleted": "Log succesvol verwijderd",
+    "saveFailed": "Opslaan van log mislukt",
+    "deleteFailed": "Verwijderen van log mislukt",
+    "deleteTitle": "Log verwijderen",
+    "deleteConfirm": "Weet je zeker dat je deze log wilt verwijderen?"
   }
 }

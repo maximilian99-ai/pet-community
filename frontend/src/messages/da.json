@@ -38,7 +38,7 @@
     "pets": "Mine kæledyr",
     "editProfile": "Rediger profil",
     "addPet": "Tilføj kæledyr",
-    "petName": "Navn på kæledyr",
+    "petName": "Kæledyrsnavn",
     "species": "Art",
     "breed": "Race",
     "age": "Alder",
@@ -47,6 +47,22 @@
     "deleteAccount": "Slet konto",
     "deleteAccountTitle": "Slet konto",
     "deleteAccountMessage": "Er du sikker på, at du vil slette din konto? Denne handling kan ikke fortrydes.",
+    "deletePetTitle": "Slet kæledyr",
+    "deletePetMessage": "Er du sikker på, at du vil slette dette kæledyr?",
+    "toast": {
+      "profileUpdated": "Profil opdateret",
+      "profileUpdateFailed": "Kunne ikke opdatere profil",
+      "petAdded": "Kæledyr tilføjet",
+      "petAddFailed": "Kunne ikke tilføje kæledyr",
+      "petUpdated": "Kæledyr opdateret",
+      "petUpdateFailed": "Kunne ikke opdatere kæledyr",
+      "petDeleted": "Kæledyr slettet",
+      "petDeleteFailed": "Kunne ikke slette kæledyr",
+      "deleteAccountFailed": "Kunne ikke slette konto"
+    },
+    "validation": {
+      "nameAndSpeciesRequired": "Udfyld venligst navn og art"
+    },
     "username": "Brugernavn"
   },
   "feed": {
@@ -67,11 +83,37 @@
   },
   "dashboard": {
     "title": "Dashboard",
-    "weeklyHealth": "Ugentligt helbred",
+    "weeklyHealth": "Ugentlig sundhed",
     "logs": "Logs",
-    "stats": "Statistikker",
+    "stats": "Statistik",
     "feeding": "Fodring",
     "walks": "Gåture",
-    "health": "Helbred"
+    "health": "Sundhed"
+  },
+  "log": {
+    "add": "Tilføj log",
+    "edit": "Rediger log",
+    "noLogs": "Ingen logs endnu",
+    "placeholder": "Indtast logindhold",
+    "fields": {
+      "type": "Type",
+      "date": "Dato",
+      "content": "Indhold"
+    },
+    "types": {
+      "feeding": "Fodring",
+      "walk": "Gåtur",
+      "health": "Sundhed",
+      "play": "Leg",
+      "other": "Andet"
+    },
+    "validationContentRequired": "Udfyld venligst indhold",
+    "created": "Log oprettet",
+    "updated": "Log opdateret",
+    "deleted": "Log slettet",
+    "saveFailed": "Kunne ikke gemme log",
+    "deleteFailed": "Kunne ikke slette log",
+    "deleteTitle": "Slet log",
+    "deleteConfirm": "Er du sikker på, at du vil slette denne log?"
   }
 }

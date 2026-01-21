@@ -46,7 +46,23 @@
     "following": "Siguiendo",
     "deleteAccount": "Eliminar cuenta",
     "deleteAccountTitle": "Eliminar cuenta",
-    "deleteAccountMessage": "¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer.",
+    "deleteAccountMessage": "¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no se puede deshacer.",
+    "deletePetTitle": "Eliminar mascota",
+    "deletePetMessage": "¿Estás seguro de que quieres eliminar esta mascota?",
+    "toast": {
+      "profileUpdated": "Perfil actualizado correctamente",
+      "profileUpdateFailed": "No se pudo actualizar el perfil",
+      "petAdded": "Mascota añadida correctamente",
+      "petAddFailed": "No se pudo añadir la mascota",
+      "petUpdated": "Mascota actualizada correctamente",
+      "petUpdateFailed": "No se pudo actualizar la mascota",
+      "petDeleted": "Mascota eliminada correctamente",
+      "petDeleteFailed": "No se pudo eliminar la mascota",
+      "deleteAccountFailed": "No se pudo eliminar la cuenta"
+    },
+    "validation": {
+      "nameAndSpeciesRequired": "Por favor, completa el nombre y la especie"
+    },
     "username": "Nombre de usuario"
   },
   "feed": {
@@ -73,5 +89,31 @@
     "feeding": "Alimentación",
     "walks": "Paseos",
     "health": "Salud"
+  },
+  "log": {
+    "add": "Añadir registro",
+    "edit": "Editar registro",
+    "noLogs": "Aún no hay registros",
+    "placeholder": "Introduce el contenido del registro",
+    "fields": {
+      "type": "Tipo",
+      "date": "Fecha",
+      "content": "Contenido"
+    },
+    "types": {
+      "feeding": "Alimentación",
+      "walk": "Paseo",
+      "health": "Salud",
+      "play": "Juego",
+      "other": "Otro"
+    },
+    "validationContentRequired": "Por favor, completa el contenido",
+    "created": "Registro creado correctamente",
+    "updated": "Registro actualizado correctamente",
+    "deleted": "Registro eliminado correctamente",
+    "saveFailed": "No se pudo guardar el registro",
+    "deleteFailed": "No se pudo eliminar el registro",
+    "deleteTitle": "Eliminar registro",
+    "deleteConfirm": "¿Estás seguro de que quieres eliminar este registro?"
   }
 }

@@ -47,6 +47,22 @@
     "deleteAccount": "회원 탈퇴",
     "deleteAccountTitle": "회원 탈퇴",
     "deleteAccountMessage": "정말로 계정을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
+    "deletePetTitle": "반려동물 삭제",
+    "deletePetMessage": "정말로 이 반려동물을 삭제하시겠습니까?",
+    "toast": {
+      "profileUpdated": "프로필이 수정되었습니다",
+      "profileUpdateFailed": "프로필 수정에 실패했습니다",
+      "petAdded": "반려동물이 추가되었습니다",
+      "petAddFailed": "반려동물 추가에 실패했습니다",
+      "petUpdated": "반려동물이 수정되었습니다",
+      "petUpdateFailed": "반려동물 수정에 실패했습니다",
+      "petDeleted": "반려동물이 삭제되었습니다",
+      "petDeleteFailed": "반려동물 삭제에 실패했습니다",
+      "deleteAccountFailed": "회원 탈퇴에 실패했습니다"
+    },
+    "validation": {
+      "nameAndSpeciesRequired": "이름과 종류를 입력해 주세요"
+    },
     "username": "사용자명"
   },
   "feed": {
@@ -73,5 +89,31 @@
     "feeding": "식사",
     "walks": "산책",
     "health": "건강"
+  },
+  "log": {
+    "add": "로그 추가",
+    "edit": "로그 수정",
+    "noLogs": "아직 로그가 없습니다",
+    "placeholder": "로그 내용을 입력하세요",
+    "fields": {
+      "type": "종류",
+      "date": "날짜",
+      "content": "내용"
+    },
+    "types": {
+      "feeding": "식사",
+      "walk": "산책",
+      "health": "건강",
+      "play": "놀이",
+      "other": "기타"
+    },
+    "validationContentRequired": "내용을 입력해 주세요",
+    "created": "로그가 생성되었습니다",
+    "updated": "로그가 수정되었습니다",
+    "deleted": "로그가 삭제되었습니다",
+    "saveFailed": "로그 저장에 실패했습니다",
+    "deleteFailed": "로그 삭제에 실패했습니다",
+    "deleteTitle": "로그 삭제",
+    "deleteConfirm": "정말로 이 로그를 삭제하시겠습니까?"
   }
 }

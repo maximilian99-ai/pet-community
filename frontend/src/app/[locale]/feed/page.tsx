@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useColorMode, Box, VStack, Card, CardBody, Heading, Text, Button, HStack, Avatar, Divider, Flex, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Input, Textarea, Image, useToast } from '@chakra-ui/react';
+import { useColorMode, Box, VStack, Card, CardBody, Heading, Text, Button, HStack, Avatar, Divider, Flex, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Input, Textarea, Image, useToast, Badge } from '@chakra-ui/react';
 import { useAuthStore } from '@/store';
 import { useGetPosts } from '@/hooks/usePost';
 import { useCreatePost, useAddComment, useLikePost, useDeleteComment, useUpdateComment, useUpdatePost, useDeletePost } from '@/hooks/usePost';
@@ -37,6 +37,24 @@ export default function FeedPage() {
   const editPostDisclosure = useDisclosure();
 
   const posts: Post[] = feedData?.posts || [];
+
+  const TopBadge = () => (
+    <Badge
+      colorScheme="yellow"
+      variant="solid"
+      borderRadius="full"
+      px={2}
+      py={0.5}
+      fontSize="xs"
+    >
+      TOP
+    </Badge>
+  );
+
+  const popularPosts = [...posts]
+    .sort((a, b) => (b.likes?.length || 0) - (a.likes?.length || 0))
+    .slice(0, 3);
+  const topPopularPostId = popularPosts[0]?.id;
 
   const pathname = usePathname();
   const locale = pathname.split('/')[1];
@@ -243,6 +261,48 @@ export default function FeedPage() {
 
           {/* Feed Posts */}
           <VStack spacing={4} width="100%">
+            {!isLoading && popularPosts.length > 0 && !sharedPostId && (
+              <Card width="100%" bg={colorMode === 'dark' ? 'gray.700' : 'white'}>
+                <CardBody>
+                  <Flex align="center" justify="space-between" mb={3}>
+                    <Heading size="sm">{t('feed.popular') || 'Popular Posts'}</Heading>
+                    <TopBadge />
+                  </Flex>
+                  <VStack spacing={2} align="stretch">
+                    {popularPosts.map((post, index) => (
+                      <Box
+                        key={post.id}
+                        p={3}
+                        borderRadius="md"
+                        bg={colorMode === 'dark' ? 'gray.600' : 'gray.50'}
+                      >
+                        <Flex align="center" justify="space-between" gap={3}>
+                          <Box flex={1} minW={0}>
+                            <HStack spacing={2} mb={1}>
+                              <Text fontWeight="bold" noOfLines={1}>
+                                {post.title}
+                              </Text>
+                              {index === 0 && <TopBadge />}
+                            </HStack>
+                            <Text fontSize="sm" color={colorMode === 'dark' ? 'gray.300' : 'gray.600'} noOfLines={1}>
+                              {post.author.username}
+                            </Text>
+                          </Box>
+                          <HStack spacing={2} flexShrink={0}>
+                            <Text fontSize="sm" color={colorMode === 'dark' ? 'gray.300' : 'gray.600'}>
+                              ❤️ {post.likes?.length || 0}
+                            </Text>
+                            <Button size="sm" variant="outline" onClick={() => handleSharePost(post.id)}>
+                              {t('feed.share') || 'Share'}
+                            </Button>
+                          </HStack>
+                        </Flex>
+                      </Box>
+                    ))}
+                  </VStack>
+                </CardBody>
+              </Card>
+            )}
             {isLoading ? (
               <Text>{t('feed.loading') || 'Loading posts...'}</Text>
             ) : displayPosts.length > 0 ? (
@@ -280,9 +340,10 @@ export default function FeedPage() {
                     <Divider mb={4} />
 
                     {/* Post Content */}
-                    <Heading size="md" mb={2}>
-                      {post.title}
-                    </Heading>
+                    <HStack spacing={2} mb={2} align="center">
+                      <Heading size="md">{post.title}</Heading>
+                      {post.id === topPopularPostId && <TopBadge />}
+                    </HStack>
                     <Text mb={4}>{post.content}</Text>
 
                     {/* Post Image */}
@@ -300,6 +361,17 @@ export default function FeedPage() {
                           {post.pet.breed ? ` - ${post.pet.breed}` : ''})
                         </Text>
                       </Box>
+                    )}
+
+                    {/* Badges */}
+                    {post.badges && post.badges.length > 0 && (
+                      <HStack mb={4} spacing={2} flexWrap="wrap">
+                        {post.badges.map((badge) => (
+                          <Badge key={badge.id} colorScheme="gold" variant="solid">
+                            ⭐ {badge.name}
+                          </Badge>
+                        ))}
+                      </HStack>
                     )}
 
                     <Divider mb={4} />

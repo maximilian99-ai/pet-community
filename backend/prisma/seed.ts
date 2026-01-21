@@ -253,18 +253,10 @@ async function main() {
     },
   });
 
-  await prisma.comment.create({
-    data: {
-      content: 'Melody는 정말 귀엽네요! 🥰',
-      authorId: userAnna.id,
-      postId: postKorean.id,
-    },
-  });
-
   // Comments on English post
   await prisma.comment.create({
     data: {
-      content: 'Max도 해변을 매우 즐겼어요!',
+      content: 'Max hat der Strand auch sehr genossen!',
       authorId: userKlaus.id,
       postId: postEnglish.id,
     },
@@ -281,8 +273,15 @@ async function main() {
   // Comments on Danish post
   await prisma.comment.create({
     data: {
-      content: 'Lucy also loves sunbathing! 🌞',
+      content: 'Lucy is ook dol op zonnebaden! 🌞',
       authorId: userJan.id,
+      postId: postDanish.id,
+    },
+  });
+  await prisma.comment.create({
+    data: {
+      content: 'Loke ser så sød ud!',
+      authorId: userJiEun.id,
       postId: postDanish.id,
     },
   });
@@ -292,6 +291,14 @@ async function main() {
     data: {
       content: 'Sabor también es muy inteligente. ¡Excelente entrenamiento! 👏',
       authorId: userCarlos.id,
+      postId: postGerman.id,
+    },
+  });
+
+  await prisma.comment.create({
+    data: {
+      content: 'Max ist so süß! 🥰',
+      authorId: userAnna.id,
       postId: postGerman.id,
     },
   });
@@ -308,7 +315,7 @@ async function main() {
   // Comments on Dutch post
   await prisma.comment.create({
     data: {
-      content: 'Loki loves it too! Great photos! 📷',
+      content: 'Loki vindt het ook geweldig! Fantastische foto\'s! 📷',
       authorId: userAnna.id,
       postId: postDutch.id,
     },
@@ -328,20 +335,6 @@ async function main() {
   await prisma.like.create({
     data: {
       userId: userEmma.id,
-      postId: postKorean.id,
-    },
-  });
-
-  await prisma.like.create({
-    data: {
-      userId: userAnna.id,
-      postId: postKorean.id,
-    },
-  });
-
-  await prisma.like.create({
-    data: {
-      userId: userKlaus.id,
       postId: postKorean.id,
     },
   });
@@ -384,6 +377,20 @@ async function main() {
     },
   });
 
+  await prisma.like.create({
+    data: {
+      userId: userAnna.id,
+      postId: postGerman.id,
+    },
+  });
+
+  await prisma.like.create({
+    data: {
+      userId: userJiEun.id,
+      postId: postGerman.id,
+    },
+  });
+
   // French post likes
   await prisma.like.create({
     data: {
@@ -407,6 +414,20 @@ async function main() {
     },
   });
 
+  await prisma.like.create({
+    data: {
+      userId: userAnna.id,
+      postId: postDutch.id,
+    },
+  });
+
+  await prisma.like.create({
+    data: {
+      userId: userKlaus.id,
+      postId: postDutch.id,
+    },
+  });
+
   // Spanish post likes
   await prisma.like.create({
     data: {
@@ -418,6 +439,327 @@ async function main() {
   await prisma.like.create({
     data: {
       userId: userJan.id,
+      postId: postSpanish.id,
+    },
+  });
+
+  // Create follow relationships
+  // 지은 follows Emma, Anna, Klaus
+  await prisma.userFollow.create({
+    data: {
+      followerId: userJiEun.id,
+      followingId: userEmma.id,
+    },
+  });
+
+  await prisma.userFollow.create({
+    data: {
+      followerId: userJiEun.id,
+      followingId: userAnna.id,
+    },
+  });
+
+  await prisma.userFollow.create({
+    data: {
+      followerId: userJiEun.id,
+      followingId: userKlaus.id,
+    },
+  });
+
+  // Emma follows 지은, Klaus, Pierre
+  await prisma.userFollow.create({
+    data: {
+      followerId: userEmma.id,
+      followingId: userJiEun.id,
+    },
+  });
+
+  await prisma.userFollow.create({
+    data: {
+      followerId: userEmma.id,
+      followingId: userKlaus.id,
+    },
+  });
+
+  await prisma.userFollow.create({
+    data: {
+      followerId: userEmma.id,
+      followingId: userPierre.id,
+    },
+  });
+
+  // Anna follows Emma, Klaus, Jan
+  await prisma.userFollow.create({
+    data: {
+      followerId: userAnna.id,
+      followingId: userEmma.id,
+    },
+  });
+
+  await prisma.userFollow.create({
+    data: {
+      followerId: userAnna.id,
+      followingId: userKlaus.id,
+    },
+  });
+
+  await prisma.userFollow.create({
+    data: {
+      followerId: userAnna.id,
+      followingId: userJan.id,
+    },
+  });
+
+  // Klaus follows Jan, Emma, Pierre, Carlos
+  await prisma.userFollow.create({
+    data: {
+      followerId: userKlaus.id,
+      followingId: userJan.id,
+    },
+  });
+
+  await prisma.userFollow.create({
+    data: {
+      followerId: userKlaus.id,
+      followingId: userEmma.id,
+    },
+  });
+
+  await prisma.userFollow.create({
+    data: {
+      followerId: userKlaus.id,
+      followingId: userPierre.id,
+    },
+  });
+
+  await prisma.userFollow.create({
+    data: {
+      followerId: userKlaus.id,
+      followingId: userCarlos.id,
+    },
+  });
+
+  // Create logs for pets
+  // Melody's logs (지은)
+  await prisma.log.create({
+    data: {
+      petId: petMelody.id,
+      type: 'feeding',
+      content: '아침 사료: 스탠다드 양',
+      date: new Date('2026-01-20'),
+    },
+  });
+
+  await prisma.log.create({
+    data: {
+      petId: petMelody.id,
+      type: 'walk',
+      content: '공원 산책 1시간',
+      date: new Date('2026-01-20'),
+    },
+  });
+
+  await prisma.log.create({
+    data: {
+      petId: petMelody.id,
+      type: 'play',
+      content: '장난감으로 30분간 놀이',
+      date: new Date('2026-01-19'),
+    },
+  });
+
+  // Bailey's logs (Emma)
+  await prisma.log.create({
+    data: {
+      petId: petBailey.id,
+      type: 'feeding',
+      content: 'Morning meal - standard portion',
+      date: new Date('2026-01-20'),
+    },
+  });
+
+  await prisma.log.create({
+    data: {
+      petId: petBailey.id,
+      type: 'health',
+      content: 'Grooming session - coat looks healthy',
+      date: new Date('2026-01-18'),
+    },
+  });
+
+  await prisma.log.create({
+    data: {
+      petId: petBailey.id,
+      type: 'walk',
+      content: 'Beach walk for 2 hours',
+      date: new Date('2026-01-17'),
+    },
+  });
+
+  // Loki's logs (Anna)
+  await prisma.log.create({
+    data: {
+      petId: petLoki.id,
+      type: 'feeding',
+      content: 'Morgenmad - standard portion',
+      date: new Date('2026-01-20'),
+    },
+  });
+
+  await prisma.log.create({
+    data: {
+      petId: petLoki.id,
+      type: 'play',
+      content: 'Legende med fjerkat i 15 minutter',
+      date: new Date('2026-01-19'),
+    },
+  });
+
+  // Max's logs (Klaus)
+  await prisma.log.create({
+    data: {
+      petId: petMax.id,
+      type: 'feeding',
+      content: 'Frühstück - große Portion',
+      date: new Date('2026-01-20'),
+    },
+  });
+
+  await prisma.log.create({
+    data: {
+      petId: petMax.id,
+      type: 'health',
+      content: 'Zahnarzt Besuch - alles ist in Ordnung',
+      date: new Date('2026-01-15'),
+    },
+  });
+
+  await prisma.log.create({
+    data: {
+      petId: petMax.id,
+      type: 'walk',
+      content: 'Trainings sitzung im Park - 1.5 Stunden',
+      date: new Date('2026-01-20'),
+    },
+  });
+
+  // Chouchou's logs (Pierre)
+  await prisma.log.create({
+    data: {
+      petId: petChouchou.id,
+      type: 'feeding',
+      content: 'Petit déjeuner - portion standard',
+      date: new Date('2026-01-20'),
+    },
+  });
+
+  await prisma.log.create({
+    data: {
+      petId: petChouchou.id,
+      type: 'play',
+      content: 'Jeu avec des jouets pour chat - 20 minutes',
+      date: new Date('2026-01-19'),
+    },
+  });
+
+  // Lucy's logs (Jan)
+  await prisma.log.create({
+    data: {
+      petId: petLucy.id,
+      type: 'feeding',
+      content: 'Ontbijt - standaard portie',
+      date: new Date('2026-01-20'),
+    },
+  });
+
+  await prisma.log.create({
+    data: {
+      petId: petLucy.id,
+      type: 'walk',
+      content: 'Wandeling in de achterin - 45 minuten',
+      date: new Date('2026-01-20'),
+    },
+  });
+
+  // Sabor's logs (Carlos)
+  await prisma.log.create({
+    data: {
+      petId: petSabor.id,
+      type: 'feeding',
+      content: 'Desayuno - porción grande',
+      date: new Date('2026-01-20'),
+    },
+  });
+
+  await prisma.log.create({
+    data: {
+      petId: petSabor.id,
+      type: 'walk',
+      content: 'Paseo en el campo - 2 horas',
+      date: new Date('2026-01-19'),
+    },
+  });
+
+  // Create badges for posts
+  // Korean post badge
+  await prisma.badge.create({
+    data: {
+      name: 'Adorable',
+      postId: postKorean.id,
+    },
+  });
+
+  // English post badges
+  await prisma.badge.create({
+    data: {
+      name: 'Best Photo',
+      postId: postEnglish.id,
+    },
+  });
+
+  await prisma.badge.create({
+    data: {
+      name: 'Heartwarming',
+      postId: postEnglish.id,
+    },
+  });
+
+  // Danish post badge
+  await prisma.badge.create({
+    data: {
+      name: 'Peaceful',
+      postId: postDanish.id,
+    },
+  });
+
+  // German post badge
+  await prisma.badge.create({
+    data: {
+      name: 'Outstanding',
+      postId: postGerman.id,
+    },
+  });
+
+  // French post badge
+  await prisma.badge.create({
+    data: {
+      name: 'Lovely',
+      postId: postFrench.id,
+    },
+  });
+
+  // Dutch post badge
+  await prisma.badge.create({
+    data: {
+      name: 'Exciting',
+      postId: postDutch.id,
+    },
+  });
+
+  // Spanish post badges
+  await prisma.badge.create({
+    data: {
+      name: 'Inspiring',
       postId: postSpanish.id,
     },
   });

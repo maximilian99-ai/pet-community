@@ -41,6 +41,12 @@ export interface Like {
   createdAt: string;
 }
 
+export interface Badge {
+  id: string;
+  name: string;
+  postId: string;
+}
+
 export interface Post {
   id: string;
   authorId: string;
@@ -52,7 +58,7 @@ export interface Post {
   image?: string;
   likes: Like[];
   comments: Comment[];
-  badges?: string[];
+  badges?: Badge[];
   createdAt: string;
 }
 
@@ -60,3 +66,4 @@ export interface AuthResponse {
   token: string;
   user: Omit<User, 'createdAt'> & { email: string };
 }
+

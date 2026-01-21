@@ -13,7 +13,7 @@
   "nav": {
     "profile": "Profil",
     "feed": "Feed",
-    "dashboard": "Dashboard",
+    "dashboard": "Armaturenbrett",
     "logout": "Abmelden",
     "login": "Anmelden",
     "signup": "Registrieren",
@@ -42,11 +42,27 @@
     "species": "Art",
     "breed": "Rasse",
     "age": "Alter",
-    "followers": "Follower",
+    "followers": "Folger",
     "following": "Folgen",
     "deleteAccount": "Konto löschen",
     "deleteAccountTitle": "Konto löschen",
     "deleteAccountMessage": "Sind Sie sicher, dass Sie Ihr Konto löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "deletePetTitle": "Haustier löschen",
+    "deletePetMessage": "Möchten Sie dieses Haustier wirklich löschen?",
+    "toast": {
+      "profileUpdated": "Profil erfolgreich aktualisiert",
+      "profileUpdateFailed": "Profil konnte nicht aktualisiert werden",
+      "petAdded": "Haustier erfolgreich hinzugefügt",
+      "petAddFailed": "Haustier konnte nicht hinzugefügt werden",
+      "petUpdated": "Haustier erfolgreich aktualisiert",
+      "petUpdateFailed": "Haustier konnte nicht aktualisiert werden",
+      "petDeleted": "Haustier erfolgreich gelöscht",
+      "petDeleteFailed": "Haustier konnte nicht gelöscht werden",
+      "deleteAccountFailed": "Konto konnte nicht gelöscht werden"
+    },
+    "validation": {
+      "nameAndSpeciesRequired": "Bitte Name und Art ausfüllen"
+    },
     "username": "Benutzername"
   },
   "feed": {
@@ -66,12 +82,38 @@
     "postContent": "Beitragsinhalt"
   },
   "dashboard": {
-    "title": "Dashboard",
+    "title": "Armaturenbrett",
     "weeklyHealth": "Wöchentliche Gesundheit",
     "logs": "Logs",
     "stats": "Statistiken",
     "feeding": "Fütterung",
     "walks": "Spaziergänge",
     "health": "Gesundheit"
+  },
+  "log": {
+    "add": "Log hinzufügen",
+    "edit": "Log bearbeiten",
+    "noLogs": "Noch keine Logs",
+    "placeholder": "Log-Inhalt eingeben",
+    "fields": {
+      "type": "Typ",
+      "date": "Datum",
+      "content": "Inhalt"
+    },
+    "types": {
+      "feeding": "Fütterung",
+      "walk": "Spaziergang",
+      "health": "Gesundheit",
+      "play": "Spielen",
+      "other": "Andere"
+    },
+    "validationContentRequired": "Bitte Inhalt ausfüllen",
+    "created": "Log erfolgreich erstellt",
+    "updated": "Log erfolgreich aktualisiert",
+    "deleted": "Log erfolgreich gelöscht",
+    "saveFailed": "Log konnte nicht gespeichert werden",
+    "deleteFailed": "Log konnte nicht gelöscht werden",
+    "deleteTitle": "Log löschen",
+    "deleteConfirm": "Möchten Sie diesen Log wirklich löschen?"
   }
 }

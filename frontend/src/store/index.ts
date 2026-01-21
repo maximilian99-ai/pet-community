@@ -20,8 +20,10 @@ interface AuthState {
   token: string | null;
   isAuthenticated: boolean;
   username: string | null;
+  userId: string | null;
   setToken: (token: string | null) => void;
   setUsername: (username: string | null) => void;
+  setUserId: (userId: string | null) => void;
   logout: () => void;
 }
 
@@ -56,6 +58,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   token: typeof window !== 'undefined' ? localStorage.getItem('token') : null,
   isAuthenticated: typeof window !== 'undefined' ? !!localStorage.getItem('token') : false,
   username: typeof window !== 'undefined' ? localStorage.getItem('username') : null,
+  userId: typeof window !== 'undefined' ? localStorage.getItem('userId') : null,
 
   setToken: (token) => {
     if (token) {
@@ -73,9 +76,18 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
     set({ username });
   },
+  setUserId: (userId) => {
+    if (userId) {
+      localStorage.setItem('userId', userId);
+    } else {
+      localStorage.removeItem('userId');
+    }
+    set({ userId });
+  },
   logout: () => {
     localStorage.removeItem('token');
     localStorage.removeItem('username');
-    set({ token: null, isAuthenticated: false, username: null });
+    localStorage.removeItem('userId');
+    set({ token: null, isAuthenticated: false, username: null, userId: null });
   },
 }));
