@@ -13,8 +13,10 @@ RUN pnpm install
 # Copy backend source code
 COPY backend/ ./
 
-# Generate Prisma client and build
+# Generate Prisma client, push schema to DB, seed data, and build the project
 RUN pnpm prisma:generate
+RUN pnpm prisma:push
+RUN pnpm prisma:seed
 RUN pnpm build
 
 # Keep only production dependencies for the runtime image
