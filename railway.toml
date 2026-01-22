@@ -1,9 +1,10 @@
 [build]
-builder = "NIXPACKS"
+# builder = "NIXPACKS"
+builder = "DOCKERFILE"
 
 [deploy]
-healthcheckPath = "/health"
-healthcheckTimeout = 300
+# healthcheckPath = "/health"
+# healthcheckTimeout = 300
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 10
 
@@ -12,4 +13,4 @@ name = "backend"
 
 [services.variables]
 NODE_ENV = "production"
-PORT = "5001"
+# PORT = "5001"
