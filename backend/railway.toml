@@ -9,7 +9,7 @@ restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 10
 
 [[services]]
-name = "backend"
+# name = "backend"
 
 [services.variables]
 NODE_ENV = "production"

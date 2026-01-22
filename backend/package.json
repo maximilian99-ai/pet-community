@@ -12,7 +12,6 @@
     "prisma:migrate": "prisma migrate dev",
     "prisma:generate": "prisma generate",
     "prisma:seed": "ts-node prisma/seed.ts",
-    "prisma:push": "prisma db push",
     "lint": "eslint src --ext .ts"
   },
   "keywords": [],
