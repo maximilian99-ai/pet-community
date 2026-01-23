@@ -1,4 +1,4 @@
-import express, { Express, Request, Response } from 'express';
+import express, { Express, NextFunction, Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
@@ -16,10 +16,23 @@ import followsRoutes from './routes/follows';
 const app: Express = express();
 const PORT = process.env.PORT || 5001;
 
+const allowedOrigins = (process.env.CORS_ORIGINS
+  ? process.env.CORS_ORIGINS.split(',').map((o) => o.trim()).filter(Boolean)
+  : ['http://localhost:3000', 'https://pet-community-xi.vercel.app']
+);
+
 // Middleware
 app.use(cors({
-  origin: 'https://pet-community-xi.vercel.app',
-  credentials: true
+  origin: (origin, callback) => {
+    if (!origin) {
+      return callback(null, true);
+    }
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error(`CORS blocked origin: ${origin}`));
+  },
+  credentials: true,
 }));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
@@ -38,10 +51,18 @@ app.use('/api/recommendations', recommendationsRoutes);
 app.use('/api/follows', followsRoutes);
 
 // Error handling middleware
-app.use((err: any, req: Request, res: Response, next: Function) => {
-  console.error(err.stack);
+app.use((err: unknown, req: Request, res: Response, _next: NextFunction) => {
+  const message = err instanceof Error ? err.message : String(err);
+  const stack = err instanceof Error ? err.stack : undefined;
+
+  if (stack) {
+    console.error(stack);
+  } else {
+    console.error(err);
+  }
+
   res.status(500).json({
-    error: process.env.NODE_ENV === 'development' ? err.message : 'Internal Server Error',
+    error: process.env.NODE_ENV === 'development' ? message : 'Internal Server Error',
   });
 });
 
