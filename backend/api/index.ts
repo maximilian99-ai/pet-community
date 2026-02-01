@@ -80,4 +80,5 @@ app.use((err: Error & { statusCode?: number }, req: Request, res: Response, _nex
   });
 });
 
+// Vercel 서버리스 함수용 export
 export default app;
