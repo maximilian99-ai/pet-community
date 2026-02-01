@@ -23,11 +23,12 @@ const extractUserIdFromHeader = (req: any): string | null => {
 };
 
 // Get feed (with pagination)
-router.get('/', async (req: any, res: Response) => {
+router.get('/', async (req: AuthRequest, res: Response) => {
   try {
-    const { limit = '10', offset = '0' } = req.query;
-    const take = Math.min(parseInt(limit), 100);
-    const skip = parseInt(offset);
+    const limit = Array.isArray(req.query.limit) ? req.query.limit[0] : req.query.limit || '10';
+    const offset = Array.isArray(req.query.offset) ? req.query.offset[0] : req.query.offset || '0';
+    const take = Math.min(parseInt(limit as string), 100);
+    const skip = parseInt(offset as string);
     // Extract userId from authorization header
     const userId = extractUserIdFromHeader(req);
 
@@ -151,7 +152,7 @@ router.post('/', authenticate, async (req: AuthRequest, res: Response) => {
 });
 
 // Get single post
-router.get('/:postId', async (req: any, res: Response) => {
+router.get('/:postId', async (req: AuthRequest, res: Response) => {
   try {
     const { postId } = req.params;
     // Extract userId from authorization header

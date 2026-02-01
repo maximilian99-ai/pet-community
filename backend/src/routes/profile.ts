@@ -7,7 +7,7 @@ import type { Response } from 'express';
 const router: Router = express.Router();
 
 // Get user profile
-router.get('/:userId', async (req: any, res: Response) => {
+router.get('/:userId', async (req: AuthRequest, res: Response) => {
   try {
     const { userId } = req.params;
 
@@ -109,7 +109,7 @@ router.put('/me', authenticate, async (req: AuthRequest, res: Response) => {
 });
 
 // Get user's pets
-router.get('/:userId/pets', async (req: any, res: Response) => {
+router.get('/:userId/pets', async (req: AuthRequest, res: Response) => {
   try {
     const { userId } = req.params;
 

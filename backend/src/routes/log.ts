@@ -6,7 +6,7 @@ import type { Response } from 'express';
 const router: Router = express.Router();
 
 // Get logs for a pet
-router.get('/pet/:petId', async (req: any, res: Response) => {
+router.get('/pet/:petId', async (req: AuthRequest, res: Response) => {
   try {
     const { petId } = req.params;
     const { startDate, endDate, type } = req.query;
@@ -14,16 +14,18 @@ router.get('/pet/:petId', async (req: any, res: Response) => {
     const whereClause: any = { petId };
 
     if (type) {
-      whereClause.type = type;
+      whereClause.type = Array.isArray(type) ? type[0] : type;
     }
 
     if (startDate || endDate) {
       whereClause.date = {};
       if (startDate) {
-        whereClause.date.gte = new Date(startDate);
+        const dateStr = Array.isArray(startDate) ? startDate[0] : startDate;
+        whereClause.date.gte = new Date(dateStr as string);
       }
       if (endDate) {
-        whereClause.date.lte = new Date(endDate);
+        const dateStr = Array.isArray(endDate) ? endDate[0] : endDate;
+        whereClause.date.lte = new Date(dateStr as string);
       }
     }
 
@@ -104,7 +106,7 @@ router.delete('/:logId', authenticate, async (req: AuthRequest, res: Response) =
 });
 
 // Get weekly stats for a pet
-router.get('/pet/:petId/weekly-stats', async (req: any, res: Response) => {
+router.get('/pet/:petId/weekly-stats', async (req: AuthRequest, res: Response) => {
   try {
     const { petId } = req.params;
 

@@ -1,15 +1,16 @@
 import express, { Router } from 'express';
 import prisma from '@/utils/prisma';
 import { cacheGet, cacheSet } from '@/utils/cache';
+import { AuthRequest } from '@/middleware/auth';
 import type { Response } from 'express';
 
 const router: Router = express.Router();
 
 // Get recommended posts (popular posts with most likes/comments)
-router.get('/', async (req: any, res: Response) => {
+router.get('/', async (req: AuthRequest, res: Response) => {
   try {
-    const { limit = '10' } = req.query;
-    const take = Math.min(parseInt(limit), 50);
+    const limit = Array.isArray(req.query.limit) ? req.query.limit[0] : req.query.limit || '10';
+    const take = Math.min(parseInt(limit as string), 50);
 
     // Check cache first
     const cacheKey = `recommendations:${take}`;
@@ -79,10 +80,10 @@ router.get('/', async (req: any, res: Response) => {
 });
 
 // Get best posts (with badges)
-router.get('/best', async (req: any, res: Response) => {
+router.get('/best', async (req: AuthRequest, res: Response) => {
   try {
-    const { limit = '10' } = req.query;
-    const take = Math.min(parseInt(limit), 50);
+    const limit = Array.isArray(req.query.limit) ? req.query.limit[0] : req.query.limit || '10';
+    const take = Math.min(parseInt(limit as string), 50);
 
     const postsWithBadges = await prisma.post.findMany({
       where: {
@@ -118,10 +119,10 @@ router.get('/best', async (req: any, res: Response) => {
 });
 
 // Get recommended users (based on followers/following)
-router.get('/users', async (req: any, res: Response) => {
+router.get('/users', async (req: AuthRequest, res: Response) => {
   try {
-    const { limit = '10' } = req.query;
-    const take = Math.min(parseInt(limit), 50);
+    const limit = Array.isArray(req.query.limit) ? req.query.limit[0] : req.query.limit || '10';
+    const take = Math.min(parseInt(limit as string), 50);
 
     const users = await prisma.user.findMany({
       take,

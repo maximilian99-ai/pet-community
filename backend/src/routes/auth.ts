@@ -8,7 +8,7 @@ import type { Response } from 'express';
 const router: Router = express.Router();
 
 // Sign up
-router.post('/signup', async (req: any, res: Response) => {
+router.post('/signup', async (req: AuthRequest, res: Response) => {
   try {
     const { email, username, password } = req.body;
 
@@ -65,7 +65,7 @@ router.post('/signup', async (req: any, res: Response) => {
 });
 
 // Login
-router.post('/login', async (req: any, res: Response) => {
+router.post('/login', async (req: AuthRequest, res: Response) => {
   try {
     const { email, password } = req.body;
 
