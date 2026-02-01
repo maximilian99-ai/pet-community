@@ -1,17 +1,16 @@
 {
   "version": 2,
-  "buildCommand": "pnpm run vercel-build && pnpm run build",
-  "outputDirectory": "dist",
+  "buildCommand": "prisma generate && tsc",
   "builds": [
     {
-      "src": "dist/index.js",
+      "src": "src/index.ts",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/dist/index.js"
+      "dest": "src/index.ts"
     }
   ]
 }
