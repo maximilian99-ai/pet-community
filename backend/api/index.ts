@@ -1,4 +1,4 @@
-import express, { Express, Request, Response, NextFunction } from 'express';
+import express, { Application, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
@@ -14,7 +14,7 @@ import logRoutes from '../src/routes/log';
 import recommendationsRoutes from '../src/routes/recommendations';
 import followsRoutes from '../src/routes/follows';
 
-const app: Express = express();
+const app: Application = express();
 
 // Middleware - 정확한 CORS 설정
 const corsOrigins = [
