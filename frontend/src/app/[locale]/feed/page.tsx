@@ -6,12 +6,12 @@ import { useAuthStore } from '@/store';
 import { useGetPosts } from '@/hooks/usePost';
 import { useCreatePost, useAddComment, useLikePost, useDeleteComment, useUpdateComment, useUpdatePost, useDeletePost } from '@/hooks/usePost';
 import { Post } from '@/types';
-import { useState, useRef } from 'react';
+import { useState, useRef, Suspense } from 'react';
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
 
-export default function FeedPage() {
+function FeedPageContent() {
   const t = useTranslations();
   const { colorMode } = useColorMode();
   const auth = useAuthStore(state => state.isAuthenticated);
@@ -605,5 +605,13 @@ export default function FeedPage() {
         </Modal>
       )}
     </Box>
+  );
+}
+
+export default function FeedPage() {
+  return (
+    <Suspense fallback={<Box p={8}><Text>Loading...</Text></Box>}>
+      <FeedPageContent />
+    </Suspense>
   );
 }

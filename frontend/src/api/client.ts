@@ -7,6 +7,8 @@ export const apiClient = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  // Reduce timeout for faster failure detection
+  timeout: 10000,
 });
 
 // Add token to requests
@@ -25,14 +27,15 @@ apiClient.interceptors.request.use(
   }
 );
 
-// Handle errors
+// Handle errors with optimized response handling
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
       if (typeof window !== 'undefined') {
         localStorage.removeItem('token');
-        window.location.href = '/login';
+        // Use replace to avoid infinite redirects
+        window.location.replace('/login');
       }
     }
     return Promise.reject(error);

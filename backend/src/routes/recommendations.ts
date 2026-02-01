@@ -1,5 +1,6 @@
 import express, { Router } from 'express';
 import prisma from '@/utils/prisma';
+import { cacheGet, cacheSet } from '@/utils/cache';
 import type { Response } from 'express';
 
 const router: Router = express.Router();
@@ -9,6 +10,16 @@ router.get('/', async (req: any, res: Response) => {
   try {
     const { limit = '10' } = req.query;
     const take = Math.min(parseInt(limit), 50);
+
+    // Check cache first
+    const cacheKey = `recommendations:${take}`;
+    let cachedPosts = cacheGet(cacheKey);
+
+    if (cachedPosts) {
+      console.log(`[REC] 추천 포스트 캐시 히트 - limit: ${take}`);
+      res.json(cachedPosts);
+      return;
+    }
 
     // Get posts from the last 30 days
     const thirtyDaysAgo = new Date();
@@ -41,6 +52,13 @@ router.get('/', async (req: any, res: Response) => {
             avatar: true,
           },
         },
+        pet: {
+          select: {
+            id: true,
+            name: true,
+            species: true,
+          },
+        },
         _count: {
           select: {
             likes: true,
@@ -49,6 +67,9 @@ router.get('/', async (req: any, res: Response) => {
         },
       },
     });
+
+    // Cache for 5 minutes
+    cacheSet(cacheKey, posts, 300000);
 
     res.json(posts);
   } catch (error) {

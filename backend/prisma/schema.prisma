@@ -26,6 +26,9 @@ model User {
   likes     Like[]
   followers UserFollow[] @relation("follower")
   following UserFollow[] @relation("following")
+
+  @@index([createdAt])
+  @@index([email])
 }
 
 model UserFollow {
@@ -53,6 +56,9 @@ model Pet {
 
   logs      Log[]
   posts     Post[]
+
+  @@index([userId])
+  @@index([createdAt])
 }
 
 model Log {
@@ -64,6 +70,10 @@ model Log {
   date      DateTime
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([petId])
+  @@index([date])
+  @@index([createdAt])
 }
 
 model Post {
@@ -81,6 +91,10 @@ model Post {
   comments  Comment[]
   likes     Like[]
   badges    Badge[]
+
+  @@index([authorId])
+  @@index([petId])
+  @@index([createdAt])
 }
 
 model Comment {

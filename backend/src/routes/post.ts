@@ -1,6 +1,7 @@
 import express, { Router } from 'express';
 import prisma from '@/utils/prisma';
 import { authenticate, AuthRequest } from '@/middleware/auth';
+import { cacheGet, cacheSet, cacheDelete, cacheClear } from '@/utils/cache';
 import type { Response } from 'express';
 
 const router: Router = express.Router();
@@ -11,6 +12,16 @@ router.get('/', async (req: any, res: Response) => {
     const { limit = '10', offset = '0' } = req.query;
     const take = Math.min(parseInt(limit), 100);
     const skip = parseInt(offset);
+
+    // Cache key for feed
+    const cacheKey = `feed:${take}:${skip}`;
+    let cachedData = cacheGet(cacheKey);
+
+    if (cachedData) {
+      console.log(`[POST] 피드 캐시 히트 - limit: ${take}, offset: ${skip}`);
+      res.json(cachedData);
+      return;
+    }
 
     const posts = await prisma.post.findMany({
       skip,
@@ -24,9 +35,22 @@ router.get('/', async (req: any, res: Response) => {
             avatar: true,
           },
         },
-        pet: true,
-        likes: true,
+        pet: {
+          select: {
+            id: true,
+            name: true,
+            species: true,
+            image: true,
+          },
+        },
+        likes: {
+          select: {
+            userId: true,
+          },
+        },
         comments: {
+          take: 3, // Limit initial comments
+          orderBy: { createdAt: 'desc' },
           include: {
             author: {
               select: {
@@ -37,19 +61,23 @@ router.get('/', async (req: any, res: Response) => {
             },
           },
         },
-        badges: true,
       },
     });
 
     const totalCount = await prisma.post.count();
 
-    console.log(`[POST] 피드 조회 성공 - 포스트 수: ${posts.length}, 총합: ${totalCount}`);
-    res.json({
+    const responseData = {
       posts,
       total: totalCount,
       limit: take,
       offset: skip,
-    });
+    };
+
+    // Cache for 30 seconds
+    cacheSet(cacheKey, responseData, 30000);
+
+    console.log(`[POST] 피드 조회 성공 - 포스트 수: ${posts.length}, 총합: ${totalCount}`);
+    res.json(responseData);
   } catch (error) {
     console.error('[POST] 피드 조회 오류:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -87,6 +115,9 @@ router.post('/', authenticate, async (req: AuthRequest, res: Response) => {
       },
     });
 
+    // Invalidate feed cache
+    cacheClear('^feed:');
+
     console.log(`[POST] 포스트 생성 성공 - 제목: ${title}, ID: ${post.id}, 작성자: ${post.author.username}`);
     res.status(201).json(post);
   } catch (error) {
@@ -100,6 +131,16 @@ router.get('/:postId', async (req: any, res: Response) => {
   try {
     const { postId } = req.params;
 
+    // Cache key for single post
+    const cacheKey = `post:${postId}`;
+    let cachedPost = cacheGet(cacheKey);
+
+    if (cachedPost) {
+      console.log(`[POST] 포스트 캐시 히트 - ID: ${postId}`);
+      res.json(cachedPost);
+      return;
+    }
+
     const post = await prisma.post.findUnique({
       where: { id: postId },
       include: {
@@ -110,8 +151,19 @@ router.get('/:postId', async (req: any, res: Response) => {
             avatar: true,
           },
         },
-        pet: true,
-        likes: true,
+        pet: {
+          select: {
+            id: true,
+            name: true,
+            species: true,
+            image: true,
+          },
+        },
+        likes: {
+          select: {
+            userId: true,
+          },
+        },
         comments: {
           include: {
             author: {
@@ -122,8 +174,8 @@ router.get('/:postId', async (req: any, res: Response) => {
               },
             },
           },
+          orderBy: { createdAt: 'desc' },
         },
-        badges: true,
       },
     });
 
@@ -132,6 +184,9 @@ router.get('/:postId', async (req: any, res: Response) => {
       res.status(404).json({ error: 'Post not found' });
       return;
     }
+
+    // Cache for 1 minute
+    cacheSet(cacheKey, post, 60000);
 
     console.log(`[POST] 포스트 조회 성공 - 제목: ${post.title}, ID: ${postId}`);
     res.json(post);
