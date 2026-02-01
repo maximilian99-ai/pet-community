@@ -1,5 +1,5 @@
 import express, { Express } from 'express';
-import profileRoutes from '@/routes/profile';
+import profileRoutes from '../routes/profile';
 
 describe('Profile Routes', () => {
   it('should have profile routes defined', () => {

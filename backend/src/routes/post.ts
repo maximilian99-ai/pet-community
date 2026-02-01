@@ -1,8 +1,8 @@
 import express, { Router } from 'express';
-import prisma from '@/utils/prisma';
-import { authenticate, AuthRequest } from '@/middleware/auth';
-import { cacheGet, cacheSet, cacheDelete, cacheClear } from '@/utils/cache';
-import { verifyToken } from '@/utils/jwt';
+import prisma from '../utils/prisma';
+import { authenticate, AuthRequest } from '../middleware/auth';
+import { cacheGet, cacheSet, cacheDelete, cacheClear } from '../utils/cache';
+import { verifyToken } from '../utils/jwt';
 import type { Response } from 'express';
 
 const router: Router = express.Router();

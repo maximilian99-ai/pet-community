@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import { authenticate, AuthRequest } from '@/middleware/auth';
-import * as jwtUtils from '@/utils/jwt';
+import { authenticate, AuthRequest } from '../middleware/auth';
+import * as jwtUtils from '../utils/jwt';
 
 describe('Auth Middleware', () => {
   let mockRequest: Partial<AuthRequest>;

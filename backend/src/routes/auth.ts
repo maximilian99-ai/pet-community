@@ -1,8 +1,8 @@
 import express, { Router } from 'express';
 import bcryptjs from 'bcryptjs';
-import prisma from '@/utils/prisma';
-import { generateToken } from '@/utils/jwt';
-import { authenticate, AuthRequest } from '@/middleware/auth';
+import prisma from '../utils/prisma';
+import { generateToken } from '../utils/jwt';
+import { authenticate, AuthRequest } from '../middleware/auth';
 import type { Response } from 'express';
 
 const router: Router = express.Router();

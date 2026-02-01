@@ -1,4 +1,4 @@
-import { generateToken, verifyToken, decodeToken, TokenPayload } from '@/utils/jwt';
+import { generateToken, verifyToken, decodeToken, TokenPayload } from '../utils/jwt';
 
 describe('JWT Utilities', () => {
   const payload: TokenPayload = {
