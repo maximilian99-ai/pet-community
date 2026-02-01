@@ -1,9 +1,8 @@
 import express, { Router } from 'express';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../utils/prisma';
 import { authenticate, AuthRequest } from '../middleware/auth';
 import type { Response } from 'express';
 
-const prisma = new PrismaClient();
 const router: Router = express.Router();
 
 // Follow a user
