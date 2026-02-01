@@ -7,7 +7,7 @@ import { useGetPosts } from '@/hooks/usePost';
 import { useCreatePost, useAddComment, useLikePost, useDeleteComment, useUpdateComment, useUpdatePost, useDeletePost } from '@/hooks/usePost';
 import { Post } from '@/types';
 import { useState, useRef } from 'react';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
 
@@ -70,6 +70,8 @@ export default function FeedPage() {
     setPostData({ title: '', content: '', image: '' });
     createPostDisclosure.onOpen();
   };
+
+  const router = useRouter();
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -265,7 +267,7 @@ export default function FeedPage() {
               <Card width="100%" bg={colorMode === 'dark' ? 'gray.700' : 'white'}>
                 <CardBody>
                   <Flex align="center" justify="space-between" mb={3}>
-                    <Heading size="sm">{t('feed.popular') || 'Popular Posts'}</Heading>
+                    <Heading size="sm">{t('feed.bestPost') || 'Popular Posts'}</Heading>
                     <TopBadge />
                   </Flex>
                   <VStack spacing={2} align="stretch">
@@ -276,7 +278,7 @@ export default function FeedPage() {
                         borderRadius="md"
                         bg={colorMode === 'dark' ? 'gray.600' : 'gray.50'}
                       >
-                        <Flex align="center" justify="space-between" gap={3}>
+                        <Flex align="center" justify="space-between" gap={3} onClick={() => { router.push(`/${locale}/feed?postId=${post.id}`) }} cursor={'pointer'}>
                           <Box flex={1} minW={0}>
                             <HStack spacing={2} mb={1}>
                               <Text fontWeight="bold" noOfLines={1}>
