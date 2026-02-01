@@ -1,16 +1,14 @@
 {
-  "version": 2,
-  "buildCommand": "prisma generate && tsc",
-  "builds": [
+  "buildCommand": "pnpm install --prod=false && pnpm prisma generate && pnpm prisma migrate deploy && pnpm run build",
+  "outputDirectory": "dist",
+  "installCommand": "pnpm install --prod=false",
+  "env": {
+    "NODE_ENV": "production"
+  },
+  "rewrites": [
     {
-      "src": "api/index.ts",
-      "use": "@vercel/node"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/api/index.ts"
+      "source": "/(.*)",
+      "destination": "/index.js"
     }
   ]
 }

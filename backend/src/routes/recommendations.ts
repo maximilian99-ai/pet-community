@@ -1,26 +1,14 @@
 import express, { Router } from 'express';
-import prisma from '../utils/prisma';
-import { cacheGet, cacheSet } from '../utils/cache';
-import { AuthRequest } from '../middleware/auth';
+import prisma from '@/utils/prisma';
 import type { Response } from 'express';
 
 const router: Router = express.Router();
 
 // Get recommended posts (popular posts with most likes/comments)
-router.get('/', async (req: AuthRequest, res: Response) => {
+router.get('/', async (req: any, res: Response) => {
   try {
-    const limit = Array.isArray(req.query.limit) ? req.query.limit[0] : req.query.limit || '10';
-    const take = Math.min(parseInt(limit as string), 50);
-
-    // Check cache first
-    const cacheKey = `recommendations:${take}`;
-    let cachedPosts = cacheGet(cacheKey);
-
-    if (cachedPosts) {
-      console.log(`[REC] 추천 포스트 캐시 히트 - limit: ${take}`);
-      res.json(cachedPosts);
-      return;
-    }
+    const { limit = '10' } = req.query;
+    const take = Math.min(parseInt(limit), 50);
 
     // Get posts from the last 30 days
     const thirtyDaysAgo = new Date();
@@ -53,13 +41,6 @@ router.get('/', async (req: AuthRequest, res: Response) => {
             avatar: true,
           },
         },
-        pet: {
-          select: {
-            id: true,
-            name: true,
-            species: true,
-          },
-        },
         _count: {
           select: {
             likes: true,
@@ -69,9 +50,6 @@ router.get('/', async (req: AuthRequest, res: Response) => {
       },
     });
 
-    // Cache for 5 minutes
-    cacheSet(cacheKey, posts, 300000);
-
     res.json(posts);
   } catch (error) {
     console.error('Get recommendations error:', error);
@@ -80,10 +58,10 @@ router.get('/', async (req: AuthRequest, res: Response) => {
 });
 
 // Get best posts (with badges)
-router.get('/best', async (req: AuthRequest, res: Response) => {
+router.get('/best', async (req: any, res: Response) => {
   try {
-    const limit = Array.isArray(req.query.limit) ? req.query.limit[0] : req.query.limit || '10';
-    const take = Math.min(parseInt(limit as string), 50);
+    const { limit = '10' } = req.query;
+    const take = Math.min(parseInt(limit), 50);
 
     const postsWithBadges = await prisma.post.findMany({
       where: {
@@ -119,10 +97,10 @@ router.get('/best', async (req: AuthRequest, res: Response) => {
 });
 
 // Get recommended users (based on followers/following)
-router.get('/users', async (req: AuthRequest, res: Response) => {
+router.get('/users', async (req: any, res: Response) => {
   try {
-    const limit = Array.isArray(req.query.limit) ? req.query.limit[0] : req.query.limit || '10';
-    const take = Math.min(parseInt(limit as string), 50);
+    const { limit = '10' } = req.query;
+    const take = Math.min(parseInt(limit), 50);
 
     const users = await prisma.user.findMany({
       take,

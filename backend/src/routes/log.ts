@@ -1,12 +1,12 @@
 import express, { Router } from 'express';
-import prisma from '../utils/prisma';
-import { authenticate, AuthRequest } from '../middleware/auth';
+import prisma from '@/utils/prisma';
+import { authenticate, AuthRequest } from '@/middleware/auth';
 import type { Response } from 'express';
 
 const router: Router = express.Router();
 
 // Get logs for a pet
-router.get('/pet/:petId', async (req: AuthRequest, res: Response) => {
+router.get('/pet/:petId', async (req: any, res: Response) => {
   try {
     const { petId } = req.params;
     const { startDate, endDate, type } = req.query;
@@ -14,18 +14,16 @@ router.get('/pet/:petId', async (req: AuthRequest, res: Response) => {
     const whereClause: any = { petId };
 
     if (type) {
-      whereClause.type = Array.isArray(type) ? type[0] : type;
+      whereClause.type = type;
     }
 
     if (startDate || endDate) {
       whereClause.date = {};
       if (startDate) {
-        const dateStr = Array.isArray(startDate) ? startDate[0] : startDate;
-        whereClause.date.gte = new Date(dateStr as string);
+        whereClause.date.gte = new Date(startDate);
       }
       if (endDate) {
-        const dateStr = Array.isArray(endDate) ? endDate[0] : endDate;
-        whereClause.date.lte = new Date(dateStr as string);
+        whereClause.date.lte = new Date(endDate);
       }
     }
 
@@ -106,7 +104,7 @@ router.delete('/:logId', authenticate, async (req: AuthRequest, res: Response) =
 });
 
 // Get weekly stats for a pet
-router.get('/pet/:petId/weekly-stats', async (req: AuthRequest, res: Response) => {
+router.get('/pet/:petId/weekly-stats', async (req: any, res: Response) => {
   try {
     const { petId } = req.params;
 

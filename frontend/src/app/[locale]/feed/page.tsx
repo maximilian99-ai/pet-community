@@ -6,12 +6,12 @@ import { useAuthStore } from '@/store';
 import { useGetPosts } from '@/hooks/usePost';
 import { useCreatePost, useAddComment, useLikePost, useDeleteComment, useUpdateComment, useUpdatePost, useDeletePost } from '@/hooks/usePost';
 import { Post } from '@/types';
-import { useState, useRef, Suspense, useEffect } from 'react';
-import { usePathname, useSearchParams, useRouter } from 'next/navigation';
+import { useState, useRef } from 'react';
+import { usePathname, useSearchParams } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
 
-function FeedPageContent() {
+export default function FeedPage() {
   const t = useTranslations();
   const { colorMode } = useColorMode();
   const auth = useAuthStore(state => state.isAuthenticated);
@@ -29,6 +29,7 @@ function FeedPageContent() {
   const [postData, setPostData] = useState({ title: '', content: '', image: '' });
   const [commentData, setCommentData] = useState<{ [key: string]: string }>({});
   const [editingComment, setEditingComment] = useState<{ [key: string]: string }>({});
+  const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set());
   const [editingPost, setEditingPost] = useState<string | null>(null);
   const [editPostData, setEditPostData] = useState({ title: '', content: '' });
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -36,19 +37,6 @@ function FeedPageContent() {
   const editPostDisclosure = useDisclosure();
 
   const posts: Post[] = feedData?.posts || [];
-
-  // 초기화: 백엔드에서 제공하는 isLikedByCurrentUser 정보 사용
-  const [likedPostsMap, setLikedPostsMap] = useState<{[key: string]: boolean}>({});
-
-  useEffect(() => {
-    if (feedData?.posts && feedData.posts.length > 0) {
-      const newLikedMap: {[key: string]: boolean} = {};
-      (feedData.posts as Post[]).forEach(post => {
-        newLikedMap[post.id] = post.isLikedByCurrentUser || false;
-      });
-      setLikedPostsMap(newLikedMap);
-    }
-  }, [feedData?.posts]);
 
   const TopBadge = () => (
     <Badge
@@ -82,8 +70,6 @@ function FeedPageContent() {
     setPostData({ title: '', content: '', image: '' });
     createPostDisclosure.onOpen();
   };
-
-  const router = useRouter();
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -230,7 +216,14 @@ function FeedPageContent() {
   const handleLikePost = async (postId: string) => {
     try {
       await likePostMutation.mutateAsync(postId);
-      // UI 업데이트는 서버에서 받은 새로운 데이터로 자동 처리됨
+      
+      const newLikedPosts = new Set(likedPosts);
+      if (newLikedPosts.has(postId)) {
+        newLikedPosts.delete(postId);
+      } else {
+        newLikedPosts.add(postId);
+      }
+      setLikedPosts(newLikedPosts);
       refetch();
     } catch (error) {
       console.error('Failed to like post:', error);
@@ -272,7 +265,7 @@ function FeedPageContent() {
               <Card width="100%" bg={colorMode === 'dark' ? 'gray.700' : 'white'}>
                 <CardBody>
                   <Flex align="center" justify="space-between" mb={3}>
-                    <Heading size="sm">{t('feed.bestPost') || 'Popular Posts'}</Heading>
+                    <Heading size="sm">{t('feed.popular') || 'Popular Posts'}</Heading>
                     <TopBadge />
                   </Flex>
                   <VStack spacing={2} align="stretch">
@@ -283,7 +276,7 @@ function FeedPageContent() {
                         borderRadius="md"
                         bg={colorMode === 'dark' ? 'gray.600' : 'gray.50'}
                       >
-                        <Flex align="center" justify="space-between" gap={3} onClick={() => { router.push(`/${locale}/feed?postId=${post.id}`) }} cursor={'pointer'}>
+                        <Flex align="center" justify="space-between" gap={3}>
                           <Box flex={1} minW={0}>
                             <HStack spacing={2} mb={1}>
                               <Text fontWeight="bold" noOfLines={1}>
@@ -391,7 +384,7 @@ function FeedPageContent() {
                         onClick={() => handleLikePost(post.id)}
                         isLoading={likePostMutation.isPending}
                       >
-                        {likedPostsMap[post.id] ? '❤️' : '🤍'} {post.likes?.length || 0}
+                        {likedPosts.has(post.id) ? '❤️' : '🤍'} {post.likes?.length || 0}
                       </Button>
                       <Button size="sm" variant="ghost">
                         💬 {post.comments?.length || 0}
@@ -610,13 +603,5 @@ function FeedPageContent() {
         </Modal>
       )}
     </Box>
-  );
-}
-
-export default function FeedPage() {
-  return (
-    <Suspense fallback={<Box p={8}><Text>Loading...</Text></Box>}>
-      <FeedPageContent />
-    </Suspense>
   );
 }

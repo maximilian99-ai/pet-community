@@ -1,5 +1,5 @@
 import express, { Express } from 'express';
-import postRoutes from '../routes/post';
+import postRoutes from '@/routes/post';
 
 describe('Post Routes', () => {
   it('should have post routes defined', () => {

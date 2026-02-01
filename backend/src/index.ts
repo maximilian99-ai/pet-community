@@ -1,6 +1,7 @@
-import express, { Express, Request, Response, NextFunction } from 'express';
+import express, { Express, NextFunction, Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import prisma from './utils/prisma';
 
 // Load environment variables
 dotenv.config();
@@ -16,37 +17,33 @@ import followsRoutes from './routes/follows';
 const app: Express = express();
 const PORT = process.env.PORT || 5001;
 
-// Middleware - 정확한 CORS 설정
-const corsOrigins = [
-  'http://localhost:3000',
-  'https://pet-community-xi.vercel.app',
-  process.env.FRONTEND_URL || '',
-].filter((origin): origin is string => Boolean(origin));
+const allowedOrigins = (process.env.CORS_ORIGINS
+  ? process.env.CORS_ORIGINS.split(',').map((o) => o.trim()).filter(Boolean)
+  : ['http://localhost:3000', 'https://pet-community-xi.vercel.app']
+);
 
-const corsOptions = {
-  origin: corsOrigins,
+// Middleware
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin) {
+      return callback(null, true);
+    }
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error(`CORS blocked origin: ${origin}`));
+  },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  maxAge: 86400,
-};
-
-app.use(cors(corsOptions));
+}));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
-
-// 요청 로깅 미들웨어 (디버깅용)
-app.use((req: Request, res: Response, next: NextFunction) => {
-  console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
-  next();
-});
 
 // Health check
 app.get('/health', (req: Request, res: Response) => {
   res.json({ status: 'OK', message: 'Pet Community API is running' });
 });
 
-// API 라우터
+// Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/profiles', profileRoutes);
 app.use('/api/posts', postRoutes);
@@ -54,37 +51,30 @@ app.use('/api/logs', logRoutes);
 app.use('/api/recommendations', recommendationsRoutes);
 app.use('/api/follows', followsRoutes);
 
-// 404 핸들러
-app.use((req: Request, res: Response) => {
-  res.status(404).json({
-    error: 'Not Found',
-    path: req.path,
+// Error handling middleware
+app.use((err: unknown, req: Request, res: Response, _next: NextFunction) => {
+  const message = err instanceof Error ? err.message : String(err);
+  const stack = err instanceof Error ? err.stack : undefined;
+
+  if (stack) {
+    console.error(stack);
+  } else {
+    console.error(err);
+  }
+
+  res.status(500).json({
+    error: process.env.NODE_ENV === 'development' ? message : 'Internal Server Error',
   });
 });
 
-// 에러 처리 미들웨어
-app.use((err: Error & { statusCode?: number }, req: Request, res: Response, _next: NextFunction) => {
-  console.error('Error:', {
-    message: err.message,
-    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
-    path: req.path,
-    method: req.method,
-  });
-
-  const statusCode = err.statusCode ?? 500;
-  const message = process.env.NODE_ENV === 'development' ? err.message : 'Internal Server Error';
-
-  res.status(statusCode).json({
-    error: message,
-    ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
-  });
+app.listen(PORT, async () => {
+  console.log(`Server is running on port ${PORT}`);
+  
+  // Test database connection
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    console.log('✅ Database connection successful');
+  } catch (error) {
+    console.error('❌ Database connection failed:', error);
+  }
 });
-
-// Local 환경에서만 listen
-if (process.env.VERCEL !== 'true' && require.main === module) {
-  app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-  });
-}
-
-export default app;

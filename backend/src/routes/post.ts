@@ -1,46 +1,16 @@
 import express, { Router } from 'express';
-import prisma from '../utils/prisma';
-import { authenticate, AuthRequest } from '../middleware/auth';
-import { cacheGet, cacheSet, cacheDelete, cacheClear } from '../utils/cache';
-import { verifyToken } from '../utils/jwt';
+import prisma from '@/utils/prisma';
+import { authenticate, AuthRequest } from '@/middleware/auth';
 import type { Response } from 'express';
 
 const router: Router = express.Router();
 
-// Helper function to extract userId from authorization header
-const extractUserIdFromHeader = (req: any): string | null => {
-  try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return null;
-    }
-    const token = authHeader.slice(7);
-    const payload = verifyToken(token);
-    return payload?.userId || null;
-  } catch (error) {
-    return null;
-  }
-};
-
 // Get feed (with pagination)
-router.get('/', async (req: AuthRequest, res: Response) => {
+router.get('/', async (req: any, res: Response) => {
   try {
-    const limit = Array.isArray(req.query.limit) ? req.query.limit[0] : req.query.limit || '10';
-    const offset = Array.isArray(req.query.offset) ? req.query.offset[0] : req.query.offset || '0';
-    const take = Math.min(parseInt(limit as string), 100);
-    const skip = parseInt(offset as string);
-    // Extract userId from authorization header
-    const userId = extractUserIdFromHeader(req);
-
-    // Cache key for feed
-    const cacheKey = `feed:${take}:${skip}`;
-    let cachedData = cacheGet(cacheKey);
-
-    if (cachedData) {
-      console.log(`[POST] 피드 캐시 히트 - limit: ${take}, offset: ${skip}`);
-      res.json(cachedData);
-      return;
-    }
+    const { limit = '10', offset = '0' } = req.query;
+    const take = Math.min(parseInt(limit), 100);
+    const skip = parseInt(offset);
 
     const posts = await prisma.post.findMany({
       skip,
@@ -54,22 +24,9 @@ router.get('/', async (req: AuthRequest, res: Response) => {
             avatar: true,
           },
         },
-        pet: {
-          select: {
-            id: true,
-            name: true,
-            species: true,
-            image: true,
-          },
-        },
-        likes: {
-          select: {
-            userId: true,
-          },
-        },
+        pet: true,
+        likes: true,
         comments: {
-          take: 3, // Limit initial comments
-          orderBy: { createdAt: 'desc' },
           include: {
             author: {
               select: {
@@ -80,32 +37,27 @@ router.get('/', async (req: AuthRequest, res: Response) => {
             },
           },
         },
+        badges: true,
       },
     });
 
     const totalCount = await prisma.post.count();
 
-    // Add current user's like status to each post
-    const postsWithLikeStatus = posts.map(post => ({
-      ...post,
-      isLikedByCurrentUser: userId ? post.likes.some(like => like.userId === userId) : false,
-    }));
-
-    const responseData = {
-      posts: postsWithLikeStatus,
+    console.log(`[POST] 피드 조회 성공 - 포스트 수: ${posts.length}, 총합: ${totalCount}`);
+    res.json({
+      posts,
       total: totalCount,
       limit: take,
       offset: skip,
-    };
-
-    // Cache for 30 seconds
-    cacheSet(cacheKey, responseData, 30000);
-
-    console.log(`[POST] 피드 조회 성공 - 포스트 수: ${posts.length}, 총합: ${totalCount}`);
-    res.json(responseData);
+    });
   } catch (error) {
     console.error('[POST] 피드 조회 오류:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    const isDev = process.env.NODE_ENV !== 'production';
+    res.status(500).json({ 
+      error: 'Internal server error',
+      message: isDev ? message : undefined 
+    });
   }
 });
 
@@ -140,9 +92,6 @@ router.post('/', authenticate, async (req: AuthRequest, res: Response) => {
       },
     });
 
-    // Invalidate feed cache
-    cacheClear('^feed:');
-
     console.log(`[POST] 포스트 생성 성공 - 제목: ${title}, ID: ${post.id}, 작성자: ${post.author.username}`);
     res.status(201).json(post);
   } catch (error) {
@@ -152,21 +101,9 @@ router.post('/', authenticate, async (req: AuthRequest, res: Response) => {
 });
 
 // Get single post
-router.get('/:postId', async (req: AuthRequest, res: Response) => {
+router.get('/:postId', async (req: any, res: Response) => {
   try {
     const { postId } = req.params;
-    // Extract userId from authorization header
-    const userId = extractUserIdFromHeader(req);
-
-    // Cache key for single post
-    const cacheKey = `post:${postId}`;
-    let cachedPost = cacheGet(cacheKey);
-
-    if (cachedPost) {
-      console.log(`[POST] 포스트 캐시 히트 - ID: ${postId}`);
-      res.json(cachedPost);
-      return;
-    }
 
     const post = await prisma.post.findUnique({
       where: { id: postId },
@@ -178,19 +115,8 @@ router.get('/:postId', async (req: AuthRequest, res: Response) => {
             avatar: true,
           },
         },
-        pet: {
-          select: {
-            id: true,
-            name: true,
-            species: true,
-            image: true,
-          },
-        },
-        likes: {
-          select: {
-            userId: true,
-          },
-        },
+        pet: true,
+        likes: true,
         comments: {
           include: {
             author: {
@@ -201,8 +127,8 @@ router.get('/:postId', async (req: AuthRequest, res: Response) => {
               },
             },
           },
-          orderBy: { createdAt: 'desc' },
         },
+        badges: true,
       },
     });
 
@@ -212,17 +138,8 @@ router.get('/:postId', async (req: AuthRequest, res: Response) => {
       return;
     }
 
-    // Add current user's like status
-    const postWithLikeStatus = {
-      ...post,
-      isLikedByCurrentUser: userId ? post.likes.some(like => like.userId === userId) : false,
-    };
-
-    // Cache for 1 minute
-    cacheSet(cacheKey, postWithLikeStatus, 60000);
-
     console.log(`[POST] 포스트 조회 성공 - 제목: ${post.title}, ID: ${postId}`);
-    res.json(postWithLikeStatus);
+    res.json(post);
   } catch (error) {
     console.error('[POST] 포스트 조회 오류:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -367,9 +284,6 @@ router.post('/:postId/likes', authenticate, async (req: AuthRequest, res: Respon
         },
       });
       console.log(`[POST] 좋아요 취소 성공 - 포스트 ID: ${postId}, 사용자 ID: ${userId}`);
-      // Cache 무효화
-      cacheDelete(`post:${postId}`);
-      cacheClear();
       res.json({ liked: false });
     } else {
       // Like
@@ -380,9 +294,6 @@ router.post('/:postId/likes', authenticate, async (req: AuthRequest, res: Respon
         },
       });
       console.log(`[POST] 좋아요 추가 성공 - 포스트 ID: ${postId}, 사용자 ID: ${userId}`);
-      // Cache 무효화
-      cacheDelete(`post:${postId}`);
-      cacheClear();
       res.json({ liked: true });
     }
   } catch (error) {

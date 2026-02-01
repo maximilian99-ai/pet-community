@@ -246,9 +246,7 @@ export default function ProfilePage() {
       await apiClient.delete('/auth/me');
       deleteConfirmDisclosure.onClose();
       logout();
-      setTimeout(() => {
-        router.push(`/${locale}/feed`);
-      }, 100);
+      router.push(`/${locale}/login`);
     } catch (error) {
       console.error('Failed to delete account:', error);
       setIsDeleting(false);

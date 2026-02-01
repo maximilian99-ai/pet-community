@@ -1,6 +1,6 @@
 import express, { Express } from 'express';
-import authRoutes from '../routes/auth';
-import { generateToken } from '../utils/jwt';
+import authRoutes from '@/routes/auth';
+import { generateToken } from '@/utils/jwt';
 
 describe('Auth Routes', () => {
   it('should have auth routes defined', () => {

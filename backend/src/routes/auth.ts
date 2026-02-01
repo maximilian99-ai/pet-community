@@ -1,14 +1,14 @@
 import express, { Router } from 'express';
 import bcryptjs from 'bcryptjs';
-import prisma from '../utils/prisma';
-import { generateToken } from '../utils/jwt';
-import { authenticate, AuthRequest } from '../middleware/auth';
+import prisma from '@/utils/prisma';
+import { generateToken } from '@/utils/jwt';
+import { authenticate, AuthRequest } from '@/middleware/auth';
 import type { Response } from 'express';
 
 const router: Router = express.Router();
 
 // Sign up
-router.post('/signup', async (req: AuthRequest, res: Response) => {
+router.post('/signup', async (req: any, res: Response) => {
   try {
     const { email, username, password } = req.body;
 
@@ -65,7 +65,7 @@ router.post('/signup', async (req: AuthRequest, res: Response) => {
 });
 
 // Login
-router.post('/login', async (req: AuthRequest, res: Response) => {
+router.post('/login', async (req: any, res: Response) => {
   try {
     const { email, password } = req.body;
 

@@ -1,49 +1,21 @@
 import express, { Router } from 'express';
-import prisma from '../utils/prisma';
-import { authenticate, AuthRequest } from '../middleware/auth';
-import { cacheGet, cacheSet, cacheDelete } from '../utils/cache';
+import prisma from '@/utils/prisma';
+import { authenticate, AuthRequest } from '@/middleware/auth';
 import type { Response } from 'express';
 
 const router: Router = express.Router();
 
 // Get user profile
-router.get('/:userId', async (req: AuthRequest, res: Response) => {
+router.get('/:userId', async (req: any, res: Response) => {
   try {
     const { userId } = req.params;
-
-    // Check cache first
-    const cacheKey = `profile:${userId}`;
-    let cachedProfile = cacheGet(cacheKey);
-
-    if (cachedProfile) {
-      console.log(`[PROFILE] 프로필 캐시 히트 - ID: ${userId}`);
-      res.json(cachedProfile);
-      return;
-    }
 
     const user = await prisma.user.findUnique({
       where: { id: userId },
       include: {
-        pets: {
-          select: {
-            id: true,
-            name: true,
-            species: true,
-            breed: true,
-            age: true,
-            image: true,
-          },
-        },
-        followers: {
-          select: {
-            followerId: true,
-          },
-        },
-        following: {
-          select: {
-            followingId: true,
-          },
-        },
+        pets: true,
+        followers: true,
+        following: true,
       },
     });
 
@@ -53,7 +25,8 @@ router.get('/:userId', async (req: AuthRequest, res: Response) => {
       return;
     }
 
-    const profileData = {
+    console.log(`[PROFILE] 프로필 조회 성공 - 사용자명: ${user.username}, ID: ${user.id}`);
+    res.json({
       id: user.id,
       email: user.email,
       username: user.username,
@@ -63,13 +36,7 @@ router.get('/:userId', async (req: AuthRequest, res: Response) => {
       followers: user.followers.length,
       following: user.following.length,
       createdAt: user.createdAt,
-    };
-
-    // Cache for 2 minutes
-    cacheSet(cacheKey, profileData, 120000);
-
-    console.log(`[PROFILE] 프로필 조회 성공 - 사용자명: ${user.username}, ID: ${user.id}`);
-    res.json(profileData);
+    });
   } catch (error) {
     console.error('[PROFILE] 프로필 조회 오류:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -91,9 +58,6 @@ router.put('/me', authenticate, async (req: AuthRequest, res: Response) => {
       },
     });
 
-    // Clear profile cache
-    cacheDelete(`profile:${userId}`);
-
     console.log(`[PROFILE] 프로필 수정 성공 - 사용자명: ${user.username}, ID: ${user.id}`);
     res.json({
       id: user.id,
@@ -109,7 +73,7 @@ router.put('/me', authenticate, async (req: AuthRequest, res: Response) => {
 });
 
 // Get user's pets
-router.get('/:userId/pets', async (req: AuthRequest, res: Response) => {
+router.get('/:userId/pets', async (req: any, res: Response) => {
   try {
     const { userId } = req.params;
 

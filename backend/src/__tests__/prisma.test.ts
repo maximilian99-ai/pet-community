@@ -1,4 +1,4 @@
-import prisma from '../utils/prisma';
+import prisma from '@/utils/prisma';
 
 describe('Prisma Utils', () => {
   it('should have prisma client defined', () => {

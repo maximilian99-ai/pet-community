@@ -1,8 +1,9 @@
 import express, { Router } from 'express';
-import prisma from '../utils/prisma';
+import { PrismaClient } from '@prisma/client';
 import { authenticate, AuthRequest } from '../middleware/auth';
 import type { Response } from 'express';
 
+const prisma = new PrismaClient();
 const router: Router = express.Router();
 
 // Follow a user
@@ -87,11 +88,11 @@ router.delete('/:userId', authenticate, async (req: AuthRequest, res: Response) 
 });
 
 // Get user's following list
-router.get('/:userId/following', async (req: AuthRequest, res: Response) => {
+router.get('/:userId/following', async (req: any, res: Response) => {
   try {
     const { userId } = req.params;
-    const limit = Array.isArray(req.query.limit) ? req.query.limit[0] : req.query.limit || '10';
-    const take = Math.min(parseInt(limit as string), 50);
+    const { limit = '10' } = req.query;
+    const take = Math.min(parseInt(limit), 50);
 
     const followingRelations = await prisma.userFollow.findMany({
       where: { followerId: userId },
@@ -118,11 +119,11 @@ router.get('/:userId/following', async (req: AuthRequest, res: Response) => {
 });
 
 // Get user's followers list
-router.get('/:userId/followers', async (req: AuthRequest, res: Response) => {
+router.get('/:userId/followers', async (req: any, res: Response) => {
   try {
     const { userId } = req.params;
-    const limit = Array.isArray(req.query.limit) ? req.query.limit[0] : req.query.limit || '10';
-    const take = Math.min(parseInt(limit as string), 50);
+    const { limit = '10' } = req.query;
+    const take = Math.min(parseInt(limit), 50);
 
     const followerRelations = await prisma.userFollow.findMany({
       where: { followingId: userId },
@@ -149,7 +150,7 @@ router.get('/:userId/followers', async (req: AuthRequest, res: Response) => {
 });
 
 // Check if following a user
-router.get('/:userId/check/:targetUserId', async (req: AuthRequest, res: Response) => {
+router.get('/:userId/check/:targetUserId', async (req: any, res: Response) => {
   try {
     const { userId, targetUserId } = req.params;
 
