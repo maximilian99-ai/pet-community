@@ -6,7 +6,7 @@ import { useAuthStore } from '@/store';
 import { useGetPosts } from '@/hooks/usePost';
 import { useCreatePost, useAddComment, useLikePost, useDeleteComment, useUpdateComment, useUpdatePost, useDeletePost } from '@/hooks/usePost';
 import { Post } from '@/types';
-import { useState, useRef, Suspense } from 'react';
+import { useState, useRef, Suspense, useEffect } from 'react';
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
@@ -29,7 +29,6 @@ function FeedPageContent() {
   const [postData, setPostData] = useState({ title: '', content: '', image: '' });
   const [commentData, setCommentData] = useState<{ [key: string]: string }>({});
   const [editingComment, setEditingComment] = useState<{ [key: string]: string }>({});
-  const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set());
   const [editingPost, setEditingPost] = useState<string | null>(null);
   const [editPostData, setEditPostData] = useState({ title: '', content: '' });
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -37,6 +36,19 @@ function FeedPageContent() {
   const editPostDisclosure = useDisclosure();
 
   const posts: Post[] = feedData?.posts || [];
+
+  // 초기화: 백엔드에서 제공하는 isLikedByCurrentUser 정보 사용
+  const [likedPostsMap, setLikedPostsMap] = useState<{[key: string]: boolean}>({});
+
+  useEffect(() => {
+    if (feedData?.posts && feedData.posts.length > 0) {
+      const newLikedMap: {[key: string]: boolean} = {};
+      (feedData.posts as Post[]).forEach(post => {
+        newLikedMap[post.id] = post.isLikedByCurrentUser || false;
+      });
+      setLikedPostsMap(newLikedMap);
+    }
+  }, [feedData?.posts]);
 
   const TopBadge = () => (
     <Badge
@@ -218,14 +230,7 @@ function FeedPageContent() {
   const handleLikePost = async (postId: string) => {
     try {
       await likePostMutation.mutateAsync(postId);
-      
-      const newLikedPosts = new Set(likedPosts);
-      if (newLikedPosts.has(postId)) {
-        newLikedPosts.delete(postId);
-      } else {
-        newLikedPosts.add(postId);
-      }
-      setLikedPosts(newLikedPosts);
+      // UI 업데이트는 서버에서 받은 새로운 데이터로 자동 처리됨
       refetch();
     } catch (error) {
       console.error('Failed to like post:', error);
@@ -386,7 +391,7 @@ function FeedPageContent() {
                         onClick={() => handleLikePost(post.id)}
                         isLoading={likePostMutation.isPending}
                       >
-                        {likedPosts.has(post.id) ? '❤️' : '🤍'} {post.likes?.length || 0}
+                        {likedPostsMap[post.id] ? '❤️' : '🤍'} {post.likes?.length || 0}
                       </Button>
                       <Button size="sm" variant="ghost">
                         💬 {post.comments?.length || 0}

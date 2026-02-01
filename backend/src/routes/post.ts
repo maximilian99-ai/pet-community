@@ -2,9 +2,25 @@ import express, { Router } from 'express';
 import prisma from '@/utils/prisma';
 import { authenticate, AuthRequest } from '@/middleware/auth';
 import { cacheGet, cacheSet, cacheDelete, cacheClear } from '@/utils/cache';
+import { verifyToken } from '@/utils/jwt';
 import type { Response } from 'express';
 
 const router: Router = express.Router();
+
+// Helper function to extract userId from authorization header
+const extractUserIdFromHeader = (req: any): string | null => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return null;
+    }
+    const token = authHeader.slice(7);
+    const payload = verifyToken(token);
+    return payload?.userId || null;
+  } catch (error) {
+    return null;
+  }
+};
 
 // Get feed (with pagination)
 router.get('/', async (req: any, res: Response) => {
@@ -12,6 +28,8 @@ router.get('/', async (req: any, res: Response) => {
     const { limit = '10', offset = '0' } = req.query;
     const take = Math.min(parseInt(limit), 100);
     const skip = parseInt(offset);
+    // Extract userId from authorization header
+    const userId = extractUserIdFromHeader(req);
 
     // Cache key for feed
     const cacheKey = `feed:${take}:${skip}`;
@@ -66,8 +84,14 @@ router.get('/', async (req: any, res: Response) => {
 
     const totalCount = await prisma.post.count();
 
+    // Add current user's like status to each post
+    const postsWithLikeStatus = posts.map(post => ({
+      ...post,
+      isLikedByCurrentUser: userId ? post.likes.some(like => like.userId === userId) : false,
+    }));
+
     const responseData = {
-      posts,
+      posts: postsWithLikeStatus,
       total: totalCount,
       limit: take,
       offset: skip,
@@ -130,6 +154,8 @@ router.post('/', authenticate, async (req: AuthRequest, res: Response) => {
 router.get('/:postId', async (req: any, res: Response) => {
   try {
     const { postId } = req.params;
+    // Extract userId from authorization header
+    const userId = extractUserIdFromHeader(req);
 
     // Cache key for single post
     const cacheKey = `post:${postId}`;
@@ -185,11 +211,17 @@ router.get('/:postId', async (req: any, res: Response) => {
       return;
     }
 
+    // Add current user's like status
+    const postWithLikeStatus = {
+      ...post,
+      isLikedByCurrentUser: userId ? post.likes.some(like => like.userId === userId) : false,
+    };
+
     // Cache for 1 minute
-    cacheSet(cacheKey, post, 60000);
+    cacheSet(cacheKey, postWithLikeStatus, 60000);
 
     console.log(`[POST] 포스트 조회 성공 - 제목: ${post.title}, ID: ${postId}`);
-    res.json(post);
+    res.json(postWithLikeStatus);
   } catch (error) {
     console.error('[POST] 포스트 조회 오류:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -334,6 +366,9 @@ router.post('/:postId/likes', authenticate, async (req: AuthRequest, res: Respon
         },
       });
       console.log(`[POST] 좋아요 취소 성공 - 포스트 ID: ${postId}, 사용자 ID: ${userId}`);
+      // Cache 무효화
+      cacheDelete(`post:${postId}`);
+      cacheClear();
       res.json({ liked: false });
     } else {
       // Like
@@ -344,6 +379,9 @@ router.post('/:postId/likes', authenticate, async (req: AuthRequest, res: Respon
         },
       });
       console.log(`[POST] 좋아요 추가 성공 - 포스트 ID: ${postId}, 사용자 ID: ${userId}`);
+      // Cache 무효화
+      cacheDelete(`post:${postId}`);
+      cacheClear();
       res.json({ liked: true });
     }
   } catch (error) {

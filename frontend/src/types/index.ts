@@ -60,6 +60,7 @@ export interface Post {
   comments: Comment[];
   badges?: Badge[];
   createdAt: string;
+  isLikedByCurrentUser?: boolean;
 }
 
 export interface AuthResponse {
