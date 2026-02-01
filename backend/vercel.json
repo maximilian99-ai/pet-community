@@ -1,27 +1,20 @@
 {
   "version": 2,
-  "buildCommand": "pnpm prisma:generate && pnpm build",
-  "outputDirectory": "dist",
+  "buildCommand": "prisma generate && tsc",
   "installCommand": "pnpm install",
   "builds": [
     {
       "src": "api/index.ts",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "dist/index.js",
-      "use": "@vercel/node"
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": ["prisma/**", "src/**"]
+      }
     }
   ],
   "routes": [
     {
-      "src": "/api/(.*)",
-      "dest": "api/index.ts",
-      "methods": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"]
-    },
-    {
       "src": "/(.*)",
-      "dest": "dist/index.js"
+      "dest": "/api/index.ts"
     }
   ],
   "env": {

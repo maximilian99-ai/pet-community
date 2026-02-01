@@ -1,9 +1,10 @@
 import express, { Express, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
 
 // Load environment variables
-dotenv.config({ path: '../.env.production' });
+dotenv.config({ path: path.join(__dirname, '../.env.production') });
 
 // Routes
 import authRoutes from '../src/routes/auth';
