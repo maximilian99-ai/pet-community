@@ -1,14 +1,9 @@
 {
   "version": 2,
-  "buildCommand": "prisma generate && tsc",
-  "installCommand": "pnpm install",
   "builds": [
     {
-      "src": "api/index.ts",
-      "use": "@vercel/node",
-      "config": {
-        "includeFiles": ["prisma/**", "src/**"]
-      }
+      "src": "package.json",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
@@ -16,8 +11,5 @@
       "src": "/(.*)",
       "dest": "/api/index.ts"
     }
-  ],
-  "env": {
-    "NODE_ENV": "production"
-  }
+  ]
 }
