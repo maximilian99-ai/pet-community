@@ -59,7 +59,7 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      router.push('/login');
+      router.push(`/${locale}/login`);
     }
   }, [isAuthenticated, router]);
 
@@ -246,7 +246,9 @@ export default function ProfilePage() {
       await apiClient.delete('/auth/me');
       deleteConfirmDisclosure.onClose();
       logout();
-      router.push(`/${locale}/login`);
+      setTimeout(() => {
+        router.push(`/${locale}/login`);
+      }, 100);
     } catch (error) {
       console.error('Failed to delete account:', error);
       setIsDeleting(false);

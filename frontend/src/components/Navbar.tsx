@@ -21,7 +21,9 @@ export function Navbar() {
 
   const handleLogout = () => {
     logout();
-    router.push(`/${locale}/feed`);
+    setTimeout(() => {
+      router.push(`/${locale}/feed`);
+    }, 100);
   };
 
   const navigateTo = (path: string) => {
