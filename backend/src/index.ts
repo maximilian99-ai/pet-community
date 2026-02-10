@@ -67,14 +67,20 @@ app.use((err: unknown, req: Request, res: Response, _next: NextFunction) => {
   });
 });
 
-app.listen(PORT, async () => {
-  console.log(`Server is running on port ${PORT}`);
-  
-  // Test database connection
-  try {
-    await prisma.$queryRaw`SELECT 1`;
-    console.log('✅ Database connection successful');
-  } catch (error) {
-    console.error('❌ Database connection failed:', error);
-  }
-});
+// Only start the server if not in Vercel serverless environment
+if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+  app.listen(PORT, async () => {
+    console.log(`Server is running on port ${PORT}`);
+    
+    // Test database connection
+    try {
+      await prisma.$queryRaw`SELECT 1`;
+      console.log('✅ Database connection successful');
+    } catch (error) {
+      console.error('❌ Database connection failed:', error);
+    }
+  });
+}
+
+// Export for Vercel serverless
+export default app;
