@@ -8,6 +8,7 @@ import { useCreatePost, useAddComment, useLikePost, useDeleteComment, useUpdateC
 import { Post } from '@/types';
 import { useState, useRef } from 'react';
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
+import apiClient from '@/api/client';
 
 export const dynamic = 'force-dynamic';
 
@@ -32,6 +33,8 @@ export default function FeedPage() {
   const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set());
   const [editingPost, setEditingPost] = useState<string | null>(null);
   const [editPostData, setEditPostData] = useState({ title: '', content: '' });
+  const [expandedComments, setExpandedComments] = useState<Set<string>>(new Set());
+  const [fullPostData, setFullPostData] = useState<{ [key: string]: Post }>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
   const createPostDisclosure = useDisclosure();
   const editPostDisclosure = useDisclosure();
@@ -183,6 +186,12 @@ export default function FeedPage() {
       
       await addCommentMutation.mutateAsync({ postId, content });
       setCommentData({ ...commentData, [postId]: '' });
+      
+      // 확장된 댓글 새로고침
+      if (expandedComments.has(postId)) {
+        await handleExpandComments(postId);
+        await handleExpandComments(postId);
+      }
       refetch();
     } catch (error) {
       console.error('Failed to add comment:', error);
@@ -200,6 +209,12 @@ export default function FeedPage() {
 
       await updateCommentMutation.mutateAsync({ postId, commentId, content });
       setEditingComment({});
+      
+      // 확장된 댓글 새로고침
+      if (expandedComments.has(postId)) {
+        await handleExpandComments(postId);
+        await handleExpandComments(postId);
+      }
       refetch();
     } catch (error) {
       console.error('Failed to update comment:', error);
@@ -209,6 +224,12 @@ export default function FeedPage() {
   const handleDeleteComment = async (postId: string, commentId: string) => {
     try {
       await deleteCommentMutation.mutateAsync({ postId, commentId });
+      
+      // 확장된 댓글 새로고침
+      if (expandedComments.has(postId)) {
+        await handleExpandComments(postId);
+        await handleExpandComments(postId);
+      }
       refetch();
     } catch (error) {
       console.error('Failed to delete comment:', error);
@@ -241,6 +262,35 @@ export default function FeedPage() {
       status: 'success',
       duration: 3000,
     });
+  };
+
+  const handleExpandComments = async (postId: string) => {
+    try {
+      // 이미 확장된 상태면 토글
+      if (expandedComments.has(postId)) {
+        const newExpanded = new Set(expandedComments);
+        newExpanded.delete(postId);
+        setExpandedComments(newExpanded);
+        return;
+      }
+
+      // 전체 게시물 데이터 가져오기
+      const response = await apiClient.get(`/posts/${postId}`);
+      const fullPost = response.data;
+      setFullPostData({ ...fullPostData, [postId]: fullPost });
+      const newExpanded = new Set(expandedComments);
+      newExpanded.add(postId);
+      setExpandedComments(newExpanded);
+    } catch (error) {
+      console.error('Failed to load all comments:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to load all comments',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    }
   };
 
   return (
@@ -292,7 +342,7 @@ export default function FeedPage() {
                           </Box>
                           <HStack spacing={2} flexShrink={0}>
                             <Text fontSize="sm" color={colorMode === 'dark' ? 'gray.300' : 'gray.600'}>
-                              ❤️ {post.likes?.length || 0}
+                              ❤️ {post.likesCount || post._count?.likes || 0}
                             </Text>
                             <Button size="sm" variant="outline" onClick={() => handleSharePost(post.id)}>
                               {t('feed.share') || 'Share'}
@@ -386,10 +436,10 @@ export default function FeedPage() {
                         onClick={() => handleLikePost(post.id)}
                         isLoading={likePostMutation.isPending}
                       >
-                        {likedPosts.has(post.id) ? '❤️' : '🤍'} {post.likes?.length || 0}
+                        {likedPosts.has(post.id) ? '❤️' : '🤍'} {post.likesCount || post._count?.likes || 0}
                       </Button>
                       <Button size="sm" variant="ghost">
-                        💬 {post.comments?.length || 0}
+                        💬 {post.commentsCount || post._count?.comments || 0}
                       </Button>
                       <Button 
                         size="sm" 
@@ -401,12 +451,32 @@ export default function FeedPage() {
                     </HStack>
 
                     {/* Comments Preview and Input */}
-                    {post.comments && post.comments.length > 0 && (
+                    {(post.comments && post.comments.length > 0) || (expandedComments.has(post.id) && fullPostData[post.id]?.comments) ? (
                       <Box mb={4}>
-                        <Text fontSize="sm" fontWeight="bold" mb={2}>
-                          {t('feed.comments') || 'Comments'}
-                        </Text>
-                        {post.comments.map((comment) => (
+                        <Flex justify="space-between" align="center" mb={2}>
+                          <Text fontSize="sm" fontWeight="bold">
+                            {t('feed.comments') || 'Comments'}
+                          </Text>
+                          {/* 이전 댓글 보기 버튼 */}
+                          {(post.commentsCount || post._count?.comments || 0) > 3 && (
+                            <Button
+                              size="xs"
+                              variant="link"
+                              colorScheme="blue"
+                              onClick={() => handleExpandComments(post.id)}
+                            >
+                              {expandedComments.has(post.id) 
+                                ? (t('feed.showLess') || '간략히 보기')
+                                : `${t('feed.viewAllComments') || '이전 댓글 보기'} (${(post.commentsCount || post._count?.comments || 0) - 3})`
+                              }
+                            </Button>
+                          )}
+                        </Flex>
+                        {/* 댓글 목록 */}
+                        {(expandedComments.has(post.id) && fullPostData[post.id]?.comments 
+                          ? fullPostData[post.id].comments 
+                          : post.comments || []
+                        ).map((comment) => (
                           <Box key={comment.id} mb={2} p={2} bg={colorMode === 'dark' ? 'gray.600' : 'gray.50'} borderRadius="md">
                             <Flex justify="space-between" align="start">
                               <Box flex={1}>
@@ -439,7 +509,7 @@ export default function FeedPage() {
                           </Box>
                         ))}
                       </Box>
-                    )}
+                    ) : null}
 
                     {/* Add Comment */}
                     {auth && (

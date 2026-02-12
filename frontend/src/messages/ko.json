@@ -77,6 +77,8 @@
     "noPosts": "아직 포스트가 없습니다",
     "comments": "댓글",
     "viewMore": "더보기",
+    "viewAllComments": "이전 댓글 보기",
+    "showLess": "간략히 보기",
     "createPost": "포스트 작성",
     "editPost": "포스트 수정",
     "postTitle": "포스트 제목",

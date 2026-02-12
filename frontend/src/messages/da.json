@@ -77,6 +77,8 @@
     "noPosts": "Ingen indlæg endnu",
     "comments": "Kommentarer",
     "viewMore": "Se flere kommentarer",
+    "viewAllComments": "Se tidligere kommentarer",
+    "showLess": "Vis mindre",
     "createPost": "Opret indlæg",
     "editPost": "Rediger indlæg",
     "postTitle": "Indlægstitel",

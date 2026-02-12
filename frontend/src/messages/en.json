@@ -77,6 +77,8 @@
     "noPosts": "No posts yet",
     "comments": "Comments",
     "viewMore": "View more comments",
+    "viewAllComments": "View previous comments",
+    "showLess": "Show less",
     "createPost": "Create Post",
     "editPost": "Edit Post",
     "postTitle": "Post Title",

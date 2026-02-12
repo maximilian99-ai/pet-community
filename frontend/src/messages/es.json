@@ -77,6 +77,8 @@
     "noPosts": "Sin publicaciones aún",
     "comments": "Comentarios",
     "viewMore": "Ver más comentarios",
+    "viewAllComments": "Ver comentarios anteriores",
+    "showLess": "Mostrar menos",
     "createPost": "Crear publicación",
     "editPost": "Editar publicación",
     "postTitle": "Título de la publicación",

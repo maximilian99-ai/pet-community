@@ -12,7 +12,7 @@ router.get('/', async (req: any, res: Response) => {
     const take = Math.min(parseInt(limit), 100);
     const skip = parseInt(offset);
 
-    // Optimized query: only fetch counts instead of all related data
+    // Optimized query: fetch counts and recent comments (max 3 per post)
     const posts = await prisma.post.findMany({
       skip,
       take,
@@ -34,6 +34,26 @@ router.get('/', async (req: any, res: Response) => {
             image: true,
           },
         },
+        comments: {
+          take: 3,
+          orderBy: { createdAt: 'desc' },
+          include: {
+            author: {
+              select: {
+                id: true,
+                username: true,
+                avatar: true,
+              },
+            },
+          },
+        },
+        likes: {
+          select: {
+            id: true,
+            userId: true,
+          },
+        },
+        badges: true,
         _count: {
           select: {
             likes: true,
@@ -49,9 +69,6 @@ router.get('/', async (req: any, res: Response) => {
     // Transform the response to match frontend expectations
     const transformedPosts = posts.map(post => ({
       ...post,
-      likes: Array(post._count.likes).fill({}),  // Empty array with correct length
-      comments: [],  // Comments will be loaded separately when viewing post
-      badges: Array(post._count.badges).fill({}),
       likesCount: post._count.likes,
       commentsCount: post._count.comments,
       badgesCount: post._count.badges,

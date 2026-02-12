@@ -59,6 +59,14 @@ export interface Post {
   likes: Like[];
   comments: Comment[];
   badges?: Badge[];
+  likesCount?: number;
+  commentsCount?: number;
+  badgesCount?: number;
+  _count?: {
+    likes: number;
+    comments: number;
+    badges: number;
+  };
   createdAt: string;
 }
 
