@@ -499,7 +499,7 @@ export default function FeedPage() {
                 />
               </Box>
               <Box width="100%">
-                <Text fontWeight="bold" mb={2}>Image Upload</Text>
+                <Text fontWeight="bold" mb={2}>{t('feed.uploadImage')}</Text>
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -512,7 +512,7 @@ export default function FeedPage() {
                   onClick={() => fileInputRef.current?.click()}
                   variant="outline"
                 >
-                  {postData.image ? 'Change Image' : 'Upload Image'}
+                  {postData.image ? t('feed.changeImage') : t('feed.uploadImage')}
                 </Button>
                 {postData.image && (
                   <Box mt={2} position="relative">

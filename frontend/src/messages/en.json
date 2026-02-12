@@ -80,7 +80,9 @@
     "createPost": "Create Post",
     "editPost": "Edit Post",
     "postTitle": "Post Title",
-    "postContent": "Post Content"
+    "postContent": "Post Content",
+    "changeImage": "Change Image",
+    "uploadImage": "Upload Image"
   },
   "dashboard": {
     "title": "Dashboard",

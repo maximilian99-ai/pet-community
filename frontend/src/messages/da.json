@@ -80,7 +80,9 @@
     "createPost": "Opret indlæg",
     "editPost": "Rediger indlæg",
     "postTitle": "Indlægstitel",
-    "postContent": "Indlægsindhold"
+    "postContent": "Indlægsindhold",
+    "changeImage": "Skift billede",
+    "uploadImage": "Upload billede"
   },
   "dashboard": {
     "title": "Dashboard",

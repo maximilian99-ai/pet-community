@@ -82,6 +82,9 @@ model Post {
   comments  Comment[]
   likes     Like[]
   badges    Badge[]
+
+  @@index([createdAt(sort: Desc)])
+  @@index([authorId])
 }
 
 model Comment {
@@ -93,6 +96,9 @@ model Comment {
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([postId, createdAt(sort: Desc)])
+  @@index([authorId])
 }
 
 model Like {
@@ -104,6 +110,7 @@ model Like {
   createdAt DateTime @default(now())
 
   @@unique([userId, postId])
+  @@index([postId])
 }
 
 model Badge {

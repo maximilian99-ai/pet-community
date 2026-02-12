@@ -80,7 +80,9 @@
     "createPost": "Beitrag erstellen",
     "editPost": "Beitrag bearbeiten",
     "postTitle": "Beitragstitel",
-    "postContent": "Beitragsinhalt"
+    "postContent": "Beitragsinhalt",
+    "changeImage": "Bild ändern",
+    "uploadImage": "Bild hochladen"
   },
   "dashboard": {
     "title": "Armaturenbrett",

@@ -80,7 +80,9 @@
     "createPost": "Bericht maken",
     "editPost": "Bericht bewerken",
     "postTitle": "Berichttitel",
-    "postContent": "Berichtinhoud"
+    "postContent": "Berichtinhoud",
+    "changeImage": "Afbeelding wijzigen",
+    "uploadImage": "Afbeelding uploaden"
   },
   "dashboard": {
     "title": "Dashboard",

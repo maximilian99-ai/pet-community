@@ -12,6 +12,7 @@ router.get('/', async (req: any, res: Response) => {
     const take = Math.min(parseInt(limit), 100);
     const skip = parseInt(offset);
 
+    // Optimized query: only fetch counts instead of all related data
     const posts = await prisma.post.findMany({
       skip,
       take,
@@ -24,28 +25,41 @@ router.get('/', async (req: any, res: Response) => {
             avatar: true,
           },
         },
-        pet: true,
-        likes: true,
-        comments: {
-          include: {
-            author: {
-              select: {
-                id: true,
-                username: true,
-                avatar: true,
-              },
-            },
+        pet: {
+          select: {
+            id: true,
+            name: true,
+            species: true,
+            breed: true,
+            image: true,
           },
         },
-        badges: true,
+        _count: {
+          select: {
+            likes: true,
+            comments: true,
+            badges: true,
+          },
+        },
       },
     });
 
     const totalCount = await prisma.post.count();
 
-    console.log(`[POST] 피드 조회 성공 - 포스트 수: ${posts.length}, 총합: ${totalCount}`);
+    // Transform the response to match frontend expectations
+    const transformedPosts = posts.map(post => ({
+      ...post,
+      likes: Array(post._count.likes).fill({}),  // Empty array with correct length
+      comments: [],  // Comments will be loaded separately when viewing post
+      badges: Array(post._count.badges).fill({}),
+      likesCount: post._count.likes,
+      commentsCount: post._count.comments,
+      badgesCount: post._count.badges,
+    }));
+
+    console.log(`[POST] 피드 조회 성공 (최적화) - 포스트 수: ${posts.length}, 총합: ${totalCount}`);
     res.json({
-      posts,
+      posts: transformedPosts,
       total: totalCount,
       limit: take,
       offset: skip,
@@ -81,7 +95,12 @@ router.post('/', authenticate, async (req: AuthRequest, res: Response) => {
         petId: petId || null,
         authorId: authorId!,
       },
-      include: {
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        image: true,
+        createdAt: true,
         author: {
           select: {
             id: true,
@@ -92,7 +111,7 @@ router.post('/', authenticate, async (req: AuthRequest, res: Response) => {
       },
     });
 
-    console.log(`[POST] 포스트 생성 성공 - 제목: ${title}, ID: ${post.id}, 작성자: ${post.author.username}`);
+    console.log(`[POST] 포스트 생성 성공 - 제목: ${title}, ID: ${post.id}`);
     res.status(201).json(post);
   } catch (error) {
     console.error('[POST] 포스트 생성 오류:', error);
@@ -115,9 +134,25 @@ router.get('/:postId', async (req: any, res: Response) => {
             avatar: true,
           },
         },
-        pet: true,
-        likes: true,
+        pet: {
+          select: {
+            id: true,
+            name: true,
+            species: true,
+            breed: true,
+            age: true,
+            image: true,
+          },
+        },
+        likes: {
+          select: {
+            id: true,
+            userId: true,
+          },
+        },
         comments: {
+          take: 20,  // Limit to recent 20 comments
+          orderBy: { createdAt: 'desc' },
           include: {
             author: {
               select: {
@@ -129,6 +164,12 @@ router.get('/:postId', async (req: any, res: Response) => {
           },
         },
         badges: true,
+        _count: {
+          select: {
+            comments: true,
+            likes: true,
+          },
+        },
       },
     });
 
@@ -239,7 +280,10 @@ router.post('/:postId/comments', authenticate, async (req: AuthRequest, res: Res
         postId,
         authorId: authorId!,
       },
-      include: {
+      select: {
+        id: true,
+        content: true,
+        createdAt: true,
         author: {
           select: {
             id: true,
@@ -250,7 +294,7 @@ router.post('/:postId/comments', authenticate, async (req: AuthRequest, res: Res
       },
     });
 
-    console.log(`[POST] 댓글 추가 성공 - 포스트 ID: ${postId}, 댓글 ID: ${comment.id}, 작성자: ${comment.author.username}`);
+    console.log(`[POST] 댓글 추가 성공 - 포스트 ID: ${postId}, 댓글 ID: ${comment.id}`);
     res.status(201).json(comment);
   } catch (error) {
     console.error('[POST] 댓글 추가 오류:', error);

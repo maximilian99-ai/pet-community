@@ -80,7 +80,9 @@
     "createPost": "Créer une publication",
     "editPost": "Modifier la publication",
     "postTitle": "Titre de la publication",
-    "postContent": "Contenu de la publication"
+    "postContent": "Contenu de la publication",
+    "changeImage": "Changer l'image",
+    "uploadImage": "Télécharger une image"
   },
   "dashboard": {
     "title": "Tableau de bord",
