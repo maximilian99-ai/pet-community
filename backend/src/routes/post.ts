@@ -12,63 +12,67 @@ router.get('/', async (req: any, res: Response) => {
     const take = Math.min(parseInt(limit), 100);
     const skip = parseInt(offset);
 
-    // Optimized query: fetch counts and recent comments (max 3 per post)
-    const posts = await prisma.post.findMany({
-      skip,
-      take,
-      orderBy: { createdAt: 'desc' },
-      include: {
-        author: {
-          select: {
-            id: true,
-            username: true,
-            avatar: true,
+    // Optimized query: only fetch necessary data, use _count for likes/badges
+    const [posts, totalCount] = await Promise.all([
+      prisma.post.findMany({
+        skip,
+        take,
+        orderBy: { createdAt: 'desc' },
+        select: {
+          id: true,
+          title: true,
+          content: true,
+          image: true,
+          createdAt: true,
+          author: {
+            select: {
+              id: true,
+              username: true,
+              avatar: true,
+            },
           },
-        },
-        pet: {
-          select: {
-            id: true,
-            name: true,
-            species: true,
-            breed: true,
-            image: true,
+          pet: {
+            select: {
+              id: true,
+              name: true,
+              species: true,
+              breed: true,
+              image: true,
+            },
           },
-        },
-        comments: {
-          take: 3,
-          orderBy: { createdAt: 'desc' },
-          include: {
-            author: {
-              select: {
-                id: true,
-                username: true,
-                avatar: true,
+          comments: {
+            take: 3,
+            orderBy: { createdAt: 'desc' },
+            select: {
+              id: true,
+              content: true,
+              createdAt: true,
+              author: {
+                select: {
+                  id: true,
+                  username: true,
+                  avatar: true,
+                },
               },
             },
           },
-        },
-        likes: {
-          select: {
-            id: true,
-            userId: true,
+          _count: {
+            select: {
+              likes: true,
+              comments: true,
+              badges: true,
+            },
           },
         },
-        badges: true,
-        _count: {
-          select: {
-            likes: true,
-            comments: true,
-            badges: true,
-          },
-        },
-      },
-    });
-
-    const totalCount = await prisma.post.count();
+      }),
+      prisma.post.count(),
+    ]);
 
     // Transform the response to match frontend expectations
     const transformedPosts = posts.map(post => ({
       ...post,
+      likes: [],
+      badges: [],
       likesCount: post._count.likes,
       commentsCount: post._count.comments,
       badgesCount: post._count.badges,
@@ -112,24 +116,10 @@ router.post('/', authenticate, async (req: AuthRequest, res: Response) => {
         petId: petId || null,
         authorId: authorId!,
       },
-      select: {
-        id: true,
-        title: true,
-        content: true,
-        image: true,
-        createdAt: true,
-        author: {
-          select: {
-            id: true,
-            username: true,
-            avatar: true,
-          },
-        },
-      },
     });
 
     console.log(`[POST] 포스트 생성 성공 - 제목: ${title}, ID: ${post.id}`);
-    res.status(201).json(post);
+    res.status(201).json({ id: post.id, success: true });
   } catch (error) {
     console.error('[POST] 포스트 생성 오류:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -143,7 +133,14 @@ router.get('/:postId', async (req: any, res: Response) => {
 
     const post = await prisma.post.findUnique({
       where: { id: postId },
-      include: {
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        image: true,
+        createdAt: true,
+        authorId: true,
+        petId: true,
         author: {
           select: {
             id: true,
@@ -161,16 +158,14 @@ router.get('/:postId', async (req: any, res: Response) => {
             image: true,
           },
         },
-        likes: {
+        comments: {
+          take: 50,  // Limit to recent 50 comments
+          orderBy: { createdAt: 'desc' },
           select: {
             id: true,
-            userId: true,
-          },
-        },
-        comments: {
-          take: 20,  // Limit to recent 20 comments
-          orderBy: { createdAt: 'desc' },
-          include: {
+            content: true,
+            createdAt: true,
+            authorId: true,
             author: {
               select: {
                 id: true,
@@ -180,11 +175,11 @@ router.get('/:postId', async (req: any, res: Response) => {
             },
           },
         },
-        badges: true,
         _count: {
           select: {
             comments: true,
             likes: true,
+            badges: true,
           },
         },
       },
@@ -196,8 +191,18 @@ router.get('/:postId', async (req: any, res: Response) => {
       return;
     }
 
+    // Transform response to include empty arrays for compatibility
+    const transformedPost = {
+      ...post,
+      likes: [],
+      badges: [],
+      likesCount: post._count.likes,
+      commentsCount: post._count.comments,
+      badgesCount: post._count.badges,
+    };
+
     console.log(`[POST] 포스트 조회 성공 - 제목: ${post.title}, ID: ${postId}`);
-    res.json(post);
+    res.json(transformedPost);
   } catch (error) {
     console.error('[POST] 포스트 조회 오류:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -227,7 +232,7 @@ router.put('/:postId', authenticate, async (req: AuthRequest, res: Response) => 
       return;
     }
 
-    const updatedPost = await prisma.post.update({
+    await prisma.post.update({
       where: { id: postId },
       data: {
         title: title || undefined,
@@ -236,8 +241,8 @@ router.put('/:postId', authenticate, async (req: AuthRequest, res: Response) => 
       },
     });
 
-    console.log(`[POST] 포스트 수정 성공 - 제목: ${updatedPost.title}, ID: ${postId}`);
-    res.json(updatedPost);
+    console.log(`[POST] 포스트 수정 성공 - ID: ${postId}`);
+    res.json({ success: true });
   } catch (error) {
     console.error('[POST] 포스트 수정 오류:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -297,22 +302,10 @@ router.post('/:postId/comments', authenticate, async (req: AuthRequest, res: Res
         postId,
         authorId: authorId!,
       },
-      select: {
-        id: true,
-        content: true,
-        createdAt: true,
-        author: {
-          select: {
-            id: true,
-            username: true,
-            avatar: true,
-          },
-        },
-      },
     });
 
     console.log(`[POST] 댓글 추가 성공 - 포스트 ID: ${postId}, 댓글 ID: ${comment.id}`);
-    res.status(201).json(comment);
+    res.status(201).json({ id: comment.id, success: true });
   } catch (error) {
     console.error('[POST] 댓글 추가 오류:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -398,22 +391,13 @@ router.put('/:postId/comments/:commentId', authenticate, async (req: AuthRequest
       return;
     }
 
-    const updatedComment = await prisma.comment.update({
+    await prisma.comment.update({
       where: { id: commentId },
       data: { content },
-      include: {
-        author: {
-          select: {
-            id: true,
-            username: true,
-            avatar: true,
-          },
-        },
-      },
     });
 
     console.log(`[POST] 댓글 수정 성공 - 댓글 ID: ${commentId}, 포스트 ID: ${postId}`);
-    res.json(updatedComment);
+    res.json({ success: true });
   } catch (error) {
     console.error('[POST] 댓글 수정 오류:', error);
     res.status(500).json({ error: 'Internal server error' });

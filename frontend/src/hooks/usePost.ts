@@ -11,6 +11,8 @@ export const useGetPosts = (limit: number = 10, offset: number = 0) => {
       });
       return response.data;
     },
+    staleTime: 30000, // 30초 동안 데이터를 fresh로 간주
+    refetchOnWindowFocus: false, // 윈도우 포커스 시 자동 refetch 비활성화
   });
 };
 
@@ -23,6 +25,8 @@ export const useGetPost = (postId: string | undefined) => {
       return response.data;
     },
     enabled: !!postId,
+    staleTime: 30000,
+    refetchOnWindowFocus: false,
   });
 };
 

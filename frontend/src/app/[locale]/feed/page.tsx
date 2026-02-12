@@ -17,7 +17,7 @@ export default function FeedPage() {
   const { colorMode } = useColorMode();
   const auth = useAuthStore(state => state.isAuthenticated);
   const currentUserId = useAuthStore(state => state.username);
-  const { data: feedData, isLoading, refetch } = useGetPosts(10, 0);
+  const { data: feedData, isLoading } = useGetPosts(10, 0);
   const createPostMutation = useCreatePost();
   const addCommentMutation = useAddComment();
   const updateCommentMutation = useUpdateComment();
@@ -135,7 +135,6 @@ export default function FeedPage() {
         });
         createPostDisclosure.onClose();
         setPostData({ title: '', content: '', image: '' });
-        refetch();
       }
     } catch (error: unknown) {
       const err = error as { response?: { data?: { error?: string } } };
@@ -163,7 +162,6 @@ export default function FeedPage() {
         await updatePostMutation.mutateAsync({ postId: editingPost, ...editPostData });
         editPostDisclosure.onClose();
         setEditingPost(null);
-        refetch();
       }
     } catch (error) {
       console.error('Failed to update post:', error);
@@ -173,7 +171,6 @@ export default function FeedPage() {
   const handleDeletePost = async (postId: string) => {
     try {
       await deletePostMutation.mutateAsync(postId);
-      refetch();
     } catch (error) {
       console.error('Failed to delete post:', error);
     }
@@ -187,12 +184,11 @@ export default function FeedPage() {
       await addCommentMutation.mutateAsync({ postId, content });
       setCommentData({ ...commentData, [postId]: '' });
       
-      // 확장된 댓글 새로고침
+      // 확장된 상태면 전체 댓글 다시 로드
       if (expandedComments.has(postId)) {
-        await handleExpandComments(postId);
-        await handleExpandComments(postId);
+        const response = await apiClient.get(`/posts/${postId}`);
+        setFullPostData({ ...fullPostData, [postId]: response.data });
       }
-      refetch();
     } catch (error) {
       console.error('Failed to add comment:', error);
     }
@@ -210,12 +206,11 @@ export default function FeedPage() {
       await updateCommentMutation.mutateAsync({ postId, commentId, content });
       setEditingComment({});
       
-      // 확장된 댓글 새로고침
+      // 확장된 상태면 전체 댓글 다시 로드
       if (expandedComments.has(postId)) {
-        await handleExpandComments(postId);
-        await handleExpandComments(postId);
+        const response = await apiClient.get(`/posts/${postId}`);
+        setFullPostData({ ...fullPostData, [postId]: response.data });
       }
-      refetch();
     } catch (error) {
       console.error('Failed to update comment:', error);
     }
@@ -225,12 +220,11 @@ export default function FeedPage() {
     try {
       await deleteCommentMutation.mutateAsync({ postId, commentId });
       
-      // 확장된 댓글 새로고침
+      // 확장된 상태면 전체 댓글 다시 로드
       if (expandedComments.has(postId)) {
-        await handleExpandComments(postId);
-        await handleExpandComments(postId);
+        const response = await apiClient.get(`/posts/${postId}`);
+        setFullPostData({ ...fullPostData, [postId]: response.data });
       }
-      refetch();
     } catch (error) {
       console.error('Failed to delete comment:', error);
     }
@@ -247,7 +241,6 @@ export default function FeedPage() {
         newLikedPosts.add(postId);
       }
       setLikedPosts(newLikedPosts);
-      refetch();
     } catch (error) {
       console.error('Failed to like post:', error);
     }
