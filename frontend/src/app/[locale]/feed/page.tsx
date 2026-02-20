@@ -231,6 +231,10 @@ export default function FeedPage() {
   };
 
   const handleLikePost = async (postId: string) => {
+    if (!auth) {
+      return;
+    }
+    
     try {
       await likePostMutation.mutateAsync(postId);
       
@@ -337,7 +341,7 @@ export default function FeedPage() {
                             <Text fontSize="sm" color={colorMode === 'dark' ? 'gray.300' : 'gray.600'}>
                               ❤️ {post.likesCount || post._count?.likes || 0}
                             </Text>
-                            <Button size="sm" variant="outline" onClick={() => handleSharePost(post.id)}>
+                            <Button size="sm" variant="outline" onClick={(e) => { e.stopPropagation(); handleSharePost(post.id); }}>
                               {t('feed.share') || 'Share'}
                             </Button>
                           </HStack>
@@ -431,7 +435,7 @@ export default function FeedPage() {
                       >
                         {likedPosts.has(post.id) ? '❤️' : '🤍'} {post.likesCount || post._count?.likes || 0}
                       </Button>
-                      <Button size="sm" variant="ghost">
+                      <Button size="sm" variant="ghost" onClick={() => handleExpandComments(post.id)}>
                         💬 {post.commentsCount || post._count?.comments || 0}
                       </Button>
                       <Button 
