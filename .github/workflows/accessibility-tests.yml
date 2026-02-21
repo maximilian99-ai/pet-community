@@ -1,0 +1,106 @@
+name: Accessibility Tests (WCAG)
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'frontend/**'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'frontend/**'
+
+jobs:
+  accessibility:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.5.1'
+    
+    - name: Install pnpm
+      uses: pnpm/action-setup@v2
+      with:
+        version: 8
+    
+    - name: Install dependencies
+      working-directory: ./frontend
+      run: pnpm install
+    
+    - name: Install Playwright browsers
+      working-directory: ./frontend
+      run: pnpm exec playwright install --with-deps chromium
+    
+    - name: Install axe-core
+      working-directory: ./frontend
+      run: pnpm add -D @axe-core/playwright
+    
+    - name: Run accessibility tests
+      working-directory: ./frontend
+      run: pnpm exec playwright test e2e/accessibility.spec.ts
+    
+    - name: Upload test results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: accessibility-test-results
+        path: frontend/playwright-report/
+        retention-days: 30
+    
+    - name: Comment PR with test results
+      if: github.event_name == 'pull_request' && failure()
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const comment = `## ♿ 접근성 테스트 실패
+          
+          WCAG 2.1 AA 기준 접근성 테스트에서 문제가 발견되었습니다.
+          
+          🔍 자세한 내용은 [Test Results](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})를 확인하세요.
+          
+          ### 일반적인 접근성 문제
+          - 이미지에 alt 텍스트 누락
+          - 버튼/링크에 설명 텍스트 누락
+          - 색상 대비 부족 (4.5:1 미만)
+          - 폼 컨트롤에 레이블 누락
+          - 키보드로 접근 불가능한 요소
+          
+          ### 수정 가이드
+          - [WCAG 2.1 가이드라인](https://www.w3.org/WAI/WCAG21/quickref/)
+          - [접근성 체크리스트](https://www.a11yproject.com/checklist/)
+          `;
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: comment
+          });
+    
+    - name: Comment PR with success
+      if: github.event_name == 'pull_request' && success()
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const comment = `## ✅ 접근성 테스트 통과
+          
+          WCAG 2.1 AA 기준 접근성 테스트를 모두 통과했습니다! 🎉
+          
+          ### 테스트된 항목
+          - ♿ WCAG 2.1 Level A, AA 준수
+          - ⌨️ 키보드 네비게이션
+          - 🎨 색상 대비 (4.5:1 이상)
+          - 🏷️ 레이블 및 대체 텍스트
+          - 🔊 스크린 리더 호환성
+          `;
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: comment
+          });

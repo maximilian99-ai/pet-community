@@ -6,9 +6,10 @@ import { useAuthStore } from '@/store';
 import { useGetPosts } from '@/hooks/usePost';
 import { useCreatePost, useAddComment, useLikePost, useDeleteComment, useUpdateComment, useUpdatePost, useDeletePost } from '@/hooks/usePost';
 import { Post } from '@/types';
-import { useState, useRef } from 'react';
+import { useState, useRef, useMemo, useCallback, memo } from 'react';
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 import apiClient from '@/api/client';
+import NextImage from 'next/image';
 
 export const dynamic = 'force-dynamic';
 
@@ -39,44 +40,55 @@ export default function FeedPage() {
   const createPostDisclosure = useDisclosure();
   const editPostDisclosure = useDisclosure();
 
-  const posts: Post[] = feedData?.posts || [];
+  const posts: Post[] = useMemo(() => feedData?.posts || [], [feedData]);
 
-  const TopBadge = () => (
-    <Badge
-      colorScheme="yellow"
-      variant="solid"
-      borderRadius="full"
-      px={2}
-      py={0.5}
-      fontSize="xs"
-    >
-      TOP
-    </Badge>
+  const TopBadge = useMemo(() => {
+    const Component = memo(() => (
+      <Badge
+        bg="orange.600"
+        color="white"
+        variant="solid"
+        borderRadius="full"
+        px={2}
+        py={0.5}
+        fontSize="xs"
+      >
+        TOP
+      </Badge>
+    ));
+    Component.displayName = 'TopBadge';
+    return Component;
+  }, []);
+
+  const popularPosts = useMemo(
+    () => [...posts]
+      .sort((a, b) => (b.likes?.length || 0) - (a.likes?.length || 0))
+      .slice(0, 3),
+    [posts]
   );
-
-  const popularPosts = [...posts]
-    .sort((a, b) => (b.likes?.length || 0) - (a.likes?.length || 0))
-    .slice(0, 3);
   const topPopularPostId = popularPosts[0]?.id;
 
   const pathname = usePathname();
-  const locale = pathname.split('/')[1];
+  const locale = useMemo(() => pathname.split('/')[1], [pathname]);
   const searchParams = useSearchParams();
   const sharedPostId = searchParams.get('postId');
 
   const router = useRouter();
   
   // 게시물 필터링 로직 추가
-  const displayPosts = sharedPostId 
-    ? posts.filter(post => post.id === sharedPostId)
-    : posts;
+  const displayPosts = useMemo(
+    () => sharedPostId 
+      ? posts.filter(post => post.id === sharedPostId)
+      : posts,
+    [sharedPostId, posts]
+  );
 
-  const handleCreatePost = () => {
+  const handleCreatePost = useCallback(() => {
     setPostData({ title: '', content: '', image: '' });
     createPostDisclosure.onOpen();
-  };
+  }, [createPostDisclosure]);
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       // 이미지 압축
@@ -102,14 +114,14 @@ export default function FeedPage() {
             ctx.drawImage(img, 0, 0, width, height);
             // JPEG로 압축 (품질 0.8)
             const compressedImage = canvas.toDataURL('image/jpeg', 0.8);
-            setPostData({ ...postData, image: compressedImage });
+            setPostData(prev => ({ ...prev, image: compressedImage }));
           }
         };
         img.src = reader.result as string;
       };
       reader.readAsDataURL(file);
     }
-  };
+  }, []);
 
   const handleSavePost = async () => {
     try {
@@ -397,8 +409,16 @@ export default function FeedPage() {
 
                     {/* Post Image */}
                     {post.image && (
-                      <Box mb={4} borderRadius="md" overflow="hidden">
-                        <Image src={post.image} alt={post.title} width="100%" />
+                      <Box mb={4} borderRadius="md" overflow="hidden" position="relative" minH="300px">
+                        <NextImage 
+                          src={post.image} 
+                          alt={post.title} 
+                          width={800}
+                          height={600}
+                          style={{ width: '100%', height: 'auto' }}
+                          loading="lazy"
+                          quality={85}
+                        />
                       </Box>
                     )}
 

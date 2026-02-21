@@ -26,16 +26,24 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
   const messages = await getMessages();
 
   return (
-    <NextIntlClientProvider locale={locale} messages={messages}>
-      <ReactQueryClientProvider>
-        <ChakraProvider>
-          <ColorModeProvider>
-            <Navbar />
-            {children}
-          </ColorModeProvider>
-        </ChakraProvider>
-      </ReactQueryClientProvider>
-    </NextIntlClientProvider>
+    <html lang={locale} suppressHydrationWarning>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      </head>
+      <body style={{ margin: 0, padding: 0 }}>
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <ReactQueryClientProvider>
+            <ChakraProvider>
+              <ColorModeProvider>
+                <Navbar />
+                <main>{children}</main>
+              </ColorModeProvider>
+            </ChakraProvider>
+          </ReactQueryClientProvider>
+        </NextIntlClientProvider>
+      </body>
+    </html>
   );
 }
 

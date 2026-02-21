@@ -1,0 +1,99 @@
+name: Lighthouse CI
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'frontend/**'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'frontend/**'
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.5.1'
+    
+    - name: Install pnpm
+      uses: pnpm/action-setup@v2
+      with:
+        version: 8
+    
+    - name: Install dependencies
+      working-directory: ./frontend
+      run: pnpm install
+    
+    - name: Build application
+      working-directory: ./frontend
+      env:
+        NEXT_PUBLIC_API_URL: http://localhost:5000/api
+      run: pnpm build
+    
+    - name: Start server
+      working-directory: ./frontend
+      run: |
+        pnpm start &
+        npx wait-on http://localhost:3000 --timeout 60000
+    
+    - name: Run Lighthouse CI
+      working-directory: ./frontend
+      run: |
+        npm install -g @lhci/cli@0.12.x
+        lhci autorun
+      env:
+        LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+    
+    - name: Upload Lighthouse results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: lighthouse-results
+        path: frontend/.lighthouseci
+        retention-days: 30
+    
+    - name: Comment PR with Lighthouse results
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          const path = require('path');
+          
+          // Lighthouse 결과 읽기
+          const resultsPath = path.join(process.cwd(), 'frontend/.lighthouseci');
+          
+          if (fs.existsSync(resultsPath)) {
+            const comment = `## 🚦 Lighthouse CI Results
+            
+            Lighthouse 성능 테스트가 완료되었습니다.
+            
+            📊 자세한 결과는 [Artifacts](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})에서 확인하세요.
+            
+            ### 평가 항목
+            - ⚡ Performance (성능)
+            - ♿ Accessibility (접근성)
+            - 🎯 Best Practices (모범 사례)
+            - 🔍 SEO
+            
+            ### 기준 점수
+            - Performance: 80점 이상
+            - Accessibility: 90점 이상
+            - Best Practices: 80점 이상
+            - SEO: 90점 이상
+            `;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+          }

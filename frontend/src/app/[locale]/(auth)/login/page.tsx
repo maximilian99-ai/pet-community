@@ -79,14 +79,14 @@ export default function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-            <Button type="submit" colorScheme="blue" width="100%" isLoading={isLoading}>
+            <Button type="submit" bg="blue.600" color="white" _hover={{ bg: 'blue.700' }} width="100%" isLoading={isLoading}>
               {t('auth.login')}
             </Button>
           </VStack>
 
           <Text>
             {t('auth.noAccount')}{' '}
-            <ChakraLink as={Link} href={`/${locale}/signup`} color="blue.500">
+            <ChakraLink as={Link} href={`/${locale}/signup`} color="blue.600">
               {t('auth.signup')}
             </ChakraLink>
           </Text>

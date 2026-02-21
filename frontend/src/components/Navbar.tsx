@@ -36,6 +36,7 @@ export function Navbar() {
 
   return (
     <Box
+      as="nav"
       bg={colorMode === 'dark' ? 'gray.800' : 'white'}
       borderBottom="1px"
       borderColor={colorMode === 'dark' ? 'gray.700' : 'gray.200'}
@@ -114,7 +115,9 @@ export function Navbar() {
               </Button>
               <Text display={{ base: 'none', md: 'block' }}>|</Text>
               <Button
-                colorScheme="green"
+                bg="green.600"
+                color="white"
+                _hover={{ bg: 'green.700' }}
                 size={{ base: 'xs', md: 'sm' }}
                 fontSize={{ base: 'xs', md: 'sm' }}
                 px={{ base: 2, md: 4 }}
