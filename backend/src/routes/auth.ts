@@ -160,12 +160,12 @@ router.delete('/me', authenticate, async (req: AuthRequest, res: Response) => {
       return;
     }
 
-    // Delete user (cascade will delete related posts, comments, etc.)
+    // Delete user (posts and comments will be preserved with null authorId)
     await prisma.user.delete({
       where: { id: userId },
     });
 
-    console.log(`[AUTH] 회원탈퇴 성공 - 사용자명: ${user.username}, ID: ${userId}`);
+    console.log(`[AUTH] 회원탈퇴 성공 - 사용자명: ${user.username}, ID: ${userId} (게시글/댓글 보존)`);
     res.json({ message: 'Account deleted successfully' });
   } catch (error) {
     console.error('[AUTH] 회원탈퇴 오류:', error);

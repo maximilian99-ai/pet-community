@@ -84,7 +84,8 @@
     "postTitle": "Beitragstitel",
     "postContent": "Beitragsinhalt",
     "changeImage": "Bild ändern",
-    "uploadImage": "Bild hochladen"
+    "uploadImage": "Bild hochladen",
+    "deletedUser": "Gelöschter Benutzer"
   },
   "dashboard": {
     "title": "Armaturenbrett",

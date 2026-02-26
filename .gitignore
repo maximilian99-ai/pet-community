@@ -16,3 +16,4 @@ package-lock.json
 backups/
 *.sql
 *.sql.gz
+.nvmrc

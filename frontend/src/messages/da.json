@@ -84,7 +84,8 @@
     "postTitle": "Indlægstitel",
     "postContent": "Indlægsindhold",
     "changeImage": "Skift billede",
-    "uploadImage": "Upload billede"
+    "uploadImage": "Upload billede",
+    "deletedUser": "Slettet bruger"
   },
   "dashboard": {
     "title": "Dashboard",

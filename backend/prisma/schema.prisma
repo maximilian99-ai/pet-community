@@ -69,8 +69,8 @@ model Log {
 
 model Post {
   id        String   @id @default(cuid())
-  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  authorId  String
+  author    User?    @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  authorId  String?
   pet       Pet?     @relation(fields: [petId], references: [id], onDelete: SetNull)
   petId     String?
   title     String
@@ -89,8 +89,8 @@ model Post {
 
 model Comment {
   id        String   @id @default(cuid())
-  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  authorId  String
+  author    User?    @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  authorId  String?
   post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId    String
   content   String

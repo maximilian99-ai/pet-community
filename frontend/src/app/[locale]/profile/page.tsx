@@ -61,7 +61,7 @@ export default function ProfilePage() {
     if (!isAuthenticated) {
       router.push(`/${locale}/login`);
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated, router, locale]);
 
   useEffect(() => {
     if (currentUser) {

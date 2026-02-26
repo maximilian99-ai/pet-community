@@ -6,7 +6,7 @@ import { useAuthStore } from '@/store';
 import { useGetPosts } from '@/hooks/usePost';
 import { useCreatePost, useAddComment, useLikePost, useDeleteComment, useUpdateComment, useUpdatePost, useDeletePost } from '@/hooks/usePost';
 import { Post } from '@/types';
-import { useState, useRef, useMemo, useCallback, memo } from 'react';
+import { useState, useRef, useMemo, useCallback } from 'react';
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 import apiClient from '@/api/client';
 import NextImage from 'next/image';
@@ -42,31 +42,10 @@ export default function FeedPage() {
 
   const posts: Post[] = useMemo(() => feedData?.posts || [], [feedData]);
 
-  const TopBadge = useMemo(() => {
-    const Component = memo(() => (
-      <Badge
-        bg="orange.600"
-        color="white"
-        variant="solid"
-        borderRadius="full"
-        px={2}
-        py={0.5}
-        fontSize="xs"
-      >
-        TOP
-      </Badge>
-    ));
-    Component.displayName = 'TopBadge';
-    return Component;
-  }, []);
-
   const popularPosts = useMemo(
-    () => [...posts]
-      .sort((a, b) => (b.likes?.length || 0) - (a.likes?.length || 0))
-      .slice(0, 3),
-    [posts]
+    () => [...posts].sort((a, b) => (b.likesCount || 0) - (a.likesCount || 0)).slice(0, 3)
+    , [posts]
   );
-  const topPopularPostId = popularPosts[0]?.id;
 
   const pathname = usePathname();
   const locale = useMemo(() => pathname.split('/')[1], [pathname]);
@@ -327,10 +306,13 @@ export default function FeedPage() {
                 <CardBody>
                   <Flex align="center" justify="space-between" mb={3}>
                     <Heading size="sm">{t('feed.bestPost') || 'Popular Posts'}</Heading>
-                    <TopBadge />
+                    <Badge bg="orange.600" color="white" variant="solid" borderRadius="full"
+                      px={2} py={0.5} fontSize="xs">
+                      TOP
+                    </Badge>
                   </Flex>
                   <VStack spacing={2} align="stretch">
-                    {popularPosts.map((post, index) => (
+                    {popularPosts.map((post: Post) => (
                       <Box
                         key={post.id}
                         p={3}
@@ -343,10 +325,9 @@ export default function FeedPage() {
                               <Text fontWeight="bold" noOfLines={1}>
                                 {post.title}
                               </Text>
-                              {index === 0 && <TopBadge />}
                             </HStack>
                             <Text fontSize="sm" color={colorMode === 'dark' ? 'gray.300' : 'gray.600'} noOfLines={1}>
-                              {post.author.username}
+                              {post.author?.username || t('feed.deletedUser') || '탈퇴한 사용자'}
                             </Text>
                           </Box>
                           <HStack spacing={2} flexShrink={0}>
@@ -375,18 +356,18 @@ export default function FeedPage() {
                       <Flex align="center">
                         <Avatar
                           size="md"
-                          name={post.author.username}
-                          src={post.author.avatar}
+                          name={post.author?.username || t('feed.deletedUser') || '탈퇴한 사용자'}
+                          src={post.author?.avatar}
                           mr={3}
                         />
                         <Box>
-                          <Text fontWeight="bold">{post.author.username}</Text>
+                          <Text fontWeight="bold">{post.author?.username || t('feed.deletedUser') || '탈퇴한 사용자'}</Text>
                           <Text fontSize="sm" color={colorMode === 'dark' ? 'gray.400' : 'gray.600'}>
                             {new Date(post.createdAt).toLocaleDateString()}
                           </Text>
                         </Box>
                       </Flex>
-                      {currentUserId === post.author.username && (
+                      {currentUserId && post.author && currentUserId === post.author.username && (
                         <HStack spacing={2}>
                           <Button size="sm" variant="ghost" onClick={() => handleEditPost(post)}>
                             ✏️
@@ -403,22 +384,14 @@ export default function FeedPage() {
                     {/* Post Content */}
                     <HStack spacing={2} mb={2} align="center">
                       <Heading size="md">{post.title}</Heading>
-                      {post.id === topPopularPostId && <TopBadge />}
                     </HStack>
                     <Text mb={4}>{post.content}</Text>
 
                     {/* Post Image */}
                     {post.image && (
                       <Box mb={4} borderRadius="md" overflow="hidden" position="relative" minH="300px">
-                        <NextImage 
-                          src={post.image} 
-                          alt={post.title} 
-                          width={800}
-                          height={600}
-                          style={{ width: '100%', height: 'auto' }}
-                          loading="lazy"
-                          quality={85}
-                        />
+                        <NextImage  src={post.image} alt={post.title} width={800} height={600} style={{ width: '100%', height: 'auto' }}
+                          loading="lazy" quality={85} />
                       </Box>
                     )}
 
@@ -499,9 +472,9 @@ export default function FeedPage() {
                               <Box flex={1}>
                                 <Flex align="center" mb={1}>
                                   <Text fontSize="sm" fontWeight="bold" mr={2}>
-                                    {comment.author.username}
+                                    {comment.author?.username || t('feed.deletedUser') || '탈퇴한 사용자'}
                                   </Text>
-                                  {currentUserId === comment.author.username && (
+                                  {currentUserId && comment.author && currentUserId === comment.author.username && (
                                     <HStack spacing={1}>
                                       <Button 
                                         size="xs" 

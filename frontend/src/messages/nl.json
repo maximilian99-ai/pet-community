@@ -84,7 +84,8 @@
     "postTitle": "Berichttitel",
     "postContent": "Berichtinhoud",
     "changeImage": "Afbeelding wijzigen",
-    "uploadImage": "Afbeelding uploaden"
+    "uploadImage": "Afbeelding uploaden",
+    "deletedUser": "Verwijderde gebruiker"
   },
   "dashboard": {
     "title": "Dashboard",

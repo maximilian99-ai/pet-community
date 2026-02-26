@@ -84,7 +84,8 @@
     "postTitle": "Título de la publicación",
     "postContent": "Contenido de la publicación",
     "changeImage": "Cambiar imagen",
-    "uploadImage": "Subir imagen"
+    "uploadImage": "Subir imagen",
+    "deletedUser": "Usuario eliminado"
   },
   "dashboard": {
     "title": "Panel",

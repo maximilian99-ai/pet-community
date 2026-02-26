@@ -84,7 +84,8 @@
     "postTitle": "Post Title",
     "postContent": "Post Content",
     "changeImage": "Change Image",
-    "uploadImage": "Upload Image"
+    "uploadImage": "Upload Image",
+    "deletedUser": "Deleted User"
   },
   "dashboard": {
     "title": "Dashboard",

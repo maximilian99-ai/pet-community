@@ -31,6 +31,7 @@ export default function LogModal({ isOpen, onClose, petId }: LogModalProps) {
   const [deletingLogId, setDeletingLogId] = useState<string | null>(null);
 
   const addLogDisclosure = useDisclosure();
+  const editLogDisclosure = useDisclosure();
   const deleteConfirmDisclosure = useDisclosure();
 
   const logTypes = ['feeding', 'walk', 'health', 'play', 'other'];
@@ -60,7 +61,7 @@ export default function LogModal({ isOpen, onClose, petId }: LogModalProps) {
           description: t('log.validationContentRequired'),
           status: 'error',
           duration: 3000,
-          isClosable: true,
+          isClosable: true
         });
         return;
       }
@@ -70,31 +71,32 @@ export default function LogModal({ isOpen, onClose, petId }: LogModalProps) {
           logId: editingLogId,
           type: logData.type as 'feeding' | 'walk' | 'health' | 'play' | 'other',
           content: logData.content,
-          date: logData.date,
+          date: logData.date
         });
+        editLogDisclosure.onClose();
         toast({
           title: t('common.success'),
           description: t('log.updated'),
           status: 'success',
           duration: 2000,
-          isClosable: true,
+          isClosable: true
         });
       } else {
         await createLogMutation.mutateAsync({
           petId,
           type: logData.type as 'feeding' | 'walk' | 'health' | 'play' | 'other',
           content: logData.content,
-          date: logData.date,
+          date: logData.date
         });
+        addLogDisclosure.onClose();
         toast({
           title: t('common.success'),
           description: t('log.created'),
           status: 'success',
           duration: 2000,
-          isClosable: true,
+          isClosable: true
         });
       }
-      addLogDisclosure.onClose();
     } catch (error) {
       console.error('Failed to save log:', error);
       toast({
@@ -102,7 +104,7 @@ export default function LogModal({ isOpen, onClose, petId }: LogModalProps) {
         description: t('log.saveFailed'),
         status: 'error',
         duration: 3000,
-        isClosable: true,
+        isClosable: true
       });
     }
   };
@@ -126,15 +128,15 @@ export default function LogModal({ isOpen, onClose, petId }: LogModalProps) {
     try {
       if (deletingLogId) {
         await deleteLogMutation.mutateAsync(deletingLogId);
+        deleteConfirmDisclosure.onClose();
         toast({
           title: t('common.success'),
           description: t('log.deleted'),
           status: 'success',
           duration: 2000,
-          isClosable: true,
+          isClosable: true
         });
       }
-      deleteConfirmDisclosure.onClose();
     } catch (error) {
       console.error('Failed to delete log:', error);
       toast({
@@ -142,7 +144,7 @@ export default function LogModal({ isOpen, onClose, petId }: LogModalProps) {
         description: t('log.deleteFailed'),
         status: 'error',
         duration: 3000,
-        isClosable: true,
+        isClosable: true
       });
     }
   };

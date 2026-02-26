@@ -84,7 +84,8 @@
     "postTitle": "Titre de la publication",
     "postContent": "Contenu de la publication",
     "changeImage": "Changer l'image",
-    "uploadImage": "Télécharger une image"
+    "uploadImage": "Télécharger une image",
+    "deletedUser": "Utilisateur supprimé"
   },
   "dashboard": {
     "title": "Tableau de bord",

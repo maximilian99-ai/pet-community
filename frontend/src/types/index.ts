@@ -27,8 +27,8 @@ export interface Log {
 
 export interface Comment {
   id: string;
-  authorId: string;
-  author: User;
+  authorId: string | null;
+  author: User | null;
   postId: string;
   content: string;
   createdAt: string;
@@ -49,8 +49,8 @@ export interface Badge {
 
 export interface Post {
   id: string;
-  authorId: string;
-  author: User;
+  authorId: string | null;
+  author: User | null;
   petId?: string;
   pet?: Pet;
   title: string;
