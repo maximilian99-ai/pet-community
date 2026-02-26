@@ -269,7 +269,7 @@ export default function LogModal({ isOpen, onClose, petId }: LogModalProps) {
             <Button variant="ghost" mr={3} onClick={addLogDisclosure.onClose}>
               {t('common.cancel')}
             </Button>
-            <Button colorScheme="blue" onClick={handleSaveLog}>
+            <Button colorScheme="blue" onClick={handleSaveLog} isLoading={createLogMutation.isPending || updateLogMutation.isPending}>
               {t('common.save')}
             </Button>
           </ModalFooter>
