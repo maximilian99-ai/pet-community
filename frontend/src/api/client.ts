@@ -37,9 +37,15 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      if (typeof window !== 'undefined') {
+      // 로그인/회원가입 요청에서는 자동 리다이렉트하지 않음
+      const isAuthEndpoint = error.config?.url?.includes('/auth/login') || 
+                            error.config?.url?.includes('/auth/signup');
+      
+      if (!isAuthEndpoint && typeof window !== 'undefined') {
         localStorage.removeItem('token');
-        window.location.href = '/login';
+        // locale을 포함한 경로로 리다이렉트
+        const locale = window.location.pathname.split('/')[1] || 'ko';
+        window.location.href = `/${locale}/login`;
       }
     }
     return Promise.reject(error);

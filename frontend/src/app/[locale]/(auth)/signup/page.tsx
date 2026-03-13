@@ -31,7 +31,7 @@ export default function SignupPage() {
     setError('');
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match');
+      setError(t('auth.passwordMismatch') || '비밀번호가 일치하지 않습니다.');
       return;
     }
 
@@ -48,12 +48,19 @@ export default function SignupPage() {
       setUsernameStore(user.username);
       router.push(`/${locale}/login`);
     } catch (err) {
-      interface ErrorResponse {
-        response?: { data?: { error?: string } };
+      // 에러 처리: 사용자에게 명확한 메시지 표시
+      const error = err as { response?: { status?: number; data?: { error?: string } } };
+      console.error('회원가입 오류:', err);
+      
+      if (error.response?.status === 409) {
+        setError(t('auth.userExists') || '이미 사용 중인 이메일 또는 사용자명입니다.');
+      } else if (error.response?.status === 400) {
+        setError(t('auth.missingFields') || '모든 필드를 입력해주세요.');
+      } else if (error.response?.data?.error) {
+        setError(error.response.data.error);
+      } else {
+        setError(t('auth.signupFailed') || '회원가입에 실패했습니다. 다시 시도해주세요.');
       }
-      const error = err as ErrorResponse;
-      const errorMessage = error.response?.data?.error || 'Signup failed';
-      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }

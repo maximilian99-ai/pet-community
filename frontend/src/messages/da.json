@@ -1,4 +1,11 @@
 {
+  "followers": "Følgere",
+  "following": "Følger",
+  "loading": "Indlæser...",
+  "noFollowers": "Ingen følgere endnu",
+  "noFollowing": "Følger ingen",
+  "follow": "Følg",
+  "unfollow": "Følg ikke længere",
   "common": {
     "loading": "Indlæser...",
     "error": "Fejl",
@@ -29,7 +36,13 @@
     "loginTitle": "Velkommen tilbage",
     "signupTitle": "Opret konto",
     "noAccount": "Har du ikke en konto?",
-    "haveAccount": "Har du allerede en konto?"
+    "haveAccount": "Har du allerede en konto?",
+    "invalidCredentials": "Ugyldig e-mail eller adgangskode.",
+    "missingFields": "Indtast venligst din e-mail og adgangskode.",
+    "loginFailed": "Login mislykkedes. Prøv venligst igen.",
+    "passwordMismatch": "Adgangskoderne matcher ikke.",
+    "userExists": "Denne e-mail eller brugernavn er allerede i brug.",
+    "signupFailed": "Tilmelding mislykkedes. Prøv venligst igen."
   },
   "profile": {
     "title": "Min profil",

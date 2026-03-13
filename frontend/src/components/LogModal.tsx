@@ -31,7 +31,6 @@ export default function LogModal({ isOpen, onClose, petId }: LogModalProps) {
   const [deletingLogId, setDeletingLogId] = useState<string | null>(null);
 
   const addLogDisclosure = useDisclosure();
-  const editLogDisclosure = useDisclosure();
   const deleteConfirmDisclosure = useDisclosure();
 
   const logTypes = ['feeding', 'walk', 'health', 'play', 'other'];
@@ -73,7 +72,7 @@ export default function LogModal({ isOpen, onClose, petId }: LogModalProps) {
           content: logData.content,
           date: logData.date
         });
-        editLogDisclosure.onClose();
+        addLogDisclosure.onClose();
         toast({
           title: t('common.success'),
           description: t('log.updated'),

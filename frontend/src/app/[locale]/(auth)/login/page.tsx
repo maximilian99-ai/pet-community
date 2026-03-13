@@ -32,16 +32,29 @@ export default function LoginPage() {
     try {
       const response = await apiClient.post('/auth/login', { email, password });
       const { token, user } = response.data;
+      
+      // 토큰 저장
       setToken(token);
       setUsername(user.username);
+      
+      // 로그인 성공 후 피드 페이지로 이동
       router.push(`/${locale}/feed`);
     } catch (err) {
-      interface ErrorResponse {
-        response?: { data?: { error?: string } };
+      // 에러 처리: 사용자에게 명확한 메시지 표시
+      const error = err as { response?: { status?: number; data?: { error?: string } } };
+      console.error('로그인 오류:', err);
+      
+      if (error.response?.status === 401) {
+        setError(t('auth.invalidCredentials') || '이메일 또는 비밀번호가 올바르지 않습니다.');
+      } else if (error.response?.status === 400) {
+        setError(t('auth.missingFields') || '이메일과 비밀번호를 입력해주세요.');
+      } else if (error.response?.data?.error) {
+        setError(error.response.data.error);
+      } else {
+        setError(t('auth.loginFailed') || '로그인에 실패했습니다. 다시 시도해주세요.');
       }
-      const error = err as ErrorResponse;
-      const errorMessage = error.response?.data?.error || 'Login failed';
-      setError(errorMessage);
+      
+      // 리다이렉트 방지: 에러 발생 시 현재 페이지에 머물기
     } finally {
       setIsLoading(false);
     }

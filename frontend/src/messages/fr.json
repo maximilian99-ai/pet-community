@@ -1,4 +1,11 @@
 {
+  "followers": "Abonnés",
+  "following": "Abonnements",
+  "loading": "Chargement...",
+  "noFollowers": "Aucun abonné pour le moment",
+  "noFollowing": "Ne suit personne",
+  "follow": "Suivre",
+  "unfollow": "Ne plus suivre",
   "common": {
     "loading": "Chargement...",
     "error": "Erreur",
@@ -29,7 +36,13 @@
     "loginTitle": "Bienvenue",
     "signupTitle": "Créer un compte",
     "noAccount": "Vous n'avez pas de compte?",
-    "haveAccount": "Vous avez déjà un compte?"
+    "haveAccount": "Vous avez déjà un compte?",
+    "invalidCredentials": "Email ou mot de passe invalide.",
+    "missingFields": "Veuillez entrer votre email et mot de passe.",
+    "loginFailed": "La connexion a échoué. Veuillez réessayer.",
+    "passwordMismatch": "Les mots de passe ne correspondent pas.",
+    "userExists": "Cet email ou nom d'utilisateur est déjà utilisé.",
+    "signupFailed": "L'inscription a échoué. Veuillez réessayer."
   },
   "profile": {
     "title": "Mon profil",

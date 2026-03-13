@@ -1,4 +1,11 @@
 {
+  "followers": "Followers",
+  "following": "Following",
+  "loading": "Loading...",
+  "noFollowers": "No followers yet",
+  "noFollowing": "Not following anyone",
+  "follow": "Follow",
+  "unfollow": "Unfollow",
   "common": {
     "loading": "Loading...",
     "error": "Error",
@@ -29,7 +36,13 @@
     "loginTitle": "Welcome Back",
     "signupTitle": "Create Account",
     "noAccount": "Don't have an account?",
-    "haveAccount": "Already have an account?"
+    "haveAccount": "Already have an account?",
+    "invalidCredentials": "Invalid email or password.",
+    "missingFields": "Please enter your email and password.",
+    "loginFailed": "Login failed. Please try again.",
+    "passwordMismatch": "Passwords do not match.",
+    "userExists": "This email or username is already in use.",
+    "signupFailed": "Signup failed. Please try again."
   },
   "profile": {
     "title": "My Profile",

@@ -1,4 +1,11 @@
 {
+  "followers": "Volgers",
+  "following": "Volgend",
+  "loading": "Bezig met laden...",
+  "noFollowers": "Nog geen volgers",
+  "noFollowing": "Volgt niemand",
+  "follow": "Volgen",
+  "unfollow": "Ontvolgen",
   "common": {
     "loading": "Bezig met laden...",
     "error": "Fout",
@@ -29,7 +36,13 @@
     "loginTitle": "Welkom terug",
     "signupTitle": "Account maken",
     "noAccount": "Heb je nog geen account?",
-    "haveAccount": "Heb je al een account?"
+    "haveAccount": "Heb je al een account?",
+    "invalidCredentials": "Ongeldig e-mailadres of wachtwoord.",
+    "missingFields": "Voer uw e-mailadres en wachtwoord in.",
+    "loginFailed": "Aanmelden mislukt. Probeer het opnieuw.",
+    "passwordMismatch": "Wachtwoorden komen niet overeen.",
+    "userExists": "Dit e-mailadres of deze gebruikersnaam is al in gebruik.",
+    "signupFailed": "Registratie mislukt. Probeer het opnieuw."
   },
   "profile": {
     "title": "Mijn profiel",

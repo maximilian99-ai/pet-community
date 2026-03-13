@@ -580,7 +580,7 @@ export default function ProfilePage() {
       )}
 
       {/* Following List Modal */}
-      {currentUser && (
+      {currentUser && followingListDisclosure.isOpen && (
         <FollowingList
           isOpen={followingListDisclosure.isOpen}
           onClose={followingListDisclosure.onClose}
@@ -589,7 +589,7 @@ export default function ProfilePage() {
       )}
 
       {/* Follower List Modal */}
-      {currentUser && (
+      {currentUser && followerListDisclosure.isOpen && (
         <FollowerList
           isOpen={followerListDisclosure.isOpen}
           onClose={followerListDisclosure.onClose}

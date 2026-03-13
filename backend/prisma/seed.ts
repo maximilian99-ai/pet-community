@@ -94,7 +94,7 @@ async function main() {
       species: 'Dog',
       breed: 'Maltese',
       age: 2,
-      image: 'https://images.unsplash.com/photo-1633722715463-d30628be4c4e?w=300',
+      image: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=300&q=80',
       userId: userJiEun.id,
     },
   });
@@ -138,7 +138,7 @@ async function main() {
       species: 'Cat',
       breed: 'Siamese',
       age: 2,
-      image: 'https://images.unsplash.com/photo-1567633949008-58fc508d9ee0?w=300',
+      image: 'https://images.unsplash.com/photo-1513360371669-4adf3dd7dff8?w=300&q=80',
       userId: userPierre.id,
     },
   });
@@ -149,7 +149,7 @@ async function main() {
       species: 'Dog',
       breed: 'Dachshund',
       age: 3,
-      image: 'https://images.unsplash.com/photo-1623807917808-ab3efb4a9bdc?w=300',
+      image: 'https://images.unsplash.com/photo-1541364983171-a8ba01e95cfc?w=300&q=80',
       userId: userJan.id,
     },
   });
@@ -160,7 +160,7 @@ async function main() {
       species: 'Dog',
       breed: 'Spanish Mastiff',
       age: 4,
-      image: 'https://images.unsplash.com/photo-1633722815463-d30628be4c4e?w=300',
+      image: 'https://images.unsplash.com/photo-1517849845537-4d257902454a?w=300&q=80',
       userId: userCarlos.id,
     },
   });
@@ -171,7 +171,7 @@ async function main() {
     data: {
       title: 'Melody와 함께한 공원 산책',
       content: '날씨가 너무 좋아서 공원에 다녀왔어요. Melody가 다른 강아지들과 잘 놀았어요 🐕',
-      image: 'https://images.unsplash.com/photo-1633722715463-d30628be4c4e?w=500',
+      image: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=800&q=80',
       petId: petMelody.id,
       authorId: userJiEun.id,
     },
@@ -215,7 +215,7 @@ async function main() {
     data: {
       title: 'Chouchou, mon petit compagnon',
       content: 'Chouchou est la plus gracieuse des chattes. Elle aime s\'asseoir sur mes genoux pendant que je travaille. C\'est un vrai plaisir d\'avoir ce petit amour! 💕',
-      image: 'https://images.unsplash.com/photo-1567633949008-58fc508d9ee0?w=500',
+      image: 'https://images.unsplash.com/photo-1513360371669-4adf3dd7dff8?w=800&q=80',
       petId: petChouchou.id,
       authorId: userPierre.id,
     },
@@ -226,7 +226,7 @@ async function main() {
     data: {
       title: 'Lucy\'s eerste dag in de achtertuin',
       content: 'Lucy exploert nu voor het eerst onze nieuwe achtertuin! Ze snuffelt overal en geniet van alle nieuwe geuren. Ze is zo enthousiast! 🐕',
-      image: 'https://images.unsplash.com/photo-1623807917808-ab3efb4a9bdc?w=500',
+      image: 'https://images.unsplash.com/photo-1541364983171-a8ba01e95cfc?w=800&q=80',
       petId: petLucy.id,
       authorId: userJan.id,
     },
@@ -237,7 +237,7 @@ async function main() {
     data: {
       title: 'Sabor, mi fiel compañero',
       content: 'Sabor ha sido mi compañero más leal durante estos años. Hoy disfrutamos de un hermoso paseo en el campo. ¡La vida es mucho mejor con él! 🐾',
-      image: 'https://images.unsplash.com/photo-1633722815463-d30628be4c4e?w=500',
+      image: 'https://images.unsplash.com/photo-1517849845537-4d257902454a?w=800&q=80',
       petId: petSabor.id,
       authorId: userCarlos.id,
     },

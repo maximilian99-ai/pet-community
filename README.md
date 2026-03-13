@@ -274,40 +274,33 @@ Pet Community는 **Lighthouse**와 **WCAG 2.1 AA**를 기준으로 사용자 경
 | 🎯 Best Practices | 90+ | Lighthouse |
 | 🔍 SEO | 95+ | Lighthouse |
 
-### 자동화된 테스트
-
-- **Lighthouse CI**: GitHub Actions에서 자동 실행
-- **WCAG 접근성 테스트**: Playwright + axe-core
-- **ESLint 접근성 규칙**: 코드 레벨 검사
-
 ### 빠른 시작
 
 ```bash
 # UX 평가 도구 설치
 ./setup-ux-tools.sh
 
-# Lighthouse 점수 측정
+# 개발 서버 시작 후 별도 터미널에서
 cd frontend
-pnpm lighthouse:local
-
-# 접근성 테스트
-pnpm test:a11y
-
-# ESLint 접근성 검사
-pnpm lint:a11y
+pnpm lighthouse:local  # Lighthouse 점수
+pnpm test:a11y        # 접근성 테스트
+pnpm lint:a11y        # ESLint 검사
 ```
 
-### 상세 가이드
+### 📖 완벽 가이드
 
-- 📊 [**UX 평가 가이드**](guide%20documents/UX_EVALUATION_GUIDE.md) - Lighthouse & WCAG 전체 가이드
-- 🌐 [**Vercel 모니터링**](guide%20documents/VERCEL_UX_MONITORING.md) - 프로덕션 환경 모니터링
+- 📘 [**UX & 접근성 완벽 가이드**](guide%20documents/UX_AND_ACCESSIBILITY_GUIDE.md)
+  - Lighthouse 성능 측정
+  - WCAG 2.1 AA 준수
+  - 점수 개선 방법
+  - Vercel 프로덕션 모니터링
+  - CI/CD 자동화
+  - 문제 해결
 
-### 문서
+### 참고 문서
 
 자세한 가이드는 다음 문서를 참고하세요:
-- 📘 [**UX 품질 지표 가이드**](guide%20documents/UX_QUALITY_METRICS.md) - Lighthouse & WCAG 전체 가이드
-- 🚀 [**빠른 시작 가이드**](guide%20documents/QUICK_START_METRICS.md) - 즉시 시작하기
-- ♿ [**접근성 Best Practices**](guide%20documents/ACCESSIBILITY_BEST_PRACTICES.md) - 컴포넌트별 예제
+- 🎯 [**UX 접근성 완벽 가이드**](guide%20documents/UX_AND_ACCESSIBILITY_GUIDE.md) - Lighthouse & WCAG 전체 가이드
 - 🗄️ [**데이터베이스 백업 가이드**](guide%20documents/DATABASE_BACKUP_GUIDE.md) - DB 백업 및 복원 방법
 - 🔄 [**데이터베이스 복원 가이드**](RESTORE_GUIDE.md) - DB 복원 빠른 가이드
 - 📦 [**백업 빠른 가이드**](BACKUP_QUICK_GUIDE.md) - Vercel 배포 전 백업
@@ -320,5 +313,5 @@ MIT
 
 ---
 
-**개발 완료일**: 2026년 1월 21일
+**개발 완료일**: 2026년 01월 21일
 **배포 준비 상태**: MVP 구현 완료, 배포 준비 완료
