@@ -98,7 +98,9 @@
     "postContent": "Post Content",
     "changeImage": "Change Image",
     "uploadImage": "Upload Image",
-    "deletedUser": "Deleted User"
+    "deletedUser": "Deleted User",
+    "editComment": "Edit Comment",
+    "editYourComment": "Edit your comment..."
   },
   "dashboard": {
     "title": "Dashboard",

@@ -1,9 +1,6 @@
 'use client';
 
-import { Box, Button, Card, CardBody, VStack, HStack, Text, useColorMode, useDisclosure,
-  Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter,
-  Input, Textarea, Select, useToast, AlertDialog, AlertDialogOverlay, AlertDialogContent,
-  AlertDialogHeader, AlertDialogBody, AlertDialogFooter, Badge } from '@chakra-ui/react';
+import { Box, Button, Card, CardBody, VStack, HStack, Text, useColorMode, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Input, Textarea, Select, useToast, AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter, Badge } from '@chakra-ui/react';
 import { useTranslations } from 'next-intl';
 import { useState, useRef } from 'react';
 import { useGetLogs, useCreateLog, useUpdateLog, useDeleteLog } from '@/hooks/useLog';
@@ -41,7 +38,7 @@ export default function LogModal({ isOpen, onClose, petId }: LogModalProps) {
       walk: t('log.types.walk'),
       health: t('log.types.health'),
       play: t('log.types.play'),
-      other: t('log.types.other'),
+      other: t('log.types.other')
     };
     return labels[type] || type;
   };

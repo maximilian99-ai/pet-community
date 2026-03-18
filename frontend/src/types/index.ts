@@ -70,8 +70,29 @@ export interface Post {
   createdAt: string;
 }
 
+export interface PostModalProps {
+  createPostDisclosure: {
+    isOpen: boolean;
+    onClose: () => void;
+  };
+  editPostDisclosure: {
+    isOpen: boolean;
+    onClose: () => void;
+  };
+  postData: { title: string; content: string; image: string };
+  setPostData: (data: { title: string; content: string; image: string }) => void;
+  editingPost: string | null;
+  setEditingPost: (id: string | null) => void;
+  editPostData: { title: string; content: string };
+  setEditPostData: (data: { title: string; content: string }) => void;
+  editingComment: { [key: string]: string };
+  setEditingComment: (comment: { [key: string]: string }) => void;
+  fullPostData: { [key: string]: Post };
+  setFullPostData: (data: { [key: string]: Post }) => void;
+  expandedComments: Set<string>;
+}
+
 export interface AuthResponse {
   token: string;
   user: Omit<User, 'createdAt'> & { email: string };
 }
-

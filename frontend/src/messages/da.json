@@ -98,7 +98,9 @@
     "postContent": "Indlægsindhold",
     "changeImage": "Skift billede",
     "uploadImage": "Upload billede",
-    "deletedUser": "Slettet bruger"
+    "deletedUser": "Slettet bruger",
+    "editComment": "Rediger kommentar",
+    "editYourComment": "Rediger din kommentar..."
   },
   "dashboard": {
     "title": "Dashboard",

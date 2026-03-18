@@ -5,22 +5,16 @@ import { useRouter, useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Box, VStack, Heading, Grid, Button, Card, CardBody, useColorMode, Text, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Input, Textarea, AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter, HStack, useToast } from '@chakra-ui/react';
 import { useAuthStore } from '@/store';
-import { useGetCurrentUser, useUpdateProfile, useGetPets, useAddPet, useUpdatePet, useDeletePet } from '@/hooks/useProfile';
+import { useGetCurrentUser, useUpdateProfile, useGetPets, useDeletePet } from '@/hooks/useProfile';
 import apiClient from '@/api/client';
 import { useRef } from 'react';
-import LogModal from '@/components/LogModal';
+import LogModal from '@/app/[locale]/profile/ui/LogModal';
+import CardModal from '@/app/[locale]/profile/ui/CardModal';
 import FollowingList from '@/components/FollowingList';
 import FollowerList from '@/components/FollowerList';
+import { Pet } from '@/types';
 
 export const dynamic = 'force-dynamic';
-
-interface PetType {
-  id: string;
-  name: string;
-  species: string;
-  breed?: string | null;
-  age?: number | null;
-}
 
 export default function ProfilePage() {
   const t = useTranslations();
@@ -37,24 +31,23 @@ export default function ProfilePage() {
   const { data: pets = [], isLoading: petsLoading } = useGetPets(currentUser?.id);
   
   const [profileData, setProfileData] = useState({ username: '', bio: '' });
-  const [petData, setPetData] = useState({ name: '', species: '', breed: '', age: '' });
-  const [editingPetId, setEditingPetId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [selectedPet, setSelectedPet] = useState<Pet | undefined>(undefined);
+  const [petModalMode, setPetModalMode] = useState<'add' | 'edit'>('add');
+  const [deletingPet, setDeletingPet] = useState<Pet | null>(null);
 
   const editProfileDisclosure = useDisclosure();
-  const addPetDisclosure = useDisclosure();
-  const editPetDisclosure = useDisclosure();
-  const deletePetConfirmDisclosure = useDisclosure();
+  const petModalDisclosure = useDisclosure();
   const deleteConfirmDisclosure = useDisclosure();
+  const deletePetDisclosure = useDisclosure();
   const logModalDisclosure = useDisclosure();
   const followingListDisclosure = useDisclosure();
   const followerListDisclosure = useDisclosure();
   const [selectedPetForLog, setSelectedPetForLog] = useState<string | null>(null);
   const cancelRef = useRef<HTMLButtonElement>(null);
+  const deletePetCancelRef = useRef<HTMLButtonElement>(null);
 
   const updateProfileMutation = useUpdateProfile();
-  const addPetMutation = useAddPet();
-  const updatePetMutation = useUpdatePet();
   const deletePetMutation = useDeletePet();
 
   useEffect(() => {
@@ -67,7 +60,7 @@ export default function ProfilePage() {
     if (currentUser) {
       setProfileData({
         username: currentUser.username || '',
-        bio: currentUser.bio || '',
+        bio: currentUser.bio || ''
       });
     }
   }, [currentUser]);
@@ -79,7 +72,7 @@ export default function ProfilePage() {
   const handleEditProfile = () => {
     setProfileData({
       username: currentUser?.username || '',
-      bio: currentUser?.bio || '',
+      bio: currentUser?.bio || ''
     });
     editProfileDisclosure.onOpen();
   };
@@ -93,7 +86,7 @@ export default function ProfilePage() {
         description: t('profile.toast.profileUpdated'),
         status: 'success',
         duration: 2000,
-        isClosable: true,
+        isClosable: true
       });
     } catch (error) {
       console.error('Failed to update profile:', error);
@@ -102,126 +95,40 @@ export default function ProfilePage() {
         description: t('profile.toast.profileUpdateFailed'),
         status: 'error',
         duration: 3000,
-        isClosable: true,
+        isClosable: true
       });
     }
   };
 
   const handleAddPet = () => {
-    setPetData({ name: '', species: '', breed: '', age: '' });
-    setEditingPetId(null);
-    addPetDisclosure.onOpen();
+    setPetModalMode('add');
+    setSelectedPet(undefined);
+    petModalDisclosure.onOpen();
   };
 
-  const handleSaveAddPet = async () => {
-    try {
-      if (!petData.name || !petData.species) {
-        toast({
-          title: t('common.error'),
-          description: t('profile.validation.nameAndSpeciesRequired'),
-          status: 'error',
-          duration: 3000,
-          isClosable: true,
-        });
-        return;
-      }
-      
-      await addPetMutation.mutateAsync({ 
-        name: petData.name, 
-        species: petData.species, 
-        breed: petData.breed || undefined,
-        age: petData.age ? parseInt(petData.age) : undefined
-      });
-      addPetDisclosure.onClose();
-      toast({
-        title: t('common.success'),
-        description: t('profile.toast.petAdded'),
-        status: 'success',
-        duration: 2000,
-        isClosable: true,
-      });
-    } catch (error) {
-      console.error('Failed to add pet:', error);
-      toast({
-        title: t('common.error'),
-        description: t('profile.toast.petAddFailed'),
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
-    }
+  const handleEditPet = (pet: Pet) => {
+    setPetModalMode('edit');
+    setSelectedPet(pet);
+    petModalDisclosure.onOpen();
   };
 
-  const handleEditPet = (pet: PetType) => {
-    setEditingPetId(pet.id);
-    setPetData({
-      name: pet.name,
-      species: pet.species,
-      breed: pet.breed || '',
-      age: pet.age?.toString() || '',
-    });
-    editPetDisclosure.onOpen();
-  };
-
-  const handleSaveEditPet = async () => {
-    try {
-      if (!petData.name || !petData.species) {
-        toast({
-          title: t('common.error'),
-          description: t('profile.validation.nameAndSpeciesRequired'),
-          status: 'error',
-          duration: 3000,
-          isClosable: true,
-        });
-        return;
-      }
-      
-      if (editingPetId) {
-        await updatePetMutation.mutateAsync({
-          petId: editingPetId,
-          name: petData.name,
-          species: petData.species,
-          breed: petData.breed || undefined,
-          age: petData.age ? parseInt(petData.age) : undefined,
-        });
-        editPetDisclosure.onClose();
-        toast({
-          title: t('common.success'),
-          description: t('profile.toast.petUpdated'),
-          status: 'success',
-          duration: 2000,
-          isClosable: true,
-        });
-      }
-    } catch (error) {
-      console.error('Failed to update pet:', error);
-      toast({
-        title: t('common.error'),
-        description: t('profile.toast.petUpdateFailed'),
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  };
-
-  const handleDeletePetClick = (petId: string) => {
-    setEditingPetId(petId);
-    deletePetConfirmDisclosure.onOpen();
+  const handleDeletePet = (pet: Pet) => {
+    setDeletingPet(pet);
+    deletePetDisclosure.onOpen();
   };
 
   const confirmDeletePet = async () => {
     try {
-      if (editingPetId) {
-        await deletePetMutation.mutateAsync(editingPetId);
-        deletePetConfirmDisclosure.onClose();
-        setEditingPetId(null);
+      if (deletingPet) {
+        await deletePetMutation.mutateAsync(deletingPet.id);
+        deletePetDisclosure.onClose();
+        setDeletingPet(null);
         toast({
           title: t('common.success'),
           description: t('profile.toast.petDeleted'),
           status: 'success',
           duration: 2000,
-          isClosable: true,
+          isClosable: true
         });
       }
     } catch (error) {
@@ -231,7 +138,7 @@ export default function ProfilePage() {
         description: t('profile.toast.petDeleteFailed'),
         status: 'error',
         duration: 3000,
-        isClosable: true,
+        isClosable: true
       });
     }
   };
@@ -257,7 +164,7 @@ export default function ProfilePage() {
         description: t('profile.toast.deleteAccountFailed'),
         status: 'error',
         duration: 3000,
-        isClosable: true,
+        isClosable: true
       });
     }
   };
@@ -342,7 +249,7 @@ export default function ProfilePage() {
             ) : (
               <>
                 <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', lg: 'repeat(3, 1fr)' }} gap={4} mb={4}>
-                  {pets.map((pet: PetType) => (
+                  {pets.map((pet: Pet) => (
                     <Card key={pet.id} bg={colorMode === 'dark' ? 'gray.800' : 'white'}>
                       <CardBody>
                         <Heading size="sm">{pet.name}</Heading>
@@ -360,7 +267,7 @@ export default function ProfilePage() {
                           }}>
                             {t('dashboard.logs')}
                           </Button>
-                          <Button size="sm" colorScheme="red" onClick={() => handleDeletePetClick(pet.id)}>
+                          <Button size="sm" colorScheme="red" onClick={() => handleDeletePet(pet)}>
                             {t('common.delete')}
                           </Button>
                         </HStack>
@@ -412,138 +319,6 @@ export default function ProfilePage() {
         </ModalContent>
       </Modal>
 
-      {/* Add Pet Modal */}
-      <Modal isOpen={addPetDisclosure.isOpen} onClose={addPetDisclosure.onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>{t('profile.addPet')}</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <VStack spacing={4}>
-              <Box width="100%">
-                <Text fontWeight="bold" mb={2}>{t('profile.petName')}</Text>
-                <Input
-                  value={petData.name}
-                  onChange={(e) => setPetData({ ...petData, name: e.target.value })}
-                  placeholder={t('profile.petName')}
-                />
-              </Box>
-              <Box width="100%">
-                <Text fontWeight="bold" mb={2}>{t('profile.species')}</Text>
-                <Input
-                  value={petData.species}
-                  onChange={(e) => setPetData({ ...petData, species: e.target.value })}
-                  placeholder={t('profile.species')}
-                />
-              </Box>
-              <Box width="100%">
-                <Text fontWeight="bold" mb={2}>{t('profile.breed')}</Text>
-                <Input
-                  value={petData.breed}
-                  onChange={(e) => setPetData({ ...petData, breed: e.target.value })}
-                  placeholder={t('profile.breed')}
-                />
-              </Box>
-              <Box width="100%">
-                <Text fontWeight="bold" mb={2}>{t('profile.age')}</Text>
-                <Input
-                  value={petData.age}
-                  onChange={(e) => setPetData({ ...petData, age: e.target.value })}
-                  placeholder={t('profile.age')}
-                />
-              </Box>
-            </VStack>
-          </ModalBody>
-          <ModalFooter>
-            <Button variant="ghost" mr={3} onClick={addPetDisclosure.onClose}>
-              {t('common.cancel')}
-            </Button>
-            <Button colorScheme="green" onClick={handleSaveAddPet} isLoading={addPetMutation.isPending}>
-              {t('common.add')}
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-
-      {/* Edit Pet Modal */}
-      <Modal isOpen={editPetDisclosure.isOpen} onClose={editPetDisclosure.onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>{t('common.edit')} {t('profile.pet')}</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <VStack spacing={4}>
-              <Box width="100%">
-                <Text fontWeight="bold" mb={2}>{t('profile.petName')}</Text>
-                <Input
-                  value={petData.name}
-                  onChange={(e) => setPetData({ ...petData, name: e.target.value })}
-                  placeholder={t('profile.petName')}
-                />
-              </Box>
-              <Box width="100%">
-                <Text fontWeight="bold" mb={2}>{t('profile.species')}</Text>
-                <Input
-                  value={petData.species}
-                  onChange={(e) => setPetData({ ...petData, species: e.target.value })}
-                  placeholder={t('profile.species')}
-                />
-              </Box>
-              <Box width="100%">
-                <Text fontWeight="bold" mb={2}>{t('profile.breed')}</Text>
-                <Input
-                  value={petData.breed}
-                  onChange={(e) => setPetData({ ...petData, breed: e.target.value })}
-                  placeholder={t('profile.breed')}
-                />
-              </Box>
-              <Box width="100%">
-                <Text fontWeight="bold" mb={2}>{t('profile.age')}</Text>
-                <Input
-                  value={petData.age}
-                  onChange={(e) => setPetData({ ...petData, age: e.target.value })}
-                  placeholder={t('profile.age')}
-                />
-              </Box>
-            </VStack>
-          </ModalBody>
-          <ModalFooter>
-            <Button variant="ghost" mr={3} onClick={editPetDisclosure.onClose}>
-              {t('common.cancel')}
-            </Button>
-            <Button colorScheme="blue" onClick={handleSaveEditPet} isLoading={updatePetMutation.isPending}>
-              {t('common.save')}
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-
-      {/* Delete Pet Confirmation Dialog */}
-      <AlertDialog
-        isOpen={deletePetConfirmDisclosure.isOpen}
-        leastDestructiveRef={cancelRef}
-        onClose={deletePetConfirmDisclosure.onClose}
-      >
-        <AlertDialogOverlay>
-          <AlertDialogContent>
-            <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              {t('profile.deletePetTitle')}
-            </AlertDialogHeader>
-            <AlertDialogBody>
-              {t('profile.deletePetMessage')}
-            </AlertDialogBody>
-            <AlertDialogFooter>
-              <Button ref={cancelRef} onClick={deletePetConfirmDisclosure.onClose}>
-                {t('common.cancel')}
-              </Button>
-              <Button colorScheme="red" onClick={confirmDeletePet} ml={3} isLoading={deletePetMutation.isPending}>
-                {t('common.delete')}
-              </Button>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialogOverlay>
-      </AlertDialog>
-
       {/* Delete Account Confirmation Dialog */}
       <AlertDialog
         isOpen={deleteConfirmDisclosure.isOpen}
@@ -569,6 +344,40 @@ export default function ProfilePage() {
           </AlertDialogContent>
         </AlertDialogOverlay>
       </AlertDialog>
+
+      {/* Delete Pet Confirmation Dialog */}
+      <AlertDialog
+        isOpen={deletePetDisclosure.isOpen}
+        leastDestructiveRef={deletePetCancelRef}
+        onClose={deletePetDisclosure.onClose}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              {t('profile.deletePetTitle')}
+            </AlertDialogHeader>
+            <AlertDialogBody>
+              {t('profile.deletePetMessage')}
+            </AlertDialogBody>
+            <AlertDialogFooter>
+              <Button ref={deletePetCancelRef} onClick={deletePetDisclosure.onClose}>
+                {t('common.cancel')}
+              </Button>
+              <Button colorScheme="red" onClick={confirmDeletePet} ml={3} isLoading={deletePetMutation.isPending}>
+                {t('common.delete')}
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
+
+      {/* Pet Modal */}
+      <CardModal
+        isOpen={petModalDisclosure.isOpen}
+        onClose={petModalDisclosure.onClose}
+        mode={petModalMode}
+        pet={selectedPet}
+      />
 
       {/* Log Modal */}
       {selectedPetForLog && (

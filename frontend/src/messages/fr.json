@@ -98,7 +98,9 @@
     "postContent": "Contenu de la publication",
     "changeImage": "Changer l'image",
     "uploadImage": "Télécharger une image",
-    "deletedUser": "Utilisateur supprimé"
+    "deletedUser": "Utilisateur supprimé",
+    "editComment": "Modifier le commentaire",
+    "editYourComment": "Modifier votre commentaire..."
   },
   "dashboard": {
     "title": "Tableau de bord",

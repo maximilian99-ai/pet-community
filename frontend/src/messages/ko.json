@@ -98,7 +98,9 @@
     "postContent": "포스트 내용",
     "changeImage": "이미지 변경",
     "uploadImage": "이미지 업로드",
-    "deletedUser": "탈퇴한 사용자"
+    "deletedUser": "탈퇴한 사용자",
+    "editComment": "댓글 수정",
+    "editYourComment": "댓글을 수정하세요..."
   },
   "dashboard": {
     "title": "대시보드",

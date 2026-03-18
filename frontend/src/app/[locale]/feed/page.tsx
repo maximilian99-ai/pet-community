@@ -1,15 +1,16 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useColorMode, Box, VStack, Card, CardBody, Heading, Text, Button, HStack, Avatar, Divider, Flex, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Input, Textarea, Image, useToast, Badge } from '@chakra-ui/react';
+import { useColorMode, Box, VStack, Card, CardBody, Heading, Text, Button, HStack, Avatar, Divider, Flex, useDisclosure, Input, useToast, Badge } from '@chakra-ui/react';
 import { useAuthStore } from '@/store';
 import { useGetPosts } from '@/hooks/usePost';
-import { useCreatePost, useAddComment, useLikePost, useDeleteComment, useUpdateComment, useUpdatePost, useDeletePost } from '@/hooks/usePost';
+import { useAddComment, useLikePost, useDeleteComment, useDeletePost } from '@/hooks/usePost';
 import { Post } from '@/types';
-import { useState, useRef, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 import apiClient from '@/api/client';
 import NextImage from 'next/image';
+import PostModal from './ui/PostModal';
 
 export const dynamic = 'force-dynamic';
 
@@ -19,12 +20,9 @@ export default function FeedPage() {
   const auth = useAuthStore(state => state.isAuthenticated);
   const currentUserId = useAuthStore(state => state.username);
   const { data: feedData, isLoading } = useGetPosts(10, 0);
-  const createPostMutation = useCreatePost();
   const addCommentMutation = useAddComment();
-  const updateCommentMutation = useUpdateComment();
   const deleteCommentMutation = useDeleteComment();
   const likePostMutation = useLikePost();
-  const updatePostMutation = useUpdatePost();
   const deletePostMutation = useDeletePost();
   const toast = useToast();
   
@@ -36,7 +34,6 @@ export default function FeedPage() {
   const [editPostData, setEditPostData] = useState({ title: '', content: '' });
   const [expandedComments, setExpandedComments] = useState<Set<string>>(new Set());
   const [fullPostData, setFullPostData] = useState<{ [key: string]: Post }>({});
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const createPostDisclosure = useDisclosure();
   const editPostDisclosure = useDisclosure();
 
@@ -67,96 +64,10 @@ export default function FeedPage() {
     createPostDisclosure.onOpen();
   }, [createPostDisclosure]);
 
-  const handleImageUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      // 이미지 압축
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const img = new window.Image();
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          let width = img.width;
-          let height = img.height;
-          
-          // 최대 크기 제한 (너비 1200px)
-          const maxWidth = 1200;
-          if (width > maxWidth) {
-            height = (height * maxWidth) / width;
-            width = maxWidth;
-          }
-          
-          canvas.width = width;
-          canvas.height = height;
-          const ctx = canvas.getContext('2d');
-          if (ctx) {
-            ctx.drawImage(img, 0, 0, width, height);
-            // JPEG로 압축 (품질 0.8)
-            const compressedImage = canvas.toDataURL('image/jpeg', 0.8);
-            setPostData(prev => ({ ...prev, image: compressedImage }));
-          }
-        };
-        img.src = reader.result as string;
-      };
-      reader.readAsDataURL(file);
-    }
-  }, []);
-
-  const handleSavePost = async () => {
-    try {
-      if (!postData.title || !postData.content) {
-        toast({
-          title: 'Error',
-          description: 'Please fill in both title and content',
-          status: 'error',
-          duration: 3000,
-          isClosable: true,
-        });
-        return;
-      }
-      
-      const response = await createPostMutation.mutateAsync(postData);
-      if (response) {
-        toast({
-          title: 'Success',
-          description: 'Post created successfully',
-          status: 'success',
-          duration: 2000,
-          isClosable: true,
-        });
-        createPostDisclosure.onClose();
-        setPostData({ title: '', content: '', image: '' });
-      }
-    } catch (error: unknown) {
-      const err = error as { response?: { data?: { error?: string } } };
-      const errorMsg = err?.response?.data?.error || 'Failed to create post';
-      toast({
-        title: 'Error',
-        description: errorMsg,
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
-      console.error('Failed to create post:', error);
-    }
-  };
-
   const handleEditPost = (post: Post) => {
     setEditingPost(post.id);
     setEditPostData({ title: post.title, content: post.content });
     editPostDisclosure.onOpen();
-  };
-
-  const handleSaveEditPost = async () => {
-    try {
-      if (editingPost) {
-        await updatePostMutation.mutateAsync({ postId: editingPost, ...editPostData });
-        editPostDisclosure.onClose();
-        setEditingPost(null);
-      }
-    } catch (error) {
-      console.error('Failed to update post:', error);
-    }
   };
 
   const handleDeletePost = async (postId: string) => {
@@ -187,24 +98,6 @@ export default function FeedPage() {
 
   const handleEditComment = (postId: string, commentId: string, content: string) => {
     setEditingComment({ postId, commentId, content });
-  };
-
-  const handleSaveEditComment = async () => {
-    try {
-      const { postId, commentId, content } = editingComment as {postId: string; commentId: string; content: string};
-      if (!content || !content.trim()) return;
-
-      await updateCommentMutation.mutateAsync({ postId, commentId, content });
-      setEditingComment({});
-      
-      // 확장된 상태면 전체 댓글 다시 로드
-      if (expandedComments.has(postId)) {
-        const response = await apiClient.get(`/posts/${postId}`);
-        setFullPostData({ ...fullPostData, [postId]: response.data });
-      }
-    } catch (error) {
-      console.error('Failed to update comment:', error);
-    }
   };
 
   const handleDeleteComment = async (postId: string, commentId: string) => {
@@ -248,7 +141,7 @@ export default function FeedPage() {
       title: 'Copied to clipboard',
       description: 'Post link has been copied to your clipboard.',
       status: 'success',
-      duration: 3000,
+      duration: 3000
     });
   };
 
@@ -276,7 +169,7 @@ export default function FeedPage() {
         description: 'Failed to load all comments',
         status: 'error',
         duration: 3000,
-        isClosable: true,
+        isClosable: true
       });
     }
   };
@@ -305,7 +198,7 @@ export default function FeedPage() {
               <Card width="100%" bg={colorMode === 'dark' ? 'gray.700' : 'white'}>
                 <CardBody>
                   <Flex align="center" justify="space-between" mb={3}>
-                    <Heading size="sm">{t('feed.bestPost') || 'Popular Posts'}</Heading>
+                    <Heading size="sm">{t('feed.bestPost')}</Heading>
                     <Badge bg="orange.600" color="white" variant="solid" borderRadius="full"
                       px={2} py={0.5} fontSize="xs">
                       TOP
@@ -327,7 +220,7 @@ export default function FeedPage() {
                               </Text>
                             </HStack>
                             <Text fontSize="sm" color={colorMode === 'dark' ? 'gray.300' : 'gray.600'} noOfLines={1}>
-                              {post.author?.username || t('feed.deletedUser') || '탈퇴한 사용자'}
+                              {post.author?.username || t('feed.deletedUser')}
                             </Text>
                           </Box>
                           <HStack spacing={2} flexShrink={0}>
@@ -335,7 +228,7 @@ export default function FeedPage() {
                               ❤️ {post.likesCount || post._count?.likes || 0}
                             </Text>
                             <Button size="sm" variant="outline" onClick={(e) => { e.stopPropagation(); handleSharePost(post.id); }}>
-                              {t('feed.share') || 'Share'}
+                              {t('feed.share')}
                             </Button>
                           </HStack>
                         </Flex>
@@ -346,7 +239,7 @@ export default function FeedPage() {
               </Card>
             )}
             {isLoading ? (
-              <Text>{t('feed.loading') || 'Loading posts...'}</Text>
+              <Text>{t('feed.loading')}</Text>
             ) : displayPosts.length > 0 ? (
               displayPosts.map((post: Post) => (
                 <Card key={post.id} width="100%" bg={colorMode === 'dark' ? 'gray.700' : 'white'}>
@@ -356,12 +249,12 @@ export default function FeedPage() {
                       <Flex align="center">
                         <Avatar
                           size="md"
-                          name={post.author?.username || t('feed.deletedUser') || '탈퇴한 사용자'}
+                          name={post.author?.username || t('feed.deletedUser')}
                           src={post.author?.avatar}
                           mr={3}
                         />
                         <Box>
-                          <Text fontWeight="bold">{post.author?.username || t('feed.deletedUser') || '탈퇴한 사용자'}</Text>
+                          <Text fontWeight="bold">{post.author?.username || t('feed.deletedUser')}</Text>
                           <Text fontSize="sm" color={colorMode === 'dark' ? 'gray.400' : 'gray.600'}>
                             {new Date(post.createdAt).toLocaleDateString()}
                           </Text>
@@ -436,7 +329,7 @@ export default function FeedPage() {
                         variant="ghost"
                         onClick={() => handleSharePost(post.id)}
                       >
-                        🔗 {t('feed.share') || 'Share'}
+                        🔗 {t('feed.share')}
                       </Button>
                     </HStack>
 
@@ -445,7 +338,7 @@ export default function FeedPage() {
                       <Box mb={4}>
                         <Flex justify="space-between" align="center" mb={2}>
                           <Text fontSize="sm" fontWeight="bold">
-                            {t('feed.comments') || 'Comments'}
+                            {t('feed.comments')}
                           </Text>
                           {/* 이전 댓글 보기 버튼 */}
                           {(post.commentsCount || post._count?.comments || 0) > 3 && (
@@ -456,8 +349,8 @@ export default function FeedPage() {
                               onClick={() => handleExpandComments(post.id)}
                             >
                               {expandedComments.has(post.id) 
-                                ? (t('feed.showLess') || '간략히 보기')
-                                : `${t('feed.viewAllComments') || '이전 댓글 보기'} (${(post.commentsCount || post._count?.comments || 0) - 3})`
+                                ? (t('feed.showLess'))
+                                : `${t('feed.viewAllComments')} (${(post.commentsCount || post._count?.comments || 0) - 3})`
                               }
                             </Button>
                           )}
@@ -472,7 +365,7 @@ export default function FeedPage() {
                               <Box flex={1}>
                                 <Flex align="center" mb={1}>
                                   <Text fontSize="sm" fontWeight="bold" mr={2}>
-                                    {comment.author?.username || t('feed.deletedUser') || '탈퇴한 사용자'}
+                                    {comment.author?.username || t('feed.deletedUser')}
                                   </Text>
                                   {currentUserId && comment.author && currentUserId === comment.author.username && (
                                     <HStack spacing={1}>
@@ -506,7 +399,7 @@ export default function FeedPage() {
                       <HStack spacing={2}>
                         <Input
                           size="sm"
-                          placeholder={t('feed.comment') || 'Add a comment...'}
+                          placeholder={t('feed.comment')}
                           value={commentData[post.id] || ''}
                           onChange={(e) => setCommentData({ ...commentData, [post.id]: e.target.value })}
                         />
@@ -526,7 +419,7 @@ export default function FeedPage() {
             ) : (
               <Card width="100%" bg={colorMode === 'dark' ? 'gray.700' : 'white'}>
                 <CardBody>
-                  <Text textAlign="center">{t('feed.noPosts') || 'No posts yet'}</Text>
+                  <Text textAlign="center">{t('feed.noPosts')}</Text>
                 </CardBody>
               </Card>
             )}
@@ -534,136 +427,21 @@ export default function FeedPage() {
         </VStack>
       </Box>
 
-      {/* Create Post Modal */}
-      <Modal isOpen={createPostDisclosure.isOpen} onClose={createPostDisclosure.onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>{t('feed.createPost')}</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <VStack spacing={4}>
-              <Box width="100%">
-                <Text fontWeight="bold" mb={2}>{t('feed.postTitle')}</Text>
-                <Input
-                  value={postData.title}
-                  onChange={(e) => setPostData({ ...postData, title: e.target.value })}
-                  placeholder={t('feed.postTitle')}
-                />
-              </Box>
-              <Box width="100%">
-                <Text fontWeight="bold" mb={2}>{t('feed.postContent')}</Text>
-                <Textarea
-                  value={postData.content}
-                  onChange={(e) => setPostData({ ...postData, content: e.target.value })}
-                  placeholder={t('feed.postContent')}
-                />
-              </Box>
-              <Box width="100%">
-                <Text fontWeight="bold" mb={2}>{t('feed.uploadImage')}</Text>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  style={{ display: 'none' }}
-                />
-                <Button 
-                  width="100%"
-                  onClick={() => fileInputRef.current?.click()}
-                  variant="outline"
-                >
-                  {postData.image ? t('feed.changeImage') : t('feed.uploadImage')}
-                </Button>
-                {postData.image && (
-                  <Box mt={2} position="relative">
-                    <Image src={postData.image} alt="preview" borderRadius="md" />
-                    <Button
-                      position="absolute"
-                      top={2}
-                      right={2}
-                      size="sm"
-                      onClick={() => setPostData({ ...postData, image: '' })}
-                    >
-                      ✕
-                    </Button>
-                  </Box>
-                )}
-              </Box>
-            </VStack>
-          </ModalBody>
-          <ModalFooter>
-            <Button variant="ghost" mr={3} onClick={createPostDisclosure.onClose}>
-              {t('common.cancel')}
-            </Button>
-            <Button colorScheme="blue" onClick={handleSavePost} isLoading={createPostMutation.isPending}>
-              {t('feed.post')}
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-
-      {/* Edit Post Modal */}
-      <Modal isOpen={editPostDisclosure.isOpen} onClose={editPostDisclosure.onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>{t('feed.editPost') || 'Edit Post'}</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <VStack spacing={4}>
-              <Box width="100%">
-                <Text fontWeight="bold" mb={2}>{t('feed.postTitle')}</Text>
-                <Input
-                  value={editPostData.title}
-                  onChange={(e) => setEditPostData({ ...editPostData, title: e.target.value })}
-                  placeholder={t('feed.postTitle')}
-                />
-              </Box>
-              <Box width="100%">
-                <Text fontWeight="bold" mb={2}>{t('feed.postContent')}</Text>
-                <Textarea
-                  value={editPostData.content}
-                  onChange={(e) => setEditPostData({ ...editPostData, content: e.target.value })}
-                  placeholder={t('feed.postContent')}
-                />
-              </Box>
-            </VStack>
-          </ModalBody>
-          <ModalFooter>
-            <Button variant="ghost" mr={3} onClick={editPostDisclosure.onClose}>
-              {t('common.cancel')}
-            </Button>
-            <Button colorScheme="blue" onClick={handleSaveEditPost} isLoading={updatePostMutation.isPending}>
-              {t('common.save')}
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-
-      {/* Edit Comment Modal */}
-      {Object.keys(editingComment).length > 0 && (
-        <Modal isOpen={true} onClose={() => setEditingComment({})}>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>Edit Comment</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              <Textarea
-                value={(editingComment as {postId: string; commentId: string; content: string}).content}
-                onChange={(e) => setEditingComment({ ...editingComment, content: e.target.value })}
-                placeholder="Edit your comment..."
-              />
-            </ModalBody>
-            <ModalFooter>
-              <Button variant="ghost" mr={3} onClick={() => setEditingComment({})}>
-                {t('common.cancel')}
-              </Button>
-              <Button colorScheme="blue" onClick={handleSaveEditComment} isLoading={updateCommentMutation.isPending}>
-                {t('common.save')}
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
-      )}
+      <PostModal
+        createPostDisclosure={createPostDisclosure}
+        editPostDisclosure={editPostDisclosure}
+        postData={postData}
+        setPostData={setPostData}
+        editingPost={editingPost}
+        setEditingPost={setEditingPost}
+        editPostData={editPostData}
+        setEditPostData={setEditPostData}
+        editingComment={editingComment}
+        setEditingComment={setEditingComment}
+        fullPostData={fullPostData}
+        setFullPostData={setFullPostData}
+        expandedComments={expandedComments}
+      />
     </Box>
   );
 }

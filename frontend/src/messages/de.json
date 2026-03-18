@@ -98,7 +98,9 @@
     "postContent": "Beitragsinhalt",
     "changeImage": "Bild ändern",
     "uploadImage": "Bild hochladen",
-    "deletedUser": "Gelöschter Benutzer"
+    "deletedUser": "Gelöschter Benutzer",
+    "editComment": "Kommentar bearbeiten",
+    "editYourComment": "Bearbeiten Sie Ihren Kommentar..."
   },
   "dashboard": {
     "title": "Armaturenbrett",

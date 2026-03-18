@@ -98,7 +98,9 @@
     "postContent": "Contenido de la publicación",
     "changeImage": "Cambiar imagen",
     "uploadImage": "Subir imagen",
-    "deletedUser": "Usuario eliminado"
+    "deletedUser": "Usuario eliminado",
+    "editComment": "Editar comentario",
+    "editYourComment": "Editar tu comentario..."
   },
   "dashboard": {
     "title": "Panel",

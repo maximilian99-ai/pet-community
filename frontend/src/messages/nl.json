@@ -98,7 +98,9 @@
     "postContent": "Berichtinhoud",
     "changeImage": "Afbeelding wijzigen",
     "uploadImage": "Afbeelding uploaden",
-    "deletedUser": "Verwijderde gebruiker"
+    "deletedUser": "Verwijderde gebruiker",
+    "editComment": "Opmerking bewerken",
+    "editYourComment": "Bewerk je opmerking..."
   },
   "dashboard": {
     "title": "Dashboard",
