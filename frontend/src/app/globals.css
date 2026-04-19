@@ -8,6 +8,7 @@ html,
 body {
   max-width: 100vw;
   overflow-x: hidden;
+  font-family: var(--font-inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif);
 }
 
 a {
@@ -17,4 +18,15 @@ a {
 
 button {
   cursor: pointer;
+}
+
+/* 성능 최적화 */
+img {
+  content-visibility: auto;
+}
+
+/* 스크롤 성능 개선 */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }

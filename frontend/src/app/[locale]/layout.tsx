@@ -7,6 +7,14 @@ import { ChakraProvider } from '@chakra-ui/react';
 import { ReactQueryClientProvider } from '@/components/ReactQueryProvider';
 import { ColorModeProvider } from '@/components/ColorModeProvider';
 import { Navbar } from '@/components/Navbar';
+import { Inter } from 'next/font/google';
+
+const inter = Inter({ 
+  subsets: ['latin'],
+  display: 'swap',
+  preload: true,
+  variable: '--font-inter',
+});
 
 const locales = ['en', 'ko', 'fr', 'de', 'es', 'nl', 'da'];
 
@@ -26,12 +34,8 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
   const messages = await getMessages();
 
   return (
-    <html lang={locale} suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-      </head>
-      <body style={{ margin: 0, padding: 0 }}>
+    <html lang={locale} suppressHydrationWarning className={inter.variable}>
+      <body style={{ margin: 0, padding: 0 }} className={inter.className}>
         <NextIntlClientProvider locale={locale} messages={messages}>
           <ReactQueryClientProvider>
             <ChakraProvider>
@@ -46,4 +50,3 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
     </html>
   );
 }
-
