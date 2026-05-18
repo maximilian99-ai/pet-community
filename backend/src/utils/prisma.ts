@@ -21,7 +21,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 // Connection pooling settings for serverless environments
-prisma.$connect().catch((err) => {
+prisma.$connect().catch((err: unknown) => {
   console.error('Failed to connect to database:', err);
 });
 

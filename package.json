@@ -15,7 +15,11 @@
     "backend:test": "pnpm --filter backend test",
     "frontend:dev": "pnpm --filter frontend dev",
     "frontend:build": "pnpm --filter frontend build",
-    "frontend:test": "pnpm --filter frontend test"
+    "frontend:test": "pnpm --filter frontend test",
+    "mobile:start": "pnpm --filter mobile start",
+    "mobile:android": "pnpm --filter mobile android",
+    "mobile:ios": "pnpm --filter mobile ios",
+    "mobile:web": "pnpm --filter mobile web"
   },
   "keywords": ["pet", "community"],
   "author": "",

@@ -4,16 +4,30 @@
 
 ## 테크 스택
 
-### Frontend
+### Frontend (Web)
 - **Runtime**: Node.js 20.5.1
 - **Framework**: Next.js 14 (App Router)
 - **Language**: TypeScript
-- **State Management**: Zustand (클라이언트 상태), TanStack - React Query (서버 상태)
+- **State Management**: Zustand (클라이언트 상태), TanStack React Query (서버 상태)
 - **UI Library**: Chakra UI + Emotion/styled-components
 - **Styling**: TailwindCSS (반응형)
 - **Internationalization**: next-intl (다국어 지원: EN, KO, FR, DE, ES, NL, DA)
 - **HTTP Client**: Axios
 - **Testing**: Jest, Playwright
+
+### Mobile (iOS/Android)
+- **Framework**: Expo 54 + React Native
+- **Language**: TypeScript
+- **State Management**: TanStack React Query (서버 상태)
+- **Design System**: Toss Design System
+- **Storage**: AsyncStorage
+- **Camera/Images**: expo-camera, expo-image-picker
+- **HTTP Client**: Axios
+
+### Shared (Common)
+- **Types**: 공통 타입 정의 (User, Post, Pet 등)
+- **Constants**: API 엔드포인트, 저장소 키
+- **Utils**: 유틸리티 함수 (날짜, 검증 등)
 
 ### Backend
 - **Framework**: Express
@@ -24,13 +38,59 @@
 - **Testing**: Jest
 
 ### Infrastructure
+- **Monorepo**: pnpm workspace
 - **Containerization**: Docker & Docker Compose
 - **Database**: PostgreSQL (Supabase 또는 로컬)
-- **Frontend Hosting**: Vercel
+- **Web Hosting**: Vercel
 - **Backend Hosting**: Railway / Render
+- **Mobile**: Expo (EAS Build)
 - **CI/CD**: GitHub Actions
 
-## FSD 구조
+## 프로젝트 구조
+
+```
+pet-community/
+├── backend/                      # Express API 서버
+├── frontend/                     # Next.js 웹 앱
+├── mobile/                       # 🆕 React Native 모바일 앱
+│   ├── src/
+│   │   ├── api/                 # API 클라이언트
+│   │   ├── components/          # Toss UI 컴포넌트
+│   │   ├── theme/               # Toss 디자인 토큰
+│   │   └── utils/               # 유틸리티
+│   └── App.tsx
+├── shared/                       # 🆕 공통 패키지
+│   └── src/
+│       ├── types/               # 공통 타입
+│       ├── constants/           # 공통 상수
+│       └── utils/               # 공통 유틸
+├── pnpm-workspace.yaml
+└── package.json
+```
+
+## 빠른 시작
+
+### 전체 개발 서버 실행
+```bash
+pnpm install
+pnpm dev  # backend + frontend + mobile 동시 실행
+```
+
+### 개별 실행
+```bash
+# 웹 프론트엔드
+pnpm frontend:dev
+
+# 백엔드 API
+pnpm backend:dev
+
+# 모바일 앱
+pnpm mobile:start
+pnpm mobile:ios      # iOS 시뮬레이터
+pnpm mobile:android  # Android 에뮬레이터
+```
+
+## FSD 구조 (상세)
 
 ```
 pet-community/
@@ -300,6 +360,7 @@ pnpm lint:a11y        # ESLint 검사
 ### 참고 문서
 
 자세한 가이드는 다음 문서를 참고하세요:
+- 🔒 [**보안 가이드**](guide%20documents/SECURITY_GUIDE.md) - 웹 크롤링 & 자동 추적 방지 기능
 - 🎯 [**UX 접근성 완벽 가이드**](guide%20documents/UX_AND_ACCESSIBILITY_GUIDE.md) - Lighthouse & WCAG 전체 가이드
 - 🗄️ [**데이터베이스 백업 가이드**](guide%20documents/DATABASE_BACKUP_GUIDE.md) - DB 백업 및 복원 방법
 - 🔄 [**데이터베이스 복원 가이드**](RESTORE_GUIDE.md) - DB 복원 빠른 가이드

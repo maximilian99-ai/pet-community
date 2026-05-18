@@ -6,6 +6,14 @@ import prisma from './utils/prisma';
 // Load environment variables
 dotenv.config();
 
+// Security Middleware
+import {
+  botDetection,
+  ipRateLimit,
+  suspiciousPatternDetection,
+  securityHeaders,
+} from './middleware/security';
+
 // Routes
 import authRoutes from './routes/auth';
 import profileRoutes from './routes/profile';
@@ -21,6 +29,11 @@ const allowedOrigins = (process.env.CORS_ORIGINS
   ? process.env.CORS_ORIGINS.split(',').map((o) => o.trim()).filter(Boolean)
   : ['http://localhost:3000', 'https://pet-community-xi.vercel.app']
 );
+
+// Security Middleware (apply before other middleware)
+app.use(securityHeaders);
+app.use(ipRateLimit);
+app.use(suspiciousPatternDetection);
 
 // Middleware
 app.use(cors({
@@ -43,13 +56,13 @@ app.get('/health', (req: Request, res: Response) => {
   res.json({ status: 'OK', message: 'Pet Community API is running' });
 });
 
-// Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/profiles', profileRoutes);
-app.use('/api/posts', postRoutes);
-app.use('/api/logs', logRoutes);
-app.use('/api/recommendations', recommendationsRoutes);
-app.use('/api/follows', followsRoutes);
+// Routes (apply bot detection to API routes only)
+app.use('/api/auth', botDetection, authRoutes);
+app.use('/api/profiles', botDetection, profileRoutes);
+app.use('/api/posts', botDetection, postRoutes);
+app.use('/api/logs', botDetection, logRoutes);
+app.use('/api/recommendations', botDetection, recommendationsRoutes);
+app.use('/api/follows', botDetection, followsRoutes);
 
 // Error handling middleware
 app.use((err: unknown, req: Request, res: Response, _next: NextFunction) => {
