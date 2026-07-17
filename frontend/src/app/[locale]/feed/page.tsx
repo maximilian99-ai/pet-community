@@ -1,5 +1,5 @@
 import { setRequestLocale } from 'next-intl/server';
-import FeedClient from './ui/FeedClient';
+import FeedClient from './_ui/FeedClient';
 
 interface Props {
   params: Promise<{
