@@ -5,6 +5,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { useColorMode, Box, Flex, Button, HStack, Text, Heading } from '@chakra-ui/react';
 import { useAuthStore } from '@/store';
 import { useEffect, useState } from 'react';
+import NextImage from 'next/image';
 
 export function Navbar() {
   const t = useTranslations();
@@ -46,8 +47,9 @@ export function Navbar() {
       <Flex justify="space-between" align="center" maxW="1400px" mx="auto" gap={2}>
         {/* Left Side */}
         <Flex cursor="pointer" onClick={() => { router.push(`/${locale}/feed`) }}>
+          <NextImage src='/pet_community_favicon.png' alt="Logo" width={40} height={40} />
           <Heading as="h1" size={{ base: 'sm', md: 'lg' }} color={colorMode === 'dark' ? 'white' : 'black'}>
-            🐾 Pet Community
+            Pet Community
           </Heading>
         </Flex>
 
