@@ -2,6 +2,11 @@
   "buildCommand": "pnpm install --prod=false && pnpm prisma generate && pnpm prisma migrate deploy && pnpm run build",
   "outputDirectory": "dist",
   "installCommand": "pnpm install --prod=false",
+  "functions": {
+    "dist/index.js": {
+      "runtime": "nodejs20.x"
+    }
+  },
   "env": {
     "NODE_ENV": "production"
   },

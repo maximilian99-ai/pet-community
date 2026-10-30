@@ -15,6 +15,7 @@ async function getPosts() {
       cache: 'no-store',
       headers: {
         'Content-Type': 'application/json',
+        'User-Agent': 'PetCommunity-Frontend-SSR/1.0',
       },
     });
     
