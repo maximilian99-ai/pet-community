@@ -20,7 +20,7 @@
   "author": "",
   "license": "MIT",
   "engines": {
-    "node": "20.x"
+    "node": ">=20.0.0"
   },
   "dependencies": {
     "@prisma/client": "^5.8.0",
@@ -55,8 +55,5 @@
   "prisma": {
     "seed": "ts-node prisma/seed.ts",
     "schema": "prisma/schema.prisma"
-  },
-  "engines": {
-    "node": "20.x"
   }
 }
