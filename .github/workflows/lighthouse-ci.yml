@@ -20,16 +20,16 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '20.5.1'
+        node-version: '22'
     
     - name: Install pnpm
-      uses: pnpm/action-setup@v2
+      uses: pnpm/action-setup@v4
       with:
-        version: 8
+        version: 9
     
     - name: Install dependencies
       working-directory: ./frontend
-      run: pnpm install
+      run: pnpm install --frozen-lockfile
     
     - name: Build application
       working-directory: ./frontend
@@ -52,7 +52,7 @@ jobs:
         LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
     
     - name: Upload Lighthouse results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: lighthouse-results

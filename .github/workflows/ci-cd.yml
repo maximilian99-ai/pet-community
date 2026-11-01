@@ -9,7 +9,7 @@ on:
 jobs:
   backend-test:
     runs-on: ubuntu-latest
-    
+
     services:
       postgres:
         image: postgres:16-alpine
@@ -26,32 +26,37 @@ jobs:
           - 5432:5432
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: "20.5.1"
-          cache: "npm"
-          cache-dependency-path: backend/package-lock.json
+          node-version: "22"
+          cache: "pnpm"
+          cache-dependency-path: backend/pnpm-lock.yaml
 
       - name: Install Backend Dependencies
         working-directory: ./backend
-        run: npm install
+        run: pnpm install --frozen-lockfile
 
       - name: Generate Prisma Client
         working-directory: ./backend
-        run: npm run prisma:generate
+        run: pnpm prisma:generate
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/pet_community_test
 
       - name: Build Backend
         working-directory: ./backend
-        run: npm run build
+        run: pnpm build
 
       - name: Run Backend Tests
         working-directory: ./backend
-        run: npm test
+        run: pnpm test
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/pet_community_test
           JWT_SECRET: test-secret-key
@@ -61,61 +66,32 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: "20.5.1"
-          cache: "npm"
-          cache-dependency-path: frontend/package-lock.json
+          node-version: "22"
+          cache: "pnpm"
+          cache-dependency-path: frontend/pnpm-lock.yaml
 
       - name: Install Frontend Dependencies
         working-directory: ./frontend
-        run: npm install
+        run: pnpm install --frozen-lockfile
 
       - name: Build Frontend
         working-directory: ./frontend
-        run: npm run build
+        run: pnpm build
         env:
-          NEXT_PUBLIC_API_URL: http://localhost:5000/api
+          NEXT_PUBLIC_API_URL: http://localhost:5001/api
 
       - name: Run Frontend Tests
         working-directory: ./frontend
-        run: npm test
+        run: pnpm test
         env:
-          NEXT_PUBLIC_API_URL: http://localhost:5000/api
-
-  backend-deploy:
-    needs: backend-test
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Deploy to Railway
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-        run: |
-          npm install -g @railway/cli
-          railway deploy --service backend
-        working-directory: ./backend
-
-  frontend-deploy:
-    needs: frontend-test
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Deploy to Vercel
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-        run: |
-          npm install -g vercel
-          vercel deploy --prod --token=$VERCEL_TOKEN
-        working-directory: ./frontend
+          NEXT_PUBLIC_API_URL: http://localhost:5001/api
