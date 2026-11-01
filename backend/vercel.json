@@ -1,9 +1,8 @@
 {
   "buildCommand": "pnpm install --prod=false && pnpm prisma generate && pnpm prisma migrate deploy && pnpm run build",
-  "outputDirectory": "dist",
   "installCommand": "pnpm install --prod=false",
   "functions": {
-    "dist/index.js": {
+    "api/index.js": {
       "memory": 1024,
       "maxDuration": 30
     }
@@ -14,7 +13,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "/index.js"
+      "destination": "/api/index"
     }
   ],
   "headers": [
