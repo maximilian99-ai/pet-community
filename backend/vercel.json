@@ -4,7 +4,7 @@
   "installCommand": "pnpm install --prod=false",
   "functions": {
     "dist/index.js": {
-      "runtime": "nodejs20.x"
+      "runtime": "nodejs26.x"
     }
   },
   "env": {
